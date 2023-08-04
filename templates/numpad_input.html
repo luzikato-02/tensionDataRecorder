@@ -55,7 +55,11 @@
     <form method="post">
         {{ form.csrf_token }}
         <label for="id_number">ID Number (1-84):</label>
-        <input type="number" id="id_number" name="id_number" min="1" max="84" required>
+        <div>
+            <button type="button" onclick="previousId()">←</button>
+            <input type="number" id="id_number" name="id_number" min="1" max="84" required>
+            <button type="button" onclick="nextId()">→</button>
+        </div>
         {{ form.number_input(class="number-input") }}
         <div id="numpad-container">
             <button class="number-button" type="button" onclick="addNumber(1)">1</button>
@@ -86,6 +90,28 @@
 
         document.getElementById("id_number").addEventListener("input", updateCurrentId);
         updateCurrentId();
+
+        function previousId() {
+        const idNumberInput = document.getElementById("id_number");
+        const currentIdSpan = document.getElementById("current_id");
+        let currentId = parseInt(idNumberInput.value);
+        if (currentId > 1) {
+            currentId--;
+            idNumberInput.value = currentId;
+            currentIdSpan.textContent = currentId;
+            }
+        }
+
+        function nextId() {
+        const idNumberInput = document.getElementById("id_number");
+        const currentIdSpan = document.getElementById("current_id");
+        let currentId = parseInt(idNumberInput.value);
+        if (currentId < 84) {
+            currentId++;
+            idNumberInput.value = currentId;
+            currentIdSpan.textContent = currentId;
+            }
+        }
     </script>
 </body>
 </html>
