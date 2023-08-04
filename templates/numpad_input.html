@@ -30,6 +30,19 @@
     font-size: 18px;
   }
 
+  .submit-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .submit-button {
+    flex: 1;
+    font-size: 18px;
+    padding: 10px;
+  }
+
   #recorded-numbers {
     margin-top: 20px;
   }
@@ -73,7 +86,9 @@
   </div>
   
   <button onclick="recordNumber()">Submit</button>
-  <button onclick="finishRecording()">Finish</button>
+  <div class="submit-buttons">
+    <button class="submit-button" onclick="finishRecording()">Finish</button>
+  </div>
 
   <div id="recorded-numbers">
     <h2>Recorded Numbers for ID <span id="displayed-id">1</span>:</h2>
