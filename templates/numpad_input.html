@@ -57,7 +57,7 @@
         <label for="id_number">ID Number (1-84):</label>
         <div>
             <button type="button" onclick="previousId()">←</button>
-            <input type="number" id="id_number" name="id_number" min="1" max="84" required>
+            <input type="number" id="id_number" name="id_number" min="1" max="84" value="1" required>
             <button type="button" onclick="nextId()">→</button>
         </div>
         {{ form.number_input(class="number-input") }}
