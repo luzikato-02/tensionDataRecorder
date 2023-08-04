@@ -1,127 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Numpad Input</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
 
-        .number-input {
-            font-size: 18px;
-            margin-top: 20px;
-            padding: 5px 10px;
-        }
+  #container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
 
-        #numpad-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+  #number-form {
+    margin-bottom: 10px;
+  }
 
-        .number-button {
-            width: 50px;
-            height: 50px;
-            font-size: 18px;
-            margin: 5px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .number-button {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    font-size: 18px;
+  }
 
-        .submit-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .current-id {
-            margin-top: 10px;
-            font-size: 16px;
-        }
-    </style>
+  #recorded-numbers {
+    margin-top: 20px;
+  }
+</style>
+<title>Number Recorder</title>
 </head>
 <body>
-    <form id="numpad-form" method="post">
-        {{ form.csrf_token }}
-        <label for="id_number">ID Number (1-84):</label>
-        <div>
-            <button type="button" id="previous_id">←</button>
-            <input type="number" id="id_number" name="id_number" min="1" max="84" value="{{ current_id }}" required style="display: none;">
-            <button type="button" id="next_id">→</button>
-        </div>
-        {{ form.number_input(class="number-input", id="number_input") }}
-        <div id="numpad-container">
-            <button class="number-button" type="button" onclick="addNumber(1)">1</button>
-            <button class="number-button" type="button" onclick="addNumber(2)">2</button>
-            <button class="number-button" type="button" onclick="addNumber(3)">3</button>
-            <button class="number-button" type="button" onclick="addNumber(4)">4</button>
-            <button class="number-button" type="button" onclick="addNumber(5)">5</button>
-            <button class="number-button" type="button" onclick="addNumber(6)">6</button>
-            <button class="number-button" type="button" onclick="addNumber(7)">7</button>
-            <button class="number-button" type="button" onclick="addNumber(8)">8</button>
-            <button class="number-button" type="button" onclick="addNumber(9)">9</button>
-            <button class="number-button" type="button" onclick="addNumber(0)">0</button>
-        </div>
-        <button type="button" class="submit-button" onclick="submitForm()">Submit</button>
-        <div class="current-id">Currently Assigned ID: <span id="current_id_display">{{ current_id }}</span></div>
-<div class="current-id">Currently Assigned Value: <span id="current_value_display">{{ current_value }}</span></div>
-</form>
+<div id="container">
+  <h1>Number Recorder</h1>
+  
+  <div>
+    <button onclick="prevID()">Previous ID</button>
+    <span id="current-id">1</span>
+    <button onclick="nextID()">Next ID</button>
+  </div>
+  
+  <form id="number-form">
+    <label for="number">Enter Number: </label>
+    <input type="number" id="number" name="number" required>
+  </form>
+  
+  <div>
+    <button class="number-button" onclick="appendNumber(1)">1</button>
+    <button class="number-button" onclick="appendNumber(2)">2</button>
+    <button class="number-button" onclick="appendNumber(3)">3</button>
+  </div>
+  <div>
+    <button class="number-button" onclick="appendNumber(4)">4</button>
+    <button class="number-button" onclick="appendNumber(5)">5</button>
+    <button class="number-button" onclick="appendNumber(6)">6</button>
+  </div>
+  <div>
+    <button class="number-button" onclick="appendNumber(7)">7</button>
+    <button class="number-button" onclick="appendNumber(8)">8</button>
+    <button class="number-button" onclick="appendNumber(9)">9</button>
+  </div>
+  <div>
+    <button class="number-button" onclick="clearNumber()">Clear</button>
+    <button class="number-button" onclick="appendNumber(0)">0</button>
+    <button class="number-button" onclick="backspaceNumber()">&#9003;</button>
+  </div>
+  
+  <button onclick="recordNumber()">Submit</button>
+  <button onclick="finishRecording()">Finish</button>
+
+  <div id="recorded-numbers">
+    <h2>Recorded Numbers for ID <span id="displayed-id">1</span>:</h2>
+    <ul id="numbers-list"></ul>
+  </div>
+</div>
 
 <script>
-   const previousButton = document.getElementById("previous_id");
-    const nextButton = document.getElementById("next_id");
-    const idNumberInput = document.getElementById("id_number");
-    const currentValueDisplay = document.getElementById("current_value_display");
-    const currentIdDisplay = document.getElementById("current_id_display");
+  let currentID = 1;
+  let data = {};
 
-    previousButton.addEventListener("click", () => {
-        changeId("previous");
+  function updateIDDisplay() {
+    const currentIDElement = document.getElementById('current-id');
+    currentIDElement.textContent = currentID;
+    document.getElementById('displayed-id').textContent = currentID;
+    displayRecordedNumbers();
+  }
+
+  function prevID() {
+    if (currentID > 1) {
+      currentID--;
+      updateIDDisplay();
+    }
+  }
+
+  function nextID() {
+    if (currentID < 84) {
+      currentID++;
+      updateIDDisplay();
+    }
+  }
+
+  function appendNumber(num) {
+    const numberInput = document.getElementById('number');
+    numberInput.value += num;
+  }
+
+  function backspaceNumber() {
+    const numberInput = document.getElementById('number');
+    numberInput.value = numberInput.value.slice(0, -1);
+  }
+
+  function clearNumber() {
+    const numberInput = document.getElementById('number');
+    numberInput.value = '';
+  }
+
+  function recordNumber() {
+    const numberInput = document.getElementById('number');
+    
+    const number = numberInput.value;
+    
+    data[currentID] = [number]; // Overwrite previous number with new one
+    
+    console.log(data);
+    
+    numberInput.value = '';
+    displayRecordedNumbers();
+  }
+
+  function finishRecording() {
+    let csvContent = "data:text/csv;charset=utf-8,ID,Numbers\n";
+    Object.keys(data).forEach(key => {
+      const row = [key, data[key].join(",")];
+      csvContent += row.join(",") + "\n";
     });
 
-    nextButton.addEventListener("click", () => {
-        changeId("next");
-    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "recorded_data.csv");
+    document.body.appendChild(link); // Required for Firefox
+    link.click(); // Trigger the link click
 
-    function changeId(direction) {
-        let currentId = parseInt(idNumberInput.value);
-        if (direction === "previous" && currentId > 1) {
-            currentId--;
-        } else if (direction === "next" && currentId < 84) {
-            currentId++;
-        }
-        idNumberInput.value = currentId;
-        currentIdDisplay.textContent = currentId;
-        
-        // Fetch submitted values from the server
-        fetch("/get_submitted_values")
-            .then(response => response.json())
-            .then(data => {
-                submittedValues = data;
-                currentValueDisplay.textContent = submittedValues[currentId] || "";
-            })
-            .catch(error => {
-                console.error("Error fetching submitted values:", error);
-            });
-    }
-    function addNumber(number) {
-        document.getElementById("number_input").value += number;
-    }
+    // Clear the stored data after download
+    data = {};
 
-    function submitForm() {
-        document.getElementById("numpad-form").submit();
+    displayRecordedNumbers();
+  }
+
+  function displayRecordedNumbers() {
+    const numbersList = document.getElementById('numbers-list');
+    numbersList.innerHTML = '';
+
+    if (data[currentID]) {
+      data[currentID].forEach(number => {
+        const listItem = document.createElement('li');
+        listItem.textContent = number;
+        numbersList.appendChild(listItem);
+      });
     }
+  }
 </script>
-
 </body>
 </html>
