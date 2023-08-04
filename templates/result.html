@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Numpad Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .number-input {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 5px 10px;
+        }
+
+        #number-list {
+            list-style: none;
+            margin: 20px;
+            padding: 0;
+        }
+
+        #number-list li {
+            font-size: 16px;
+            margin: 5px;
+            padding: 5px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        {{ form.csrf_token }}
+        {{ form.number_input(class="number-input", readonly=True) }}
+    </form>
+    <ul id="number-list">
+        <li>{{ number }}</li>
+    </ul>
+</body>
+</html>
