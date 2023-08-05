@@ -64,6 +64,20 @@
     color: white;
     border: none;
   }
+
+  #tension-type {
+    font-size: 24px;
+    margin: 10px;
+  }
+
+  /* Added styles for tension type buttons */
+  .tension-type-button {
+    width: 130px;
+    height: 50px;
+    margin: 5px;
+    font-size: 14px;
+  }
+
 </style>
 <title>Tension Data Recorder</title>
 </head>
@@ -75,6 +89,12 @@
     <button class="arrow-button" onclick="prevID()">&#9664;</button>
     <span id="current-id">1</span>
     <button class="arrow-button" onclick="nextID()">&#9654;</button>
+  </div>
+
+  <div>
+    <button class="arrow-button" onclick="prevTensionType()">&#9664;</button>
+    <span id="tension-type">Cord Tension</span>
+    <button class="arrow-button" onclick="nextTensionType()">&#9654;</button>
   </div>
   
   <form id="number-form">
@@ -118,6 +138,7 @@
 
 <script>
   let currentID = 1;
+  let currentTensionType = "Cord Tension"; // Default tension type
   let data = {};
 
   function updateIDDisplay() {
@@ -126,6 +147,27 @@
     document.getElementById('displayed-id').textContent = currentID;
     displayRecordedNumbers();
   }
+
+  function prevTensionType() {
+    if (currentTensionType === "Cord Tension") {
+      currentTensionType = "Winding Tension";
+      updateTensionTypeDisplay();
+    }
+  }
+
+  function nextTensionType() {
+    if (currentTensionType === "Winding Tension") {
+      currentTensionType = "Cord Tension";
+      updateTensionTypeDisplay();
+    }
+  }
+
+  function updateTensionTypeDisplay() {
+    const tensionTypeElement = document.getElementById('tension-type');
+    tensionTypeElement.textContent = currentTensionType;
+  }
+
+
 
   function prevID() {
     if (currentID > 1) {
@@ -178,11 +220,11 @@
   }
 
   function finishRecording(machineNumber, operator) {
-    let csvContent = "data:text/csv;charset=utf-8,Machine Number,Operator,DateTime,ID,Numbers\n";
+    let csvContent = "data:text/csv;charset=utf-8,Machine Number,Operator,DateTime,Spindle Number,Cord Tension,Winding Tension\n";
     const now = new Date().toLocaleString();
     
     Object.keys(data).forEach(key => {
-      const row = [machineNumber, operator, now, key, data[key].join(",")];
+      const row = [machineNumber, operator, now, key, ...data[key]]; // Spread the array for both tension types
       csvContent += row.join(",") + "\n";
     });
     
