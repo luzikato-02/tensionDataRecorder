@@ -60,12 +60,26 @@
     font-size: 24px; /* Larger font size */
     margin: 0 10px; /* Added margin for space */
   }
+
+  /* Added styles for custom buttons */
+  .custom-button {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    font-size: 18px;
+  }
+
+  .delete-button {
+    background-color: #FF0000;
+    color: white;
+    border: none;
+  }
 </style>
-<title>Number Recorder</title>
+<title>Tension Data Recorder</title>
 </head>
 <body>
 <div id="container">
-  <h1>Number Recorder</h1>
+  <h1>Tension Data Recorder</h1>
   
   <div>
     <button class="arrow-button" onclick="prevID()">&#9664;</button> <!-- Left arrow -->
@@ -94,21 +108,26 @@
     <button class="number-button" onclick="appendNumber(9)">9</button>
   </div>
   <div>
-    <button class="number-button" onclick="clearNumber()">Clear</button>
+    <button class="number-button" onclick="clearNumber()">C</button>
     <button class="number-button" onclick="appendNumber(0)">0</button>
     <button class="number-button" onclick="backspaceNumber()">&#9003;</button>
   </div>
   
   <div class="submit-buttons">
     <button class="submit-button" onclick="recordNumber()">Submit</button>
-    <button class="submit-button" onclick="finishRecording()">Finish</button>
+    <button class="submit-button" onclick="promptFinish()">Finish</button>
+  </div>
+
+  <div class="submit-buttons">
+    <button class="custom-button delete-button" onclick="deleteData()">Delete</button>
   </div>
 
   <div id="recorded-numbers">
-    <h2>Recorded Numbers for ID <span id="displayed-id">1</span>:</h2>
+    <h2>Recorded Numbers for Spd No. <span id="displayed-id">1</span>:</h2>
     <ul id="numbers-list"></ul>
   </div>
-  
+</div>
+
 <script>
   let currentID = 1;
   let data = {};
@@ -151,24 +170,34 @@
 
   function recordNumber() {
     const numberInput = document.getElementById('number');
-    
     const number = numberInput.value;
-    
     data[currentID] = [number]; // Overwrite previous number with new one
-    
     console.log(data);
-    
     numberInput.value = '';
     displayRecordedNumbers();
   }
 
-  function finishRecording() {
-    let csvContent = "data:text/csv;charset=utf-8,ID,Numbers\n";
+  function promptFinish() {
+    const machineNumber = prompt("Enter machine number:");
+    const operator = prompt("Enter operator:");
+    
+    if (machineNumber !== null && operator !== null) {
+      const confirmation = confirm("Are you sure you want to finish? This will erase the stored data.");
+      if (confirmation) {
+        finishRecording(machineNumber, operator);
+      }
+    }
+  }
+
+  function finishRecording(machineNumber, operator) {
+    let csvContent = "data:text/csv;charset=utf-8,Machine Number,Operator,DateTime,ID,Numbers\n";
+    const now = new Date().toLocaleString();
+    
     Object.keys(data).forEach(key => {
-      const row = [key, data[key].join(",")];
+      const row = [machineNumber, operator, now, key, data[key].join(",")];
       csvContent += row.join(",") + "\n";
     });
-
+    
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -179,6 +208,11 @@
     // Clear the stored data after download
     data = {};
 
+    displayRecordedNumbers();
+  }
+
+  function deleteData() {
+    delete data[currentID];
     displayRecordedNumbers();
   }
 
