@@ -20,7 +20,7 @@
   }
 
   #number-form {
-    margin: 20px 0; /* Added margin */
+    margin: 20px 0;
   }
 
   .number-button {
@@ -32,7 +32,7 @@
 
   .submit-buttons {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 5px;
     width: 100%;
     margin-top: 10px;
@@ -40,14 +40,13 @@
 
   .submit-button {
     font-size: 18px;
-    padding: 12px 0; /* Adjust padding if needed */
+    padding: 12px 0;
   }
 
   #recorded-numbers {
     margin-top: 20px;
   }
 
-  /* Added styles for arrow buttons */
   .arrow-button {
     background: none;
     border: none;
@@ -55,18 +54,9 @@
     cursor: pointer;
   }
 
-  /* Added styles for ID display */
   #current-id {
-    font-size: 24px; /* Larger font size */
-    margin: 0 10px; /* Added margin for space */
-  }
-
-  /* Added styles for custom buttons */
-  .custom-button {
-    width: 50px;
-    height: 50px;
-    margin: 5px;
-    font-size: 18px;
+    font-size: 24px;
+    margin: 0 10px;
   }
 
   .delete-button {
@@ -82,9 +72,9 @@
   <h1>Tension Data Recorder</h1>
   
   <div>
-    <button class="arrow-button" onclick="prevID()">&#9664;</button> <!-- Left arrow -->
+    <button class="arrow-button" onclick="prevID()">&#9664;</button>
     <span id="current-id">1</span>
-    <button class="arrow-button" onclick="nextID()">&#9654;</button> <!-- Right arrow -->
+    <button class="arrow-button" onclick="nextID()">&#9654;</button>
   </div>
   
   <form id="number-form">
@@ -116,11 +106,9 @@
   <div class="submit-buttons">
     <button class="submit-button" onclick="recordNumber()">Submit</button>
     <button class="submit-button" onclick="promptFinish()">Finish</button>
-  </div>
-
-  <div class="submit-buttons">
     <button class="custom-button delete-button" onclick="deleteData()">Delete</button>
   </div>
+
 
   <div id="recorded-numbers">
     <h2>Recorded Numbers for Spd No. <span id="displayed-id">1</span>:</h2>
@@ -171,7 +159,7 @@
   function recordNumber() {
     const numberInput = document.getElementById('number');
     const number = numberInput.value;
-    data[currentID] = [number]; // Overwrite previous number with new one
+    data[currentID] = [number];
     console.log(data);
     numberInput.value = '';
     displayRecordedNumbers();
@@ -202,10 +190,9 @@
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "recorded_data.csv");
-    document.body.appendChild(link); // Required for Firefox
-    link.click(); // Trigger the link click
+    document.body.appendChild(link);
+    link.click();
 
-    // Clear the stored data after download
     data = {};
 
     displayRecordedNumbers();
