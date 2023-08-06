@@ -94,9 +94,9 @@
 
   <div>
     <span id="label-tension">Tension Type</span>
-    <button class="arrow-button" onclick="prevTensionType()">&#9664;</button>
-    <span id="tension-type">Cord Tension</span>
-    <button class="arrow-button" onclick="nextTensionType()">&#9654;</button>
+    <button class="arrow-button" onclick="changeTensionType()">&#9664;</button>
+    <span id="tension-type">CT</span>
+    <button class="arrow-button" onclick="changeTensionType()">&#9654;</button>
   </div>
   
   <form id="number-form">
@@ -140,7 +140,7 @@
 
 <script>
   let currentID = 1;
-  let currentTensionType = "Cord Tension"; // Default tension type
+  let currentTensionType = "CT"; // Default tension type
   let data = {};
 
   function updateIDDisplay() {
@@ -150,16 +150,13 @@
     displayRecordedNumbers();
   }
 
-  function prevTensionType() {
-    if (currentTensionType === "Cord Tension") {
-      currentTensionType = "Winding Tension";
+  function changeTensionType() {
+    if (currentTensionType === "CT") {
+      currentTensionType = "WT";
       updateTensionTypeDisplay();
     }
-  }
-
-  function nextTensionType() {
-    if (currentTensionType === "Winding Tension") {
-      currentTensionType = "Cord Tension";
+    else {
+      currentTensionType = "CT";
       updateTensionTypeDisplay();
     }
   }
@@ -168,8 +165,6 @@
     const tensionTypeElement = document.getElementById('tension-type');
     tensionTypeElement.textContent = currentTensionType;
   }
-
-
 
   function prevID() {
     if (currentID > 1) {
