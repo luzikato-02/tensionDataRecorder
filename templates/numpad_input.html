@@ -43,6 +43,15 @@
     padding: 12px 0;
   }
 
+/* Modify the font size and add padding to the Submit, Finish, and Delete buttons */
+.submit-button,
+.delete-button {
+  font-size: 14px; /* Adjust the font size as needed */
+  padding: 8px 12px; /* Adjust the padding to create space around the text */
+  margin: 5px;
+}
+
+
   #recorded-numbers {
     margin-top: 20px;
   }
@@ -62,7 +71,6 @@
   .delete-button {
     background-color: #FF0000;
     color: white;
-    border: none;
   }
 
   #tension-type {
@@ -94,7 +102,7 @@
   .numbers-container {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin: 20px;
   }
 
   .tension-list {
@@ -123,6 +131,20 @@
 <body>
 <div id="container">
   <h1>Tension Data Recorder</h1>
+
+  <div id="recorded-numbers">
+    <h2>Recorded Tension for Spd No. <span id="displayed-id">1</span>:</h2>
+    <div class="numbers-container">
+      <div class="tension-list">
+        <h3>MIN</h3>
+        <ul id="min-numbers-list"></ul>
+      </div>
+      <div class="tension-list">
+        <h3>MAX</h3>
+        <ul id="max-numbers-list"></ul>
+      </div>
+    </div>
+  </div>
   
   <div>
     <span id="label-spindle">Spd No.</span>
@@ -164,28 +186,13 @@
     <button class="number-button" onclick="backspaceNumber()">&#9003;</button>
   </div>
   
-<div class="submit-buttons">
+  <div class="button-container">
     <button class="submit-button" onclick="recordNumber()">Submit</button>
     <button class="submit-button" onclick="promptFinish()">Finish</button>
-  </div>
-
-  <div class="submit-buttons">
     <button class="custom-button delete-button" onclick="deleteData()">Delete</button>
   </div>
-
-  <div id="recorded-numbers">
-    <h2>Recorded Tension for Spd No. <span id="displayed-id">1</span>:</h2>
-    <div class="numbers-container">
-      <div class="tension-list">
-        <h3>MIN</h3>
-        <ul id="min-numbers-list"></ul>
-      </div>
-      <div class="tension-list">
-        <h3>MAX</h3>
-        <ul id="max-numbers-list"></ul>
-      </div>
-    </div>
-  </div>
+  
+  
 </div>
 
 <script>
