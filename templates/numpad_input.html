@@ -78,6 +78,19 @@
     font-size: 14px;
   }
 
+  .tension-type-button {
+    width: 130px;
+    height: 50px;
+    margin: 5px;
+    font-size: 14px;
+  }
+
+  /* Added styles for displayed tension type */
+  #displayed-tension-type {
+    font-size: 18px;
+    margin-top: 5px;
+  }
+
 </style>
 <title>Tension Data Recorder</title>
 </head>
@@ -95,10 +108,10 @@
   <div>
     <span id="label-tension">Tension Type</span>
     <button class="arrow-button" onclick="changeTensionType()">&#9664;</button>
-    <span id="tension-type">CT</span>
+    <span id="tension-type">Cord Tension</span>
     <button class="arrow-button" onclick="changeTensionType()">&#9654;</button>
   </div>
-  
+
   <form id="number-form">
     <label for="number">Enter Number: </label>
     <input type="number" id="number" name="number" required>
@@ -125,23 +138,28 @@
     <button class="number-button" onclick="backspaceNumber()">&#9003;</button>
   </div>
   
-  <div class="submit-buttons">
+<div class="submit-buttons">
     <button class="submit-button" onclick="recordNumber()">Submit</button>
     <button class="submit-button" onclick="promptFinish()">Finish</button>
+  </div>
+
+  <div class="submit-buttons">
     <button class="custom-button delete-button" onclick="deleteData()">Delete</button>
   </div>
 
-
   <div id="recorded-numbers">
-    <h2>Recorded Numbers for Spd No. <span id="displayed-id">1</span>:</h2>
+    <h2>Recorded <span id="displayed-tension-type">Cord Tension</span> for Spd No. <span id="displayed-id">1</span>:</h2>
     <ul id="numbers-list"></ul>
   </div>
 </div>
 
 <script>
-  let currentID = 1;
-  let currentTensionType = "CT"; // Default tension type
-  let data = {};
+   let currentID = 1;
+  let currentTensionType = "Cord Tension"; // Default tension type
+  let data = {
+    "Cord Tension": {},
+    "Winding Tension": {}
+  };
 
   function updateIDDisplay() {
     const currentIDElement = document.getElementById('current-id');
@@ -151,19 +169,16 @@
   }
 
   function changeTensionType() {
-    if (currentTensionType === "CT") {
-      currentTensionType = "WT";
-      updateTensionTypeDisplay();
-    }
-    else {
-      currentTensionType = "CT";
-      updateTensionTypeDisplay();
-    }
+    currentTensionType = (currentTensionType === "Cord Tension") ? "Winding Tension" : "Cord Tension";
+    updateTensionTypeDisplay();
+    displayRecordedNumbers();
   }
 
   function updateTensionTypeDisplay() {
     const tensionTypeElement = document.getElementById('tension-type');
     tensionTypeElement.textContent = currentTensionType;
+    const displayedTensionType = document.getElementById('displayed-tension-type');
+    displayedTensionType.textContent = currentTensionType;
   }
 
   function prevID() {
@@ -242,12 +257,25 @@
     displayRecordedNumbers();
   }
 
+  function recordNumber() {
+    const numberInput = document.getElementById('number');
+    const number = numberInput.value;
+
+    if (!data[currentTensionType][currentID]) {
+      data[currentTensionType][currentID] = [];
+    }
+    
+    data[currentTensionType][currentID].push(number);
+    numberInput.value = '';
+    displayRecordedNumbers();
+  }
+
   function displayRecordedNumbers() {
     const numbersList = document.getElementById('numbers-list');
     numbersList.innerHTML = '';
 
-    if (data[currentID]) {
-      data[currentID].forEach(number => {
+    if (data[currentTensionType][currentID]) {
+      data[currentTensionType][currentID].forEach(number => {
         const listItem = document.createElement('li');
         listItem.textContent = number;
         numbersList.appendChild(listItem);
