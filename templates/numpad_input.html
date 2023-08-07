@@ -133,7 +133,7 @@
   <h1>Tension Data Recorder</h1>
 
   <div id="recorded-numbers">
-    <h2>Recorded Tension for Spd No. <span id="displayed-id">1</span>:</h2>
+    <h2>Recorded <span id="displayed-tension-type">Cord Tension</span> for Spd No. <span id="displayed-id">1</span>: </h2>
     <div class="numbers-container">
       <div class="tension-list">
         <h3>MIN</h3>
@@ -156,8 +156,15 @@
   <div>
     <span id="label-tension">Tension Type</span>
     <button class="arrow-button" onclick="changeTensionType()">&#9664;</button>
-    <span id="tension-type">MIN</span>
+    <span id="tension-type">CT</span>
     <button class="arrow-button" onclick="changeTensionType()">&#9654;</button>
+  </div>
+
+  <div>
+    <span id="label-value">Value Type</span>
+    <button class="arrow-button" onclick="changeValueType()">&#9664;</button>
+    <span id="value-type">MIN</span>
+    <button class="arrow-button" onclick="changeValueType()">&#9654;</button>
   </div>
 
   <form id="number-form">
@@ -197,10 +204,17 @@
 
 <script>
   let currentID = 1;
-  let currentTensionType = "MIN"; // Default tension type abbreviation
+  let currentTensionType = "CT"; // Default tension type abbreviation
+  let currentValueType = "MIN"; // Default value type abbreviation
   let data = {
-    "MIN": {},
-    "MAX": {}
+    "CT": {
+      "MIN": {},
+      "MAX": {}
+    },
+    "WT": {
+      "MIN": {},
+      "MAX": {}
+    }
   };
 
   function updateIDDisplay() {
@@ -211,16 +225,28 @@
   }
 
   function changeTensionType() {
-    currentTensionType = (currentTensionType === "MIN") ? "MAX" : "MIN";
+    currentTensionType = (currentTensionType === "CT") ? "WT" : "CT";
     updateTensionTypeDisplay();
     displayRecordedNumbers();
   }
+
+  function changeValueType() {
+    currentValueType = (currentValueType === "MIN") ? "MAX" : "MIN";
+    updateValueTypeDisplay();
+    displayRecordedNumbers();
+  }
+
 
   function updateTensionTypeDisplay() {
     const tensionTypeElement = document.getElementById('tension-type');
     tensionTypeElement.textContent = currentTensionType;
     const displayedTensionType = document.getElementById('displayed-tension-type');
-    displayedTensionType.textContent = (currentTensionType === "MIN") ? "Cord Tension" : "Winding Tension";
+    displayedTensionType.textContent = (currentTensionType === "CT") ? "Cord Tension" : "Winding Tension";
+  }
+
+  function updateValueTypeDisplay() {
+    const valueTypeElement = document.getElementById('value-type');
+    valueTypeElement.textContent = currentValueType;
   }
 
 
@@ -257,11 +283,18 @@
     const numberInput = document.getElementById('number');
     const number = numberInput.value;
 
-    if (!data[currentTensionType][currentID]) {
-      data[currentTensionType][currentID] = [];
-    }
-    
-    data[currentTensionType][currentID].push(number);
+    if (!data[currentID]) {
+    data[currentID] = {};
+  }
+  if (!data[currentID][currentTensionType]) {
+    data[currentID][currentTensionType] = {};
+  }
+  if (!data[currentID][currentTensionType][currentValueType]) {
+    data[currentID][currentTensionType][currentValueType] = [];
+  }
+
+  // Add the number to the array
+  data[currentID][currentTensionType][currentValueType].push(number);
     numberInput.value = '';
     displayRecordedNumbers();
   }
@@ -269,22 +302,28 @@
   function promptFinish() {
     const machineNumber = prompt("Enter machine number:");
     const operator = prompt("Enter operator:");
+    const dtex = prompt("Enter dtex:");
+    const tpm = prompt("Enter TPM:");
+
     
     if (machineNumber !== null && operator !== null) {
       const confirmation = confirm("Are you sure you want to finish? This will erase the stored data.");
       if (confirmation) {
-        finishRecording(machineNumber, operator);
+        finishRecording(machineNumber, operator, dtex, tpm);
       }
     }
   }
 
-  function finishRecording(machineNumber, operator) {
-    let csvContent = "Machine Number,Operator,Spindle Number,MIN,MAX\n";
+  function finishRecording(machineNumber, operator, dtx, twm) {
+    let csvContent = "Machine Number,Operator,Spindle Number,Tension Type,Value Type,Values\n";
 
-    for (let id in data["MIN"]) {
-      const cordTension = data["MIN"][id].join(",");
-      const windingTension = data["MAX"][id] ? data["MAX"][id].join(",") : "";
-      csvContent += `${machineNumber},${operator},${id},${cordTension},${windingTension}\n`;
+    for (let tensionType in data) {
+      for (let valueType in data[tensionType]) {
+        for (let id in data[tensionType][valueType]) {
+          const values = data[tensionType][valueType][id].join(",");
+          csvContent += `${machineNumber},${operator},${id},${tensionType},${valueType},${values}\n`;
+        }
+      }
     }
 
     const encodedUri = encodeURI(csvContent);
@@ -295,15 +334,21 @@
     link.click();
 
     data = {
-      "MIN": {},
-      "MAX": {}
+      "CT": {
+        "MIN": {},
+        "MAX": {}
+      },
+      "WT": {
+        "MIN": {},
+        "MAX": {}
+      }
     };
 
     displayRecordedNumbers();
   }
 
   function deleteData() {
-    delete data[currentTensionType][currentID];
+    delete data[currentTensionType][currentValueType][currentID];
     displayRecordedNumbers();
   }
 
@@ -311,11 +356,11 @@
     const numberInput = document.getElementById('number');
     const number = numberInput.value;
 
-    if (!data[currentTensionType][currentID]) {
-      data[currentTensionType][currentID] = [];
+    if (!data[currentTensionType][currentValueType][currentID]) {
+      data[currentTensionType][currentValueType][currentID] = [];
     }
     
-    data[currentTensionType][currentID].push(number);
+    data[currentTensionType][currentValueType][currentID].push(number);
     numberInput.value = '';
     displayRecordedNumbers();
   }
@@ -327,20 +372,23 @@
     minNumbersList.innerHTML = '';
     maxNumbersList.innerHTML = '';
 
-    if (data["MIN"][currentID]) {
-      data["MIN"][currentID].forEach(number => {
-        const listItem = document.createElement('li');
-        listItem.textContent = number;
-        minNumbersList.appendChild(listItem);
+    if (data[currentTensionType]["MIN"][currentID]) {
+      // Fill minimum box
+      data[currentTensionType]["MIN"][currentID].forEach(number => {
+          const listItem = document.createElement('li');
+          listItem.textContent = number;
+          minNumbersList.appendChild(listItem);
       });
     }
 
-    if (data["MAX"][currentID]) {
-      data["MAX"][currentID].forEach(number => {
-        const listItem = document.createElement('li');
-        listItem.textContent = number;
-        maxNumbersList.appendChild(listItem);
+      if (data[currentTensionType]["MAX"][currentID]) {
+      // Fill maximum box
+      data[currentTensionType]["MAX"][currentID].forEach(number => {
+          const listItem = document.createElement('li');
+          listItem.textContent = number;
+          maxNumbersList.appendChild(listItem);
       });
+
     }
   }
 </script>
