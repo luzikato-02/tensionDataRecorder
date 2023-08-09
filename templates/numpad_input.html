@@ -1,402 +1,500 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-  }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
 
-  #container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-  }
+      #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
 
-  #number-form {
-    margin: 20px 0;
-  }
+      #initial-forms-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin-top: 50px;
+        text-align: center;
+      }
 
-  .number-button {
-    width: 50px;
-    height: 50px;
-    margin: 5px;
-    font-size: 18px;
-  }
+      #finish-form {
+        display: inline-block;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+      }
 
-  .submit-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-    width: 100%;
-    margin-top: 10px;
-  }
+      #finish-form label {
+        display: block;
+        margin-bottom: 5px;
+      }
 
-  .submit-button {
-    font-size: 18px;
-    padding: 12px 0;
-  }
+      #finish-form input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+      }
 
-/* Modify the font size and add padding to the Submit, Finish, and Delete buttons */
-.submit-button,
-.delete-button {
-  font-size: 14px; /* Adjust the font size as needed */
-  padding: 8px 12px; /* Adjust the padding to create space around the text */
-  margin: 5px;
-}
+      #number-form {
+        margin: 20px 0;
+      }
 
+      #finish-form {
+        margin: 20px 0;
+      }
 
-  #recorded-numbers {
-    margin-top: 20px;
-  }
+      #tension-selector {
+        margin: 20px 0;
+      }
 
-  .arrow-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-  }
+      #finish-recording-butt {
+        margin-left: 50px;
+        margin-right: 50px;
+      }
 
-  #current-id {
-    font-size: 24px;
-    margin: 0 10px;
-  }
+      .number-button {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        font-size: 18px;
+      }
 
-  .delete-button {
-    background-color: #FF0000;
-    color: white;
-  }
+      .submit-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+        width: 100%;
+        margin-top: 10px;
+      }
 
-  #tension-type {
-    font-size: 24px;
-    margin: 10px;
-  }
+      .submit-button {
+        font-size: 18px;
+        padding: 12px 0;
+      }
 
-  /* Added styles for tension type buttons */
-  .tension-type-button {
-    width: 130px;
-    height: 50px;
-    margin: 5px;
-    font-size: 14px;
-  }
+      /* Modify the font size and add padding to the Submit, Finish, and Delete buttons */
+      .submit-button,
+      .delete-button {
+        font-size: 14px; /* Adjust the font size as needed */
+        padding: 8px 12px; /* Adjust the padding to create space around the text */
+        margin: 5px;
+      }
 
-  .tension-type-button {
-    width: 130px;
-    height: 50px;
-    margin: 5px;
-    font-size: 14px;
-  }
+      #recorded-numbers {
+        margin-top: 20px;
+      }
 
-  /* Added styles for displayed tension type */
-  #displayed-tension-type {
-    font-size: 18px;
-    margin-top: 5px;
-  }
+      .arrow-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
 
-  .numbers-container {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px;
-  }
+      #current-id {
+        font-size: 24px;
+        margin: 0 10px;
+      }
 
-  .tension-list {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    text-align: left;
-  }
+      .delete-button {
+        background-color: #ff0000;
+        color: white;
+      }
 
-  .tension-list h3 {
-    margin: 0;
-    font-size: 18px;
-  }
+      #tension-type {
+        font-size: 24px;
+        margin: 10px;
+      }
 
-  .tension-list ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 10px 0;
-  }
+      /* Added styles for tension type buttons */
+      .tension-type-button {
+        width: 130px;
+        height: 50px;
+        margin: 5px;
+        font-size: 14px;
+      }
 
-</style>
-<title>Tension Data Recorder</title>
-</head>
-<body>
-<div id="container">
-  <h1>Tension Data Recorder</h1>
+      .tension-type-button {
+        width: 130px;
+        height: 50px;
+        margin: 5px;
+        font-size: 14px;
+      }
 
-  <div id="recorded-numbers">
-    <h2>Recorded <span id="displayed-tension-type">CT</span> for Spd No. <span id="displayed-id">1</span>: </h2>
-    <div class="numbers-container">
-      <div class="tension-list">
-        <h3>MIN</h3>
-        <ul id="min-numbers-list"></ul>
+      /* Added styles for displayed tension type */
+      #displayed-tension-type {
+        font-size: 18px;
+        margin-top: 5px;
+      }
+
+      .numbers-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px;
+      }
+
+      .tension-list {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+      }
+
+      .tension-list h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .tension-list ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 10px 0;
+      }
+
+    </style>
+    <title>Tension Data Recorder</title>
+  </head>
+  <body>
+    <div id="initial-forms-container">
+      <h1>Tension Data Recorder</h1>
+      <form id="finish-form">
+        <label for="machine-number">Machine Number:</label>
+        <input type="text" id="machine-number" name="machine-number" /><br />
+
+        <label for="operator">Operator:</label>
+        <input type="text" id="operator" name="operator" /><br />
+
+        <label for="dtex">Dtex Number:</label>
+        <input type="text" id="dtex" name="dtex" /><br />
+
+        <label for="tpm">TPM:</label>
+        <input type="text" id="tpm" name="tpm" /><br />
+
+        <div id="tension-selector">
+          <span id="label-tension">Tension Type</span>
+          <button class="arrow-button" onclick="changeTensionType(event)">
+            &#9664;
+          </button>
+          <span id="tension-type">CT</span>
+          <button class="arrow-button" onclick="changeTensionType(event)">
+            &#9654;
+          </button>
+        </div>
+
+        <div id="finish-recording-butt">
+          <button class="submit-button" onclick="autoScroll(event, 2000)">
+            Start Recording
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="container">
+      <div id="recorded-numbers">
+        <h2>
+          Recorded <span id="displayed-tension-type">CT</span> for Spd No.
+          <span id="displayed-id">1</span>:
+        </h2>
+        <div class="numbers-container">
+          <div class="tension-list">
+            <h3>MIN</h3>
+            <ul id="min-numbers-list"></ul>
+          </div>
+          <div class="tension-list">
+            <h3>MAX</h3>
+            <ul id="max-numbers-list"></ul>
+          </div>
+        </div>
       </div>
-      <div class="tension-list">
-        <h3>MAX</h3>
-        <ul id="max-numbers-list"></ul>
+
+      <div>
+        <span id="label-spindle">Spd No.</span>
+        <button class="arrow-button" onclick="prevID()">&#9664;</button>
+        <span id="current-id">1</span>
+        <button class="arrow-button" onclick="nextID()">&#9654;</button>
+      </div>
+
+      <div>
+        <span id="label-value">Value Type</span>
+        <button class="arrow-button" onclick="changeValueType()">
+          &#9664;
+        </button>
+        <span id="value-type">MAX</span>
+        <button class="arrow-button" onclick="changeValueType()">
+          &#9654;
+        </button>
+      </div>
+
+      <form id="number-form">
+        <label for="number">Enter Number: </label>
+        <input type="number" id="number" name="number" required />
+      </form>
+
+      <div>
+        <button class="number-button" onclick="appendNumber(1)">1</button>
+        <button class="number-button" onclick="appendNumber(2)">2</button>
+        <button class="number-button" onclick="appendNumber(3)">3</button>
+      </div>
+      <div>
+        <button class="number-button" onclick="appendNumber(4)">4</button>
+        <button class="number-button" onclick="appendNumber(5)">5</button>
+        <button class="number-button" onclick="appendNumber(6)">6</button>
+      </div>
+      <div>
+        <button class="number-button" onclick="appendNumber(7)">7</button>
+        <button class="number-button" onclick="appendNumber(8)">8</button>
+        <button class="number-button" onclick="appendNumber(9)">9</button>
+      </div>
+      <div>
+        <button class="number-button" onclick="clearNumber()">C</button>
+        <button class="number-button" onclick="appendNumber(0)">0</button>
+        <button class="number-button" onclick="backspaceNumber()">
+          &#9003;
+        </button>
+      </div>
+
+      <div class="button-container">
+        <button class="submit-button" onclick="recordNumber()">Submit</button>
+        <button class="custom-button delete-button" onclick="deleteData()">
+          Delete
+        </button>
+        <button class="submit-button" onclick="autoScroll(event, 0)">Back</button>
+        <button class="submit-button" onclick="nextForms()">Finish</button>
       </div>
     </div>
-  </div>
-  
-  <div>
-    <span id="label-spindle">Spd No.</span>
-    <button class="arrow-button" onclick="prevID()">&#9664;</button>
-    <span id="current-id">1</span>
-    <button class="arrow-button" onclick="nextID()">&#9654;</button>
-  </div>
 
-  <div>
-    <span id="label-tension">Tension Type</span>
-    <button class="arrow-button" onclick="changeTensionType()">&#9664;</button>
-    <span id="tension-type">CT</span>
-    <button class="arrow-button" onclick="changeTensionType()">&#9654;</button>
-  </div>
+    <script>
+      let currentID = 1;
+      let currentTensionType = "CT"; // Default tension type abbreviation
+      let currentValueType = "MAX"; // Default value type abbreviation
+      let data = {};
 
-  <div>
-    <span id="label-value">Value Type</span>
-    <button class="arrow-button" onclick="changeValueType()">&#9664;</button>
-    <span id="value-type">MIN</span>
-    <button class="arrow-button" onclick="changeValueType()">&#9654;</button>
-  </div>
-
-  <form id="number-form">
-    <label for="number">Enter Number: </label>
-    <input type="number" id="number" name="number" required>
-  </form>
-  
-  <div>
-    <button class="number-button" onclick="appendNumber(1)">1</button>
-    <button class="number-button" onclick="appendNumber(2)">2</button>
-    <button class="number-button" onclick="appendNumber(3)">3</button>
-  </div>
-  <div>
-    <button class="number-button" onclick="appendNumber(4)">4</button>
-    <button class="number-button" onclick="appendNumber(5)">5</button>
-    <button class="number-button" onclick="appendNumber(6)">6</button>
-  </div>
-  <div>
-    <button class="number-button" onclick="appendNumber(7)">7</button>
-    <button class="number-button" onclick="appendNumber(8)">8</button>
-    <button class="number-button" onclick="appendNumber(9)">9</button>
-  </div>
-  <div>
-    <button class="number-button" onclick="clearNumber()">C</button>
-    <button class="number-button" onclick="appendNumber(0)">0</button>
-    <button class="number-button" onclick="backspaceNumber()">&#9003;</button>
-  </div>
-  
-  <div class="button-container">
-    <button class="submit-button" onclick="recordNumber()">Submit</button>
-    <button class="submit-button" onclick="promptFinish()">Finish</button>
-    <button class="custom-button delete-button" onclick="deleteData()">Delete</button>
-  </div>
-  
-  
-</div>
-
-<script>
-  let currentID = 1;
-  let currentTensionType = "CT"; // Default tension type abbreviation
-  let currentValueType = "MIN"; // Default value type abbreviation
-  let data = {}
-
-  function updateIDDisplay() {
-    const currentIDElement = document.getElementById('current-id');
-    currentIDElement.textContent = currentID;
-    document.getElementById('displayed-id').textContent = currentID;
-    displayRecordedNumbers();
-  }
-
-  function changeTensionType() {
-    currentTensionType = (currentTensionType === "CT") ? "WT" : "CT";
-    updateTensionTypeDisplay();
-    displayRecordedNumbers();
-  }
-
-  function changeValueType() {
-    currentValueType = (currentValueType === "MIN") ? "MAX" : "MIN";
-    updateValueTypeDisplay();
-    displayRecordedNumbers();
-  }
-
-
-  function updateTensionTypeDisplay() {
-    const tensionTypeElement = document.getElementById('tension-type');
-    tensionTypeElement.textContent = currentTensionType;
-    const displayedTensionType = document.getElementById('displayed-tension-type');
-    displayedTensionType.textContent = (currentTensionType === "CT") ? "CT" : "WT";
-  }
-
-  function updateValueTypeDisplay() {
-    const valueTypeElement = document.getElementById('value-type');
-    valueTypeElement.textContent = currentValueType;
-  }
-
-
-  function prevID() {
-    if (currentID > 1) {
-      currentID--;
-      updateIDDisplay();
-    }
-  }
-
-  function nextID() {
-    if (currentID < 84) {
-      currentID++;
-      updateIDDisplay();
-    }
-  }
-
-  function appendNumber(num) {
-    const numberInput = document.getElementById('number');
-    numberInput.value += num;
-  }
-
-  function backspaceNumber() {
-    const numberInput = document.getElementById('number');
-    numberInput.value = numberInput.value.slice(0, -1);
-  }
-
-  function clearNumber() {
-    const numberInput = document.getElementById('number');
-    numberInput.value = '';
-  }
-
-  function recordNumber() {
-    const numberInput = document.getElementById('number');
-    const number = numberInput.value;
-
-    if (!data[currentID]) {
-    data[currentID] = {};
-  }
-  if (!data[currentID][currentTensionType]) {
-    data[currentID][currentTensionType] = {};
-  }
-  if (!data[currentID][currentTensionType][currentValueType]) {
-    data[currentID][currentTensionType][currentValueType] = [];
-  }
-
-  // Add the number to the array
-  data[currentID][currentTensionType][currentValueType].push(number);
-    numberInput.value = '';
-    displayRecordedNumbers();
-  }
-
-  function promptFinish() {
-    const machineNumber = prompt("Enter machine number:");
-    const operator = prompt("Enter operator:");
-    const dtex = prompt("Enter dtex:");
-    const tpm = prompt("Enter TPM:");
-
-    
-    if (machineNumber !== null && operator !== null) {
-      const confirmation = confirm("Are you sure you want to finish? This will erase the stored data.");
-      if (confirmation) {
-        finishRecording(machineNumber, operator, dtex, tpm);
-      }
-    }
-  }
-
-  function finishRecording(machineNumber, operator, dtx, twm) {
-    let csvContent = "";
-    csvContent += `Machine No.,${machineNumber}\n`;
-    csvContent += `Operator Name,${operator}\n`;
-    csvContent += `Dtex Number,${dtx}\n`;
-    csvContent += `TPM,${twm}\n`;
-    csvContent += "Spindle Number,CT - MIN,CT - MAX,WT - MIN,WT - MAX\n";
-
-  for (let id in data) {
-    const cordTensionMin = data[id]["CT"]["MIN"] ? `${data[id]["CT"]["MIN"]}`: "";
-    const cordTensionMax = data[id]["CT"]["MAX"] ? `${data[id]["CT"]["MAX"]}` : "";
-    const windingTensionMin = data[id]["WT"]["MIN"] ? `${data[id]["WT"]["MIN"]}` : "";
-    const windingTensionMax = data[id]["WT"]["MAX"] ? `${data[id]["WT"]["MAX"]}` : "";
-
-    csvContent += `${id}.,${cordTensionMin}.,${cordTensionMax}.,${windingTensionMin}.,${windingTensionMax}.\n`;
-  }
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
-  link.setAttribute("download", "recorded_data.csv");
-  document.body.appendChild(link);
-  link.click();
-
-  data = {};
-  currentID = 1;
-  currentTensionType = "CT";
-  currentValueType = "MIN";
-
-  updateValueTypeDisplay()
-  updateTensionTypeDisplay()
-  displayRecordedNumbers();
-}
-
-  function deleteData() {
-    delete data[currentID][currentTensionType][currentValueType];
-    displayRecordedNumbers();
-  }
-
-  function recordNumber() {
-  const numberInput = document.getElementById('number');
-  const number = numberInput.value;
-
-  const currentIDData = data[currentID];
-  if (!currentIDData) {
-    data[currentID] = {};
-  }
-
-  if (!data[currentID][currentTensionType]) {
-    data[currentID][currentTensionType] = {};
-  }
-  if (!data[currentID][currentTensionType][currentValueType]) {
-    data[currentID][currentTensionType][currentValueType] = [];
-  }
-
-  data[currentID][currentTensionType][currentValueType].push(number);
-  numberInput.value = '';
-  displayRecordedNumbers();
-}
-
-function displayRecordedNumbers() {
-  const minNumbersList = document.getElementById('min-numbers-list');
-  const maxNumbersList = document.getElementById('max-numbers-list');
-
-  minNumbersList.innerHTML = '';
-  maxNumbersList.innerHTML = '';
-
-  const currentIDData = data[currentID];
-  if (currentIDData) {
-    const currentTensionTypeData = currentIDData[currentTensionType];
-    if (currentTensionTypeData) {
-      const currentMinValues = currentTensionTypeData["MIN"];
-      const currentMaxValues = currentTensionTypeData["MAX"];
-
-      if (currentMinValues) {
-        currentMinValues.forEach(number => {
-          const listItem = document.createElement('li');
-          listItem.textContent = number;
-          minNumbersList.appendChild(listItem);
-        });
+      function autoScroll(event, where) {
+        event.preventDefault(); // Prevent the default form submission
+        localStorage.setItem("scrollPosition", window.scrollY);
+        window.scrollTo(0, where); // Scroll to the specified position
       }
 
-      if (currentMaxValues) {
-        currentMaxValues.forEach(number => {
-          const listItem = document.createElement('li');
-          listItem.textContent = number;
-          maxNumbersList.appendChild(listItem);
-        });
+      function updateIDDisplay() {
+        const currentIDElement = document.getElementById("current-id");
+        currentIDElement.textContent = currentID;
+        document.getElementById("displayed-id").textContent = currentID;
+        displayRecordedNumbers();
       }
-    }
-  }
-}
-</script>
-</body>
+
+      function changeTensionType() {
+        event.preventDefault();
+        currentTensionType = currentTensionType === "CT" ? "WT" : "CT";
+        updateTensionTypeDisplay();
+        displayRecordedNumbers();
+      }
+
+      function changeValueType() {
+        currentValueType = currentValueType === "MIN" ? "MAX" : "MIN";
+        updateValueTypeDisplay();
+        displayRecordedNumbers();
+      }
+
+      function updateTensionTypeDisplay() {
+        const tensionTypeElement = document.getElementById("tension-type");
+        tensionTypeElement.textContent = currentTensionType;
+        const displayedTensionType = document.getElementById(
+          "displayed-tension-type"
+        );
+        displayedTensionType.textContent =
+          currentTensionType === "CT" ? "CT" : "WT";
+      }
+
+      function updateValueTypeDisplay() {
+        const valueTypeElement = document.getElementById("value-type");
+        valueTypeElement.textContent = currentValueType;
+      }
+
+      function prevID() {
+        if (currentID > 1) {
+          currentID--;
+          updateIDDisplay();
+        }
+      }
+
+      function nextID() {
+        if (currentID < 84) {
+          currentID++;
+          currentValueType = "MAX";
+          updateValueTypeDisplay();
+          updateIDDisplay();
+        }
+      }
+
+      function appendNumber(num) {
+        const numberInput = document.getElementById("number");
+        numberInput.value += num;
+      }
+
+      function backspaceNumber() {
+        const numberInput = document.getElementById("number");
+        numberInput.value = numberInput.value.slice(0, -1);
+      }
+
+      function clearNumber() {
+        const numberInput = document.getElementById("number");
+        numberInput.value = "";
+      }
+
+      function recordNumber() {
+        const numberInput = document.getElementById("number");
+        const number = numberInput.value;
+
+        if (!data[currentID]) {
+          data[currentID] = {};
+        }
+        if (!data[currentID][currentTensionType]) {
+          data[currentID][currentTensionType] = {};
+        }
+        if (!data[currentID][currentTensionType][currentValueType]) {
+          data[currentID][currentTensionType][currentValueType] = [];
+        }
+
+        // Add the number to the array
+        data[currentID][currentTensionType][currentValueType].push(number);
+        numberInput.value = "";
+
+        minValExist = false;
+        maxValExist = false;
+
+        for (let val in data[currentID][currentTensionType]) {
+          if (
+            data[currentID] &&
+            data[currentID][currentTensionType] &&
+            data[currentID][currentTensionType][val]
+          ) {
+            if (val === "MIN") {
+              minValExist = true;
+            } else if (val === "MAX") {
+              maxValExist = true;
+            }
+          }
+        }
+
+        if (minValExist && maxValExist) {
+          nextID();
+          displayRecordedNumbers();
+        } else {
+          changeValueType()
+          displayRecordedNumbers();
+        }
+      }
+
+      function nextForms() {
+        const machineNumber = document.getElementById("machine-number").value;
+        const operator = document.getElementById("operator").value;
+        const dtex = document.getElementById("dtex").value;
+        const tpm = document.getElementById("tpm").value;
+
+        if (machineNumber !== null && operator !== null) {
+          const confirmation = confirm(
+            "Are you sure you want to finish? This will erase the stored data."
+          );
+          if (confirmation) {
+            finishRecording(machineNumber, operator, dtex, tpm);
+          }
+        }
+      }
+
+      function finishRecording(machineNumber, operator, dtx, twm) {
+        let csvContent = "";
+        csvContent += `Machine No.,${machineNumber}\n`;
+        csvContent += `Operator Name,${operator}\n`;
+        csvContent += `Dtex Number,${dtx}\n`;
+        csvContent += `TPM,${twm}\n`;
+        csvContent += `Spindle Number,${currentTensionType} - MIN,${currentTensionType} - MAX\n`;
+
+        for (let id in data) {
+          const minTensionVal =
+            data[id] &&
+            data[id][currentTensionType] &&
+            data[id][currentTensionType]["MIN"]
+              ? `${data[id][currentTensionType]["MIN"]}`
+              : "";
+
+          const maxTensionVal =
+            data[id] &&
+            data[id][currentTensionType] &&
+            data[id][currentTensionType]["MAX"]
+              ? `${data[id][currentTensionType]["MAX"]}`
+              : "";
+          csvContent += `${id}.,${minTensionVal}.,${maxTensionVal}.\n`;
+        }
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
+        link.setAttribute("download", "recorded_data.csv");
+        document.body.appendChild(link);
+        link.click();
+        
+        window.location.reload();
+      }
+
+      function deleteData() {
+        delete data[currentID][currentTensionType][currentValueType];
+        displayRecordedNumbers();
+      }
+
+      function displayRecordedNumbers() {
+        const minNumbersList = document.getElementById("min-numbers-list");
+        const maxNumbersList = document.getElementById("max-numbers-list");
+
+        minNumbersList.innerHTML = "";
+        maxNumbersList.innerHTML = "";
+
+        const currentIDData = data[currentID];
+        if (currentIDData) {
+          const currentTensionTypeData = currentIDData[currentTensionType];
+          if (currentTensionTypeData) {
+            const currentMinValues =
+              currentTensionTypeData && currentTensionTypeData["MIN"]
+                ? currentTensionTypeData["MIN"]
+                : [];
+            const currentMaxValues =
+              currentTensionTypeData && currentTensionTypeData["MAX"]
+                ? currentTensionTypeData["MAX"]
+                : [];
+
+            if (currentMinValues) {
+              currentMinValues.forEach((number) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = number;
+                minNumbersList.appendChild(listItem);
+              });
+            }
+
+            if (currentMaxValues) {
+              currentMaxValues.forEach((number) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = number;
+                maxNumbersList.appendChild(listItem);
+              });
+            }
+          }
+        }
+      }
+    </script>
+  </body>
 </html>
