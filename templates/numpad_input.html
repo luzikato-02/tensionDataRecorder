@@ -17,6 +17,7 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
+        margin-top: 50px;
       }
 
       #initial-forms-container {
@@ -25,7 +26,7 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        margin-top: 50px;
+        margin-top: 25px;
         text-align: center;
       }
 
@@ -57,6 +58,22 @@
         margin: 20px 0;
       }
 
+      #problem-form {
+        margin: 20px;
+      }
+
+      #prob-list {
+        text-align: center;
+      }
+
+      .problem-stat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
       #tension-selector {
         margin: 20px 0;
       }
@@ -81,9 +98,10 @@
         margin-top: 10px;
       }
 
-      .submit-button {
-        font-size: 18px;
-        padding: 12px 0;
+      .submit-prob-button {
+        font-size: 14px; /* Adjust the font size as needed */
+        padding: 8px 12px; /* Adjust the padding to create space around the text */
+        margin: 10px;
       }
 
       /* Modify the font size and add padding to the Submit, Finish, and Delete buttons */
@@ -167,6 +185,24 @@
         margin: 10px 0;
       }
 
+      .prob-stat-list {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+      }
+
+      .prob-stat-list ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 10px 0;
+        color: red;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 18px;
+      }
     </style>
     <title>Tension Data Recorder</title>
   </head>
@@ -175,16 +211,29 @@
       <h1>Tension Data Recorder</h1>
       <form id="finish-form">
         <label for="machine-number">Machine Number:</label>
-        <input type="text" id="machine-number" name="machine-number" /><br />
+        <input type="text" id="machine-number" name="machine-number" required/><br />
+
+        <label for="item-number">Item Number:</label>
+        <input type="text" id="item-number" name="item-number" required/><br />
 
         <label for="operator">Operator:</label>
-        <input type="text" id="operator" name="operator" /><br />
+        <input type="text" id="operator" name="operator" required/><br />
 
         <label for="dtex">Dtex Number:</label>
-        <input type="text" id="dtex" name="dtex" /><br />
+        <input type="text" id="dtex" name="dtex" required/><br />
 
         <label for="tpm">TPM:</label>
-        <input type="text" id="tpm" name="tpm" /><br />
+        <input type="text" id="tpm" name="tpm" required/><br />
+
+        <label for="spec-tens">Spec Tens:</label>
+        <input type="text" id="spec-tens" name="spec-tens" required/><br />
+
+        <label for="tens-dev">Tens ±:</label>
+        <input type="text" id="tens-dev" name="tens-dev" required/><br />
+
+        <label for="rpm">RPM:</label>
+        <input type="text" id="rpm" name="rpm" required/><br />
+
 
         <div id="tension-selector">
           <span id="label-tension">Tension Type</span>
@@ -198,7 +247,7 @@
         </div>
 
         <div id="finish-recording-butt">
-          <button class="submit-button" onclick="autoScroll(event, 2000)">
+          <button class="submit-button" onclick="autoScroll(event, 1000)">
             Start Recording
           </button>
         </div>
@@ -271,11 +320,43 @@
 
       <div class="button-container">
         <button class="submit-button" onclick="recordNumber()">Submit</button>
-        <button class="custom-button delete-button" onclick="deleteData()">
+        <button
+          class="custom-button delete-button"
+          onclick="deleteData(`tension`)"
+        >
           Delete
         </button>
-        <button class="submit-button" onclick="autoScroll(event, 0)">Back</button>
+        <button class="submit-button" onclick="autoScroll(event, 0)">
+          Back
+        </button>
         <button class="submit-button" onclick="nextForms()">Finish</button>
+        <button class="submit-button" onclick="autoScroll(event, 2000)">Report Problem</button>
+      </div>
+    </div>
+    
+
+    <div class="problem-stat-container">
+      <div id="recorded-problems">
+        <h2>
+          Recorded Problem for Spd No.
+          <span id="displayed-id-prob">1</span>:
+        </h2>
+        <div class="probs-container">
+          <div class="prob-stat-list">
+            <ul id="prob-list"></ul>
+          </div>
+        </div>
+        <form id="problem-form">
+          <label for="problem">Enter Problem: </label>
+          <input type="problem" id="problem" name="problem" />
+        </form>
+        <button class="submit-button" onclick="recordProb()">Submit</button>
+        <button class="custom-button delete-button" onclick="deleteData(`a`)">
+          Delete
+        </button>
+        <button class="submit-button" onclick="autoScroll(event, 1000)">
+          Back
+        </button>
       </div>
     </div>
 
@@ -295,7 +376,9 @@
         const currentIDElement = document.getElementById("current-id");
         currentIDElement.textContent = currentID;
         document.getElementById("displayed-id").textContent = currentID;
+        document.getElementById("displayed-id-prob").textContent = currentID;
         displayRecordedNumbers();
+        displayRecordedProbs();
       }
 
       function changeTensionType() {
@@ -357,6 +440,26 @@
         numberInput.value = "";
       }
 
+      function recordProb() {
+        const probInput = document.getElementById("problem");
+        const problems = probInput.value;
+
+        console.log(problems);
+
+        if (!data[currentID]) {
+          data[currentID] = {};
+        }
+
+        if (!data[currentID]["Problems"]) {
+          data[currentID]["Problems"] = [];
+        }
+
+        data[currentID]["Problems"].push(problems);
+        console.log(data)
+        probInput.value = "";
+        displayRecordedProbs();
+      }
+
       function recordNumber() {
         const numberInput = document.getElementById("number");
         const number = numberInput.value;
@@ -396,7 +499,7 @@
           nextID();
           displayRecordedNumbers();
         } else {
-          changeValueType()
+          changeValueType();
           displayRecordedNumbers();
         }
       }
@@ -406,23 +509,28 @@
         const operator = document.getElementById("operator").value;
         const dtex = document.getElementById("dtex").value;
         const tpm = document.getElementById("tpm").value;
+        const rpm = document.getElementById("rpm").value;
+        const stdTens = document.getElementById("spec-tens").value;
+        const devTens = document.getElementById("tens-dev").value;
+        const itemNum = document.getElementById("item-number").value;
 
         if (machineNumber !== null && operator !== null) {
           const confirmation = confirm(
             "Are you sure you want to finish? This will erase the stored data."
           );
           if (confirmation) {
-            finishRecording(machineNumber, operator, dtex, tpm);
+            finishRecording(machineNumber, operator, dtex, tpm, rpm, stdTens, devTens, itemNum);
           }
         }
       }
 
-      function finishRecording(machineNumber, operator, dtx, twm) {
+      function finishRecording(machineNumber, operator, dtx, twm, rpm, stdT, devT, itemN) {
         let csvContent = "";
-        csvContent += `Machine No.,${machineNumber}\n`;
-        csvContent += `Operator Name,${operator}\n`;
-        csvContent += `Dtex Number,${dtx}\n`;
+        csvContent += `Machine No.,${machineNumber},Item Number,${itemN}\n`;
+        csvContent += `RPM, ${rpm},D-tex,${dtx},Operator Name,${operator}\n`;
         csvContent += `TPM,${twm}\n`;
+        csvContent += `Spec STD,${stdT}\n`;
+        csvContent += `±,${devT}\n`;
         csvContent += `Spindle Number,${currentTensionType} - MIN,${currentTensionType} - MAX\n`;
 
         for (let id in data) {
@@ -448,13 +556,27 @@
         link.setAttribute("download", "recorded_data.csv");
         document.body.appendChild(link);
         link.click();
-        
+
         window.location.reload();
       }
 
-      function deleteData() {
-        delete data[currentID][currentTensionType][currentValueType];
-        displayRecordedNumbers();
+      function deleteData(dataType) {
+        if (dataType === "tension") {
+          const recordedValue =
+            data[currentID][currentTensionType][currentValueType];
+          delete recordedValue.pop();
+          displayRecordedNumbers();
+        } else {
+          if (data[currentID]["Problems"]) {
+            const problems = data[currentID]["Problems"];
+            delete problems.pop();
+            console.log(data[currentID]["Problems"]);
+            displayRecordedProbs();
+          } else {
+            data[currentID]["Problems"] = [];
+            displayRecordedProbs();
+          }
+        }
       }
 
       function displayRecordedNumbers() {
@@ -492,6 +614,27 @@
                 maxNumbersList.appendChild(listItem);
               });
             }
+          }
+        }
+      }
+
+      function displayRecordedProbs() {
+        const problemList = document.getElementById("prob-list");
+        problemList.innerHTML = "";
+        const currentIDData = data[currentID];
+
+        if (currentIDData) {
+          const currentIDProbs =
+            currentIDData && currentIDData["Problems"]
+              ? currentIDData["Problems"]
+              : [];
+
+          if (currentIDProbs) {
+            currentIDProbs.forEach((problem) => {
+              const listItem = document.createElement("li");
+              listItem.textContent = problem;
+              problemList.appendChild(listItem);
+            });
           }
         }
       }
