@@ -514,7 +514,9 @@
         
         // Check if tensions are abnormal
         normalTens = true;
-        checkAbnormalTens(number, currentValueType);
+        if (!checkAbnormalTens(number, currentValueType)) {
+          normalTens = false;
+        }
 
         // Add the number to the array
         data[currentID][currentTensionType][currentValueType].push(number);
@@ -554,11 +556,12 @@
 
         if (valueType === "MIN" && tensNum < lowerLimit) {
           data[currentID][currentTensionType]["minTensNormal"] = false;
+          return false;
         }
         if (valueType === "MAX" && tensNum > upperLimit) {
           data[currentID][currentTensionType]["maxTensNormal"] = false;
+          return false;
         }
-        console.log(data[currentID][currentTensionType]);
       }
 
       function nextForms() {
@@ -692,7 +695,6 @@
               });
               if (currentTensionTypeData["minTensNormal"] === false) {
                 minNumbersList.style.backgroundColor = "yellow";
-                console.log("low");
               } else {
                 minNumbersList.style.backgroundColor = "transparent";
               }
@@ -706,7 +708,6 @@
               });
               if (currentTensionTypeData["maxTensNormal"] === false) {
                 maxNumbersList.style.backgroundColor = "red";
-                console.log("high");
               } else {
                 maxNumbersList.style.backgroundColor = "transparent";
               }
