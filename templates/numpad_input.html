@@ -511,33 +511,10 @@
         if (!data[currentID][currentTensionType][currentValueType]) {
           data[currentID][currentTensionType][currentValueType] = [];
         }
-        if (!data[currentID][currentTensionType]["minTensNormal"]) {
-          data[currentID][currentTensionType]["minTensNormal"] = true;
-        }
-        if (!data[currentID][currentTensionType]["maxTensNormal"]) {
-          data[currentID][currentTensionType]["maxTensNormal"] = true;
-        }
-
+        
         // Check if tensions are abnormal
         normalTens = true;
-        // checkAbnormalTens(number, currentValueType);
-        // const abnormalMarker =
-        //   currentValueType === "MIN"
-        //     ? document.getElementById("min-numbers-list")
-        //     : document.getElementById("max-numbers-list");
-        // if (currentValueType === "MIN") {
-        //   if (data[currentID][currentTensionType]["minTensNormal"] === false) {
-        //     normalTens = false;
-        //     abnormalMarker.style.backgroundColor = "yellow";
-        //     abnormalMarker.style.fontWeight = "bold";
-        //   }
-        // } else {
-        //   if (data[currentID][currentTensionType]["maxTensNormal"] === false) {
-        //   normalTens = false;
-        //   abnormalMarker.style.backgroundColor = "red";
-        //   abnormalMarker.style.fontWeight = "bold";
-        //   }
-        // }
+        checkAbnormalTens(number, currentValueType);
 
         // Add the number to the array
         data[currentID][currentTensionType][currentValueType].push(number);
@@ -577,7 +554,8 @@
 
         if (valueType === "MIN" && tensNum < lowerLimit) {
           data[currentID][currentTensionType]["minTensNormal"] = false;
-        } else if (valueType === "MAX" && tensNum > upperLimit) {
+        }
+        if (valueType === "MAX" && tensNum > upperLimit) {
           data[currentID][currentTensionType]["maxTensNormal"] = false;
         }
         console.log(data[currentID][currentTensionType]);
@@ -668,7 +646,8 @@
           if (currentValueType === "MIN") {
             data[currentID][currentTensionType]["minTensNormal"] = "";
           } else {
-            tensionChk = data[currentID][currentTensionType]["maxTensNormal"] = "";
+            tensionChk = data[currentID][currentTensionType]["maxTensNormal"] =
+              "";
           }
           delete recordedValue.pop();
           displayRecordedNumbers();
@@ -711,6 +690,12 @@
                 listItem.textContent = number;
                 minNumbersList.appendChild(listItem);
               });
+              if (currentTensionTypeData["minTensNormal"] === false) {
+                minNumbersList.style.backgroundColor = "yellow";
+                console.log("low");
+              } else {
+                minNumbersList.style.backgroundColor = "transparent";
+              }
             }
 
             if (currentMaxValues) {
@@ -719,6 +704,12 @@
                 listItem.textContent = number;
                 maxNumbersList.appendChild(listItem);
               });
+              if (currentTensionTypeData["maxTensNormal"] === false) {
+                maxNumbersList.style.backgroundColor = "red";
+                console.log("high");
+              } else {
+                maxNumbersList.style.backgroundColor = "transparent";
+              }
             }
           }
         }
