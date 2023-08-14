@@ -501,7 +501,6 @@
       function recordNumber() {
         const numberInput = document.getElementById("number");
         const number = numberInput.value;
-        
 
         if (!data[currentID]) {
           data[currentID] = {};
@@ -512,17 +511,33 @@
         if (!data[currentID][currentTensionType][currentValueType]) {
           data[currentID][currentTensionType][currentValueType] = [];
         }
-
-        normalTens = true;
-        if (abnormalTens(number, currentValueType)) {
-          const abnormalMarker =
-            currentValueType === "MIN"
-              ? document.getElementById("min-numbers-list")
-              : document.getElementById("max-numbers-list");
-          abnormalMarker.style.backgroundColor = abnormalColor;
-          abnormalMarker.style.fontWeight = "bold";
-          normalTens = false;
+        if (!data[currentID][currentTensionType]["minTensNormal"]) {
+          data[currentID][currentTensionType]["minTensNormal"] = true;
         }
+        if (!data[currentID][currentTensionType]["maxTensNormal"]) {
+          data[currentID][currentTensionType]["maxTensNormal"] = true;
+        }
+
+        // Check if tensions are abnormal
+        normalTens = true;
+        // checkAbnormalTens(number, currentValueType);
+        // const abnormalMarker =
+        //   currentValueType === "MIN"
+        //     ? document.getElementById("min-numbers-list")
+        //     : document.getElementById("max-numbers-list");
+        // if (currentValueType === "MIN") {
+        //   if (data[currentID][currentTensionType]["minTensNormal"] === false) {
+        //     normalTens = false;
+        //     abnormalMarker.style.backgroundColor = "yellow";
+        //     abnormalMarker.style.fontWeight = "bold";
+        //   }
+        // } else {
+        //   if (data[currentID][currentTensionType]["maxTensNormal"] === false) {
+        //   normalTens = false;
+        //   abnormalMarker.style.backgroundColor = "red";
+        //   abnormalMarker.style.fontWeight = "bold";
+        //   }
+        // }
 
         // Add the number to the array
         data[currentID][currentTensionType][currentValueType].push(number);
@@ -554,19 +569,18 @@
         }
       }
 
-      function abnormalTens(tensNum, valueType) {
+      function checkAbnormalTens(tensNum, valueType) {
         const stdTens = document.getElementById("spec-tens").value;
         const devTens = document.getElementById("tens-dev").value;
+        const upperLimit = stdTens + devTens;
+        const lowerLimit = stdTens - devTens;
 
-        if (valueType === "MIN" && tensNum < stdTens - devTens) {
-          abnormalColor = "yellow";
-          return true;
-        } else if (valueType === "MAX" && tensNum > stdTens + devTens) {
-          abnormalColor = "red";
-          return true;
-        } else {
-          return false;
+        if (valueType === "MIN" && tensNum < lowerLimit) {
+          data[currentID][currentTensionType]["minTensNormal"] = false;
+        } else if (valueType === "MAX" && tensNum > upperLimit) {
+          data[currentID][currentTensionType]["maxTensNormal"] = false;
         }
+        console.log(data[currentID][currentTensionType]);
       }
 
       function nextForms() {
@@ -607,7 +621,8 @@
         rpm,
         stdT,
         devT,
-        itemN, filename
+        itemN,
+        filename
       ) {
         let csvContent = "";
         csvContent += `Machine No.,${machineNumber},Item Number,${itemN}\n`;
@@ -650,6 +665,11 @@
         if (dataType === "tension") {
           const recordedValue =
             data[currentID][currentTensionType][currentValueType];
+          if (currentValueType === "MIN") {
+            data[currentID][currentTensionType]["minTensNormal"] = "";
+          } else {
+            tensionChk = data[currentID][currentTensionType]["maxTensNormal"] = "";
+          }
           delete recordedValue.pop();
           displayRecordedNumbers();
         } else {
