@@ -92,6 +92,12 @@
         margin-right: 50px;
       }
 
+      #reset-button {
+        margin-left: 50px;
+        margin-right: 50px;
+        color: whitesmoke;
+      }
+
       .number-button {
         width: 50px;
         height: 50px;
@@ -270,8 +276,13 @@
         </div>
 
         <div id="finish-recording-butt">
-          <button class="big-buttons" onclick="autoScroll(event, 1000)">
+          <button class="big-buttons" onclick="nextForms()">
             Start Recording
+          </button>
+        </div>
+        <div id="reset-button">
+          <button class="big-buttons" onclick="resetStorage()">
+            Clear Data
           </button>
         </div>
       </form>
@@ -404,10 +415,51 @@
       let abnormalColor = "";
       let data = {};
 
+      let machineNumber = "";
+      let operator = "";
+      let dtex = "";
+      let tpm = "";
+      let rpm = "";
+      let stdTens = "";
+      let devTens = "";
+      let itemNum = "";
+
+      // Load data from localStorage when the page is loaded
+      window.addEventListener("load", () => {
+        const savedData = localStorage.getItem("savedData");
+        if (savedData) {
+          data = JSON.parse(savedData);
+          // Update any necessary UI elements based on the loaded data
+          updateIDDisplay();
+          updateSpecForm();
+          // ... (other updates)
+        }
+      });
+
+      // Save data to localStorage whenever it's modified
+      function saveDataToLocalStorage() {
+        localStorage.setItem("savedData", JSON.stringify(data));
+      }
+
+      function resetStorage() {
+        localStorage.removeItem("savedData");
+      }
+
       function autoScroll(event, where) {
         event.preventDefault(); // Prevent the default form submission
         localStorage.setItem("scrollPosition", window.scrollY);
         window.scrollTo(0, where); // Scroll to the specified position
+      }
+
+      function updateSpecForm() {
+        document.getElementById("machine-number").value = data["machineNumber"];
+        document.getElementById("operator").value = data["operator"];
+        document.getElementById("dtex").value = data["dtex"];
+        document.getElementById("tpm").value = data["tpm"];
+        document.getElementById("rpm").value = data["rpm"];
+        document.getElementById("spec-tens").value = data["stdTens"];
+        document.getElementById("tens-dev").value = data["devTens"];
+        document.getElementById("item-number").value = data["itemNum"];
       }
 
       function updateIDDisplay() {
@@ -482,8 +534,6 @@
         const probInput = document.getElementById("problem");
         const problems = probInput.value;
 
-        console.log(problems);
-
         if (!data[currentID]) {
           data[currentID] = {};
         }
@@ -495,6 +545,7 @@
         data[currentID]["Problems"].push(problems);
         console.log(data);
         probInput.value = "";
+        saveDataToLocalStorage();
         displayRecordedProbs();
       }
 
@@ -511,15 +562,17 @@
         if (!data[currentID][currentTensionType][currentValueType]) {
           data[currentID][currentTensionType][currentValueType] = [];
         }
-        
+
         // Check if tensions are abnormal
         normalTens = true;
-        if (!checkAbnormalTens(number, currentValueType)) {
-          normalTens = false;
-        }
+        // if (checkAbnormalTens(number, currentValueType) === false) {
+        //   normalTens = false;
+        //   console.log(normalTens);
+        // }
 
         // Add the number to the array
         data[currentID][currentTensionType][currentValueType].push(number);
+        saveDataToLocalStorage();
         numberInput.value = "";
 
         minValExist = false;
@@ -531,20 +584,30 @@
             data[currentID][currentTensionType] &&
             data[currentID][currentTensionType][val]
           ) {
-            if (val === "MIN") {
+            if (
+              val === "MIN" &&
+              data[currentID][currentTensionType][val].length > 0
+            ) {
               minValExist = true;
-            } else if (val === "MAX") {
+            }
+            if (
+              val === "MAX" &&
+              data[currentID][currentTensionType][val].length > 0
+            ) {
               maxValExist = true;
             }
           }
         }
 
+        console.log(data);
         if (minValExist && maxValExist && normalTens) {
           nextID();
           displayRecordedNumbers();
+          console.log("All normal");
         } else {
           changeValueType();
           displayRecordedNumbers();
+          console.log("Something's not right");
         }
       }
 
@@ -557,44 +620,62 @@
         if (valueType === "MIN" && tensNum < lowerLimit) {
           data[currentID][currentTensionType]["minTensNormal"] = false;
           return false;
+        } else {
+          data[currentID][currentTensionType]["minTensNormal"] = true;
         }
+
         if (valueType === "MAX" && tensNum > upperLimit) {
           data[currentID][currentTensionType]["maxTensNormal"] = false;
           return false;
+        } else {
+          data[currentID][currentTensionType]["maxTensNormal"] = true;
         }
       }
 
       function nextForms() {
-        const machineNumber = document.getElementById("machine-number").value;
-        const operator = document.getElementById("operator").value;
-        const dtex = document.getElementById("dtex").value;
-        const tpm = document.getElementById("tpm").value;
-        const rpm = document.getElementById("rpm").value;
-        const stdTens = document.getElementById("spec-tens").value;
-        const devTens = document.getElementById("tens-dev").value;
-        const itemNum = document.getElementById("item-number").value;
+        machineNumber = document.getElementById("machine-number").value;
+        operator = document.getElementById("operator").value;
+        dtex = document.getElementById("dtex").value;
+        tpm = document.getElementById("tpm").value;
+        rpm = document.getElementById("rpm").value;
+        stdTens = document.getElementById("spec-tens").value;
+        devTens = document.getElementById("tens-dev").value;
+        itemNum = document.getElementById("item-number").value;
 
-        if (machineNumber !== null && operator !== null) {
-          const confirmation = confirm("Are you sure you want to finish?");
-          const fileName = prompt("Please enter your desired filename:");
+        data["machineNumber"] = machineNumber;
+        data["operator"] = operator;
+        data["dtex"] = dtex;
+        data["tpm"] = tpm;
+        data["rpm"] = rpm;
+        data["stdTens"] = stdTens;
+        data["devTens"] = devTens;
+        data["itemNum"] = itemNum;
 
-          if (confirmation === !null) {
-            finishRecording(
-              machineNumber,
-              operator,
-              dtex,
-              tpm,
-              rpm,
-              stdTens,
-              devTens,
-              itemNum,
-              fileName
-            );
-          }
+        saveDataToLocalStorage();
+        console.log(data);
+        autoScroll(event, 1000);
+      }
+
+      function finishRecording() {
+        const confirmation = confirm("Are you sure you want to finish?");
+        const fileName = prompt("Please enter your desired filename:");
+
+        if (confirmation === !null) {
+          writeCSV(
+            machineNumber,
+            operator,
+            dtex,
+            tpm,
+            rpm,
+            stdTens,
+            devTens,
+            itemNum,
+            fileName
+          );
         }
       }
 
-      function finishRecording(
+      function writeCSV(
         machineNumber,
         operator,
         dtx,
@@ -653,11 +734,13 @@
               "";
           }
           delete recordedValue.pop();
+          saveDataToLocalStorage();
           displayRecordedNumbers();
         } else {
           if (data[currentID]["Problems"]) {
             const problems = data[currentID]["Problems"];
             delete problems.pop();
+            saveDataToLocalStorage();
             console.log(data[currentID]["Problems"]);
             displayRecordedProbs();
           } else {
