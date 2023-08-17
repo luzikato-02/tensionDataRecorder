@@ -710,6 +710,19 @@
           const spindleProb = data[id]?.["Problems"] || "";
           csvContent += `${id}.,${minTensionVal}.,${maxTensionVal}., ${spindleProb}.\n`;
         }
+        
+        fetch("/store_csv", {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/csv", // Set appropriate content type
+          },
+          body: csvContent,
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            console.log(result); // Display server response
+          });
+
         const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
         const filename = `[${machineNumber}] - [${itemN}] - [${operator}] - [${currentDateTime}]`;
         const encodedUri = encodeURI(csvContent);
