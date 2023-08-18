@@ -610,11 +610,9 @@
         if (minValExist && maxValExist && normalTens) {
           nextID();
           displayRecordedNumbers();
-          console.log("All normal");
         } else {
           changeValueType();
           displayRecordedNumbers();
-          console.log("Something's not right");
         }
       }
 
@@ -710,18 +708,6 @@
           const spindleProb = data[id]?.["Problems"] || "";
           csvContent += `${id}.,${minTensionVal}.,${maxTensionVal}., ${spindleProb}.\n`;
         }
-        
-        fetch("/store_csv", {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/csv", // Set appropriate content type
-          },
-          body: csvContent,
-        })
-          .then((response) => response.text())
-          .then((result) => {
-            console.log(result); // Display server response
-          });
 
         const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
         const filename = `[${machineNumber}] - [${itemN}] - [${operator}] - [${currentDateTime}]`;
@@ -730,6 +716,29 @@
         link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
         link.setAttribute("download", filename);
         document.body.appendChild(link);
+
+        var blob = new Blob([csvContent], { type: "text/csv" });
+        // Create a FormData object to send both the CSV data
+        let formData = new FormData();
+        formData.append("datetime", currentDateTime);
+        formData.append("operator", operator);
+        formData.append("machine_number", machineNumber);
+        formData.append("item_number", itemN);
+        formData.append("RPM", rpm);
+        formData.append("TPM", twm);
+        formData.append("Spec. Tension", stdT);
+        formData.append("Allow. Tens. Deviation", devT);
+        formData.append("csv_data", blob, filename); // Add CSV data
+
+        fetch("/store_csv", {
+          method: "POST",
+          body: formData
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            console.log(result); // Display server response
+          });
+
         link.click();
       }
 

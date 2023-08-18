@@ -1,33 +1,25 @@
-from flask import Flask, g, request, send_file
-import sqlite3
-import io
+from flask import Flask, request, render_template
+from flask_sqlalchemy import SQLAlchemy
+import uuid
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///production_database.db'
+db = SQLAlchemy(app)
 
-DATABASE = 'production_database.db'
-
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
+class ProductionData(db.Model):
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))
+    datetime = db.Column(db.String, nullable=False)
+    operator = db.Column(db.String)
+    machine_number = db.Column(db.Integer)
+    item_number = db.Column(db.Integer)
+    rpm = db.Column(db.Integer)
+    tpm = db.Column(db.Integer)
+    stdTen = db.Column(db.Integer)
+    devTen = db.Column(db.Integer)
+    csv_file = db.Column(db.LargeBinary)
 
 def create_tables():
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS production_data (
-            id INTEGER PRIMARY KEY,
-            session_id TEXT NOT NULL,
-            datetime TEXT NOT NULL,
-            operator TEXT,
-            machine_number INTEGER,
-            item_number INTEGER,
-            production_order TEXT,
-            csv_file BLOB
-        )
-    ''')
-    conn.commit()
+    db.create_all()
 
 @app.route('/')
 def index():
@@ -35,18 +27,35 @@ def index():
 
 @app.route('/store_csv', methods=['POST'])
 def store_csv():
-    csv_data = request.data  # Get raw binary data from the request
-    conn = get_db()
-    cursor = conn.cursor()
-    
-    # Insert the CSV data into the database
-    cursor.execute('''
-        INSERT INTO production_data (csv_file)
-        VALUES (?)
-    ''', (sqlite3.Binary(csv_data),))
+    csv_data = request.files["csv_data"].read()
+    datetime = request.form["datetime"] 
+    operator = request.form["operator"]
+    machine_number = request.form["machine_number"]  
+    item_number = request.form["item_number"]
+    spd_rpm = request.form["RPM"]
+    twm = request.form["TPM"]
+    specTen = request.form["Spec. Tension"]
+    devTens = request.form["Allow. Tens. Deviation"]  
 
-    conn.commit()
+    with app.app_context():  # Enter the application context
+        new_data_entry = ProductionData(
+            datetime=datetime,
+            operator=operator,
+            machine_number=machine_number,
+            item_number=item_number,
+            rpm = spd_rpm,
+            tpm = twm,
+            stdTen = specTen,
+            devTen = devTens,
+            csv_file=csv_data
+        )
+
+        db.session.add(new_data_entry)
+        db.session.commit()
     return 'CSV data stored in the database.'
 
+
 if __name__ == '__main__':
+    with app.app_context():  # Enter the application context
+        create_tables()
     app.run(debug=True)
