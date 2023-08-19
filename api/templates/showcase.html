@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Table Showcase</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
+    />
+  </head>
+  <body>
+    <table id="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Datetime</th>
+          <th>Operator</th>
+          <th>Machine Number</th>
+          <th>Actions</th>
+          <!-- Add more column headers -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data rows will be added here -->
+      </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='javascripts/app.js') }}"></script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 import uuid
+import io
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///production_database.db'
@@ -54,6 +55,36 @@ def store_csv():
         db.session.commit()
     return 'CSV data stored in the database.'
 
+@app.route('/showcase')
+def showcase():
+    return render_template('showcase.html')
+
+@app.route('/get_data')
+def get_data():
+    data = ProductionData.query.all()
+    return jsonify([{'id': ten_data.id, 
+                     'datetime': ten_data.datetime, 
+                     'operator': ten_data.operator, 
+                     'machine_number': ten_data.machine_number} for ten_data in data])
+
+@app.route('/download/<entry_id>')
+def download(entry_id):
+    # Retrieve the associated CSV data based on the entry_id
+    # For example, assuming your database model has a 'data' column
+    csv = ProductionData.query.get(entry_id).csv_file
+    m_n = ProductionData.query.get(entry_id).machine_number
+    op = ProductionData.query.get(entry_id).operator
+    it_n = ProductionData.query.get(entry_id).item_number
+    dt = ProductionData.query.get(entry_id).datetime
+
+    # Create a response with the CSV data and set appropriate headers
+    response = send_file(
+        io.BytesIO(csv),
+        mimetype='text/csv',
+        as_attachment=True,
+        download_name=f'[{m_n}] - [{it_n}] - [{op}] - [{dt}].csv'
+    )
+    return response
 
 if __name__ == '__main__':
     with app.app_context():  # Enter the application context
