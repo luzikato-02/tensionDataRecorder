@@ -2,30 +2,146 @@
 <html>
   <head>
     <title>Data Table Showcase</title>
+    <style>
+      body,
+      h5,
+      p,
+      th,
+      label,
+      span,
+      li,
+      div {
+        font-family: "Outfit", sans-serif;
+      }
+
+      .navbar-brand img {
+        height: 2.5rem;
+      }
+
+      .navbar {
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.1rem;
+        box-shadow: 0 0.5rem 0.5rem rbga(0, 0, 0, 0.5);
+        z-index: 1;
+      }
+
+      #nav-container {
+        border-bottom: 1px solid black;
+      }
+
+      .nav-item {
+        padding: 0.2rem;
+        font-family: "Outfit", sans-serif;
+        font-size: 15pt;
+        color: black;
+      }
+
+      .nav-link.active,
+      .nav-link:hover {
+        color: red !important;
+      }
+    </style>
     <link
       rel="stylesheet"
       href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
     />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.11.1/css/dataTables.bootstrap5.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/c9b6e045a4.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="{{ url_for('static', filename='javascripts/bootstrap.min.js') }}"></script>
   </head>
   <body>
-    <table id="data-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Datetime</th>
-          <th>Operator</th>
-          <th>Machine Number</th>
-          <th>Actions</th>
-          <!-- Add more column headers -->
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Data rows will be added here -->
-      </tbody>
-    </table>
+    <nav class="navbar navbar-light navbar-expand-lg">
+      <div class="container" id="nav-container">
+        <a href="index.html" class="navbar-brand"
+          ><img
+            src="https://learning.indokordsa.com/pluginfile.php/1/theme_edumy/headerlogo2/1649050232/Logo%20Indokordsa%20Transparant.png"
+            alt="Logo"
+            title="Logo"
+            id="logo"
+        /></a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarResponsive"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a href="#" class="nav-link active">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="./about.html" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+              <a href="./contact.html" class="nav-link">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div
+      class="container"
+      style="
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      "
+    >
+      <table id="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Datetime</th>
+            <th>Operator</th>
+            <th>Machine Number</th>
+            <th>Actions</th>
+            <!-- Add more column headers -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data rows will be added here -->
+        </tbody>
+      </table>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='javascripts/app.js') }}"></script>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename='javascripts/app.js') }}"
+    ></script>
   </body>
 </html>
