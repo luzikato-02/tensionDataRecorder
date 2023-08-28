@@ -118,6 +118,12 @@
         color: whitesmoke;
       }
 
+      .nav-button {
+        margin-left: 50px;
+        margin-right: 50px;
+        color: whitesmoke;
+      }
+
       .number-button {
         width: 50px;
         height: 50px;
@@ -377,7 +383,7 @@
 
     <div class="forms-container" id="row-number-container">
       <form class="data-forms" id="row-num-forms">
-        <h2>Input Row Numbers</h2>
+        <h2>Input Column Numbers</h2>
         <div class="type-selector-group">
           <div class="types-label"><span id="label-value">Creel Side</span></div>
           <div class="types-toggle">
@@ -419,6 +425,11 @@
         <div id="reset-button">
           <button class="big-buttons" onclick="finishRecordRowNums()">
             Next
+          </button>
+        </div>
+        <div id="reset-button">
+          <button class="big-buttons" onclick="autoScroll(event, 0)">
+            Back
           </button>
         </div>
       
@@ -527,13 +538,13 @@
       </div>
 
       <div class="button-container">
-        <button class="big-buttons" onclick="autoScroll(event, 2000)">
+        <button class="big-buttons" onclick="autoScroll(event, 3000)">
           Report Problem
         </button>
       </div>
 
       <div class="button-container">
-        <button class="submit-button" onclick="autoScroll(event, 0)">
+        <button class="submit-button" onclick="autoScroll(event, 1000)">
           Back
         </button>
         <button class="submit-button" onclick="finishRecording()">
@@ -561,7 +572,7 @@
         <button class="custom-button delete-button" onclick="deleteData(`a`)">
           Delete
         </button>
-        <button class="submit-button" onclick="autoScroll(event, 1000)">
+        <button class="submit-button" onclick="autoScroll(event, 2000)">
           Back
         </button>
       </div>

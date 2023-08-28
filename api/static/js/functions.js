@@ -12,9 +12,9 @@ let machineNumber = "";
 let operator = "";
 let prod_order = "";
 let tpm = "";
-let rpm = "";
-let stdTens = "";
-let devTens = "";
+let stl = "";
+let cntNoens = "";
+let colCodeens = "";
 let itemNum = "";
 
 // Load data from localStorage when the page is loaded
@@ -508,13 +508,16 @@ function displayRecordedNumbers() {
 function displayRecordedProbs() {
   const problemList = document.getElementById("prob-list");
   problemList.innerHTML = "";
-  const currentColumnData =
-    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn];
 
-  if (currentColumnData) {
+  if (data["tensionData"][currentCreelSide][currentCreelRow][currentColumn]) {
     const currentColumnProbs =
-      currentColumnData && currentColumnData["Problems"]
-        ? currentColumnData["Problems"]
+      data["tensionData"][currentCreelSide][currentCreelRow][currentColumn] &&
+      data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+        "Problems"
+      ]
+        ? data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+            "Problems"
+          ]
         : [];
 
     if (currentColumnProbs) {
@@ -527,26 +530,26 @@ function displayRecordedProbs() {
   }
 }
 
-function checkAbnormalTens(tensNum, valueType) {
-  const stdTens = document.getElementById("spec-tens").value;
-  const devTens = document.getElementById("tens-dev").value;
-  const upperLimit = stdTens + devTens;
-  const lowerLimit = stdTens - devTens;
+// function checkAbnormalTens(tensNum, valueType) {
+//   const cntNoens = document.getElementById("spec-tens").value;
+//   const colCodeens = document.getElementById("tens-dev").value;
+//   const upperLimit = cntNoens + colCodeens;
+//   const lowerLimit = cntNoens - colCodeens;
 
-  if (valueType === "MIN" && tensNum < lowerLimit) {
-    data[currentColumn][currentTensionType]["minTensNormal"] = false;
-    return false;
-  } else {
-    data[currentColumn][currentTensionType]["minTensNormal"] = true;
-  }
+//   if (valueType === "MIN" && tensNum < lowerLimit) {
+//     data[currentColumn][currentTensionType]["minTensNormal"] = false;
+//     return false;
+//   } else {
+//     data[currentColumn][currentTensionType]["minTensNormal"] = true;
+//   }
 
-  if (valueType === "MAX" && tensNum > upperLimit) {
-    data[currentColumn][currentTensionType]["maxTensNormal"] = false;
-    return false;
-  } else {
-    data[currentColumn][currentTensionType]["maxTensNormal"] = true;
-  }
-}
+//   if (valueType === "MAX" && tensNum > upperLimit) {
+//     data[currentColumn][currentTensionType]["maxTensNormal"] = false;
+//     return false;
+//   } else {
+//     data[currentColumn][currentTensionType]["maxTensNormal"] = true;
+//   }
+// }
 
 function finishRecording() {
   const confirmation = confirm("Are you sure you want to finish?");
@@ -555,39 +558,47 @@ function finishRecording() {
     writeCSV(
       data["machineNumber"],
       data["operator"],
-      data["prod_order"],
-      data["tpm"],
-      data["rpm"],
-      data["stdTens"],
-      data["devTens"],
-      data["itemNum"]
+      data["productionOrder"],
+      data["baleNo"],
+      data["style"],
+      data["counterNo"],
+      data["colorCode"]
     );
   }
 }
 
-function writeCSV(machineNumber, operator, dtx, twm, rpm, stdT, devT, itemN) {
+function writeCSV(machineNumber, operator, po, bale, stl, cntNo, colCode) {
   let csvContent = "";
-  csvContent += `Machine No.,${machineNumber},Item Number,${itemN}\n`;
-  csvContent += `RPM, ${rpm},D-tex,${dtx},Operator Name,${operator}\n`;
-  csvContent += `TPM,${twm}\n`;
-  csvContent += `Spec STD,${stdT}\n`;
-  csvContent += `±,${devT}\n`;
-  csvContent += `Spindle Number,${currentTensionType} - MIN,${currentTensionType} - MAX, Stated Problem(s)\n`;
-
-  const ids = Object.keys(data); // Get an array of data IDs
-  const numIdsToDelete = 8; // Number of IDs to delete from the end
+  const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
+  csvContent += `Tanggal,${currentDateTime}\n`;
+  csvContent += `Style,${stl}\n`;
+  csvContent += `PO,${po}\n`;
+  csvContent += `\n`;
+  csvContent += `Color,${colCode}\n`;
+  csvContent += `Bale Ke,${bale}\n`;
+  csvContent += `Loom,${machineNumber}\n`;
+  csvContent += `Meter,${cntNo}\n`;
+  csvContent += `Date,${currentDateTime}\n`;
+  csvContent += `Operator,${operator}\n`;
   console.log(data);
 
   // Loop through all IDs except the last few and append to csvContent
-  for (let i = 0; i < ids.length - numIdsToDelete; i++) {
-    const id = ids[i];
-    const minTensionVal = data[id]?.[currentTensionType]?.["MIN"] || "";
-    const maxTensionVal = data[id]?.[currentTensionType]?.["MAX"] || "";
-    const spindleProb = data[id]?.["Problems"] || "";
-    csvContent += `${id}.,${minTensionVal}.,${maxTensionVal}., ${spindleProb}.\n`;
+  for (let sd in data["tensionData"]) {
+    console.log(sd);
+    csvContent += `${sd}\n`;
+    for (let rw in data["tensionData"][sd]) {
+      console.log(rw);
+      for (let col in data["tensionData"][sd][rw]) {
+        const minTensionVal =
+          data["tensionData"]?.[sd]?.[rw]?.[col]?.["MIN"] || "";
+        const maxTensionVal =
+          data["tensionData"]?.[sd]?.[rw]?.[col]?.["MAX"] || "";
+        csvContent += `${rw},${col},${maxTensionVal},${minTensionVal}\n`;
+      }
+    }
   }
-  const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
-  const filename = `[${machineNumber}] - [${itemN}] - [${operator}] - [${currentDateTime}]`;
+
+  const filename = `[${machineNumber}] - [${po}] - [${operator}] - [${currentDateTime}]`;
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
@@ -597,10 +608,10 @@ function writeCSV(machineNumber, operator, dtx, twm, rpm, stdT, devT, itemN) {
 }
 
 function deleteData(dataType) {
-  const currentColumnData = data["tensionData"][currentCreelSide][currentCreelRow][currentColumn];
+  const currentColumnData =
+    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn];
   if (dataType === "tension") {
-    const recordedValue =
-    currentColumnData[currentValueType];
+    const recordedValue = currentColumnData[currentValueType];
     delete recordedValue.pop();
   } else {
     if (currentColumnData["Problems"]) {
