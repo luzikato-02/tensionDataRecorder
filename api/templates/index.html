@@ -11,12 +11,15 @@
         padding: 0;
       }
 
-      #recorder-container {
+      .forms-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 100vh;
+      }
+
+      #recorder-container {
         margin-top: 100px;
       }
 
@@ -25,13 +28,7 @@
         justify-content: center;
       }
 
-      #initial-forms-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        /* margin-top: 10px; */
+      #initial-forms-container, #row-number-container {
         text-align: center;
       }
 
@@ -39,16 +36,39 @@
         margin: 5px;
       }
 
-      #finish-form {
+      .data-forms {
         display: inline-block;
         padding: 20px;
         border: 1px solid #ccc;
         border-radius: 5px;
         background-color: #f9f9f9;
         text-align: left;
+        margin: 20px;
+        justify-content: center;
       }
 
-      #finish-form label {
+      .data-forms label{
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .data-forms input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+      }
+
+      /* #finish-form {
+        display: inline-block;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+      } */
+
+
+      /* #finish-form label {
         display: block;
         margin-bottom: 5px;
       }
@@ -57,7 +77,7 @@
         width: 100%;
         padding: 5px;
         margin-bottom: 10px;
-      }
+      } */
 
       #number-form {
         margin: 20px 0;
@@ -163,6 +183,16 @@
         margin: 10px;
       }
 
+      #column {
+        font-size: 24px;
+        margin: 10px;
+      }
+
+      #column-side {
+        font-size: 24px;
+        margin: 10px;
+      }
+
       /* Added styles for tension type buttons */
       .tension-type-button {
         width: 130px;
@@ -235,13 +265,73 @@
         font-weight: bold;
         font-size: 18px;
       }
+
+      .toggle-types-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 10px;
+      }
+
+      .types-label {
+        justify-content: center;
+      }
+
+      .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .label {
+        flex: 1;
+        padding: 5px;
+        font-weight: bold;
+      }
+
+      .input-field {
+        padding: 5px;
+        margin-inline: 5px;
+      }
+
+      .input-group {
+        display: flex;
+        align-items: center;
+      }
+
+      .column {
+        float: left;
+        width: 33.33%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      .type-selector-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 20px;
+      }
+
+      .data-forms h2 {
+        text-align: center;
+      }
     </style>
     <title>Tension Data Recorder</title>
   </head>
   <body>
-    <div id="initial-forms-container">
+    <div class="forms-container" id="initial-forms-container">
       <h1>Tension Data Recorder</h1>
-      <form id="finish-form">
+      <form class="data-forms" id="finish-form">
+        <label for="production-order">Production Order:</label>
+        <input
+          type="text"
+          id="production-order"
+          name="production-order"
+          required
+        /><br />
+
         <label for="machine-number">Machine Number:</label>
         <input
           type="text"
@@ -250,40 +340,30 @@
           required
         /><br />
 
-        <label for="item-number">Item Number:</label>
-        <input type="text" id="item-number" name="item-number" required /><br />
-
         <label for="operator">Operator:</label>
         <input type="text" id="operator" name="operator" required /><br />
 
-        <label for="dtex">Dtex Number:</label>
-        <input type="text" id="dtex" name="dtex" required /><br />
+        <label for="bale-no">Bale Number:</label>
+        <input type="text" id="bale-no" name="bale-no" required /><br />
 
-        <label for="tpm">TPM:</label>
-        <input type="text" id="tpm" name="tpm" required /><br />
+        <label for="color-code">Color Code:</label>
+        <input type="text" id="color-code" name="color-code" required /><br />
 
-        <label for="spec-tens">Spec Tens:</label>
-        <input type="text" id="spec-tens" name="spec-tens" required /><br />
+        <label for="style-spec">Style:</label>
+        <input type="text" id="style-spec" name="style-spec" required /><br />
 
-        <label for="tens-dev">Tens ±:</label>
-        <input type="text" id="tens-dev" name="tens-dev" required /><br />
+        <label for="counter-number">Counter Number:</label>
+        <input
+          type="text"
+          id="counter-number"
+          name="counter-number"
+          required
+        /><br />
 
-        <label for="rpm">RPM:</label>
-        <input type="text" id="rpm" name="rpm" required /><br />
-
-        <div id="tension-selector">
-          <span id="label-tension">Tension Type</span>
-          <button class="arrow-button" onclick="changeTensionType(event)">
-            &#9664;
-          </button>
-          <span id="tension-type">CT</span>
-          <button class="arrow-button" onclick="changeTensionType(event)">
-            &#9654;
-          </button>
-        </div>
+        
 
         <div id="finish-recording-butt">
-          <button class="big-buttons" onclick="nextForms()">
+          <button class="big-buttons" onclick="recordSpecs()">
             Start Recording
           </button>
         </div>
@@ -295,10 +375,61 @@
       </form>
     </div>
 
-    <div id="recorder-container">
+    <div class="forms-container" id="row-number-container">
+      <form class="data-forms" id="row-num-forms">
+        <h2>Input Row Numbers</h2>
+        <div class="type-selector-group">
+          <div class="types-label"><span id="label-value">Creel Side</span></div>
+          <div class="types-toggle">
+            <button class="arrow-button" onclick="changeCreelSideInput()">
+              &#9664;
+            </button>
+            <span id="creel-side-input">Out</span>
+            <button class="arrow-button" onclick="changeCreelSideInput()">
+              &#9654;
+            </button>
+          </div>
+
+        </div>
+        <div class="type-selector-group">
+          <div class="types-label"><span id="label-value">Creel Row</span></div>
+          <div class="types-toggle">
+            <button class="arrow-button" onclick="changeCreelRowInput('prev')">
+              &#9664;
+            </button>
+            <span id="row-side-input">A</span>
+            <button class="arrow-button" onclick="changeCreelRowInput('next')">
+              &#9654;
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label" for="min-column-num">Enter Range:</label>
+          <div class="input-group">
+            <input class="input-field" type="text" id="min-col-num" name="min-col-num" size="5" placeholder="From">
+            <input class="input-field" type="text" id="max-col-num" name="max-col-num" size="5" placeholder="To">
+          </div>
+        </div>
+        
+        <div id="finish-recording-butt">
+          <button class="big-buttons" onclick="recordColumnNumbers()">
+            Submit
+          </button>
+        </div>
+        <div id="reset-button">
+          <button class="big-buttons" onclick="finishRecordRowNums()">
+            Next
+          </button>
+        </div>
+      
+      </form>
+
+    </div>
+
+    <div class="forms-container" id="recorder-container">
       <div id="recorded-numbers">
         <h2>
-          Recorded <span id="displayed-tension-type">CT</span> for Spd No.
+          <span>Recorded Tens.</span> for Column No.
           <span id="displayed-id">1</span>:
         </h2>
         <div class="numbers-container">
@@ -313,22 +444,48 @@
         </div>
       </div>
 
-      <div>
-        <span id="label-spindle">Spd No.</span>
-        <button class="arrow-button" onclick="prevID()">&#9664;</button>
-        <span id="current-id">1</span>
-        <button class="arrow-button" onclick="nextID()">&#9654;</button>
-      </div>
+      <div class="toggle-types-container">
+        <div class="types-label"><span id="label-value">Creel Side</span></div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeCreelSide('prev')">
+            &#9664;
+          </button>
+          <span id="column-side">Ai</span>
+          <button class="arrow-button" onclick="changeCreelSide('next')">
+            &#9654;
+          </button>
+        </div>
 
-      <div>
-        <span id="label-value">Value Type</span>
-        <button class="arrow-button" onclick="changeValueType()">
-          &#9664;
-        </button>
-        <span id="value-type">MAX</span>
-        <button class="arrow-button" onclick="changeValueType()">
-          &#9654;
-        </button>
+        <div class="types-label">
+          <span id="label-value">Creel Row</span>
+        </div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeCreelRow('prev')">
+            &#9664;
+          </button>
+          <span id="column">A</span>
+          <button class="arrow-button" onclick="changeCreelRow('next')">
+            &#9654;
+          </button>
+        </div>
+
+        <div class="types-label"><span id="label-spindle">Col. No.</span></div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeColumnNumber('prev')">&#9664;</button>
+          <span id="current-id">N</span>
+          <button class="arrow-button" onclick="changeColumnNumber('next')">&#9654;</button>
+        </div>
+
+        <div class="types-label"><span id="label-value">Value Type</span></div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeValueType()">
+            &#9664;
+          </button>
+          <span id="value-type">MAX</span>
+          <button class="arrow-button" onclick="changeValueType()">
+            &#9654;
+          </button>
+        </div>
       </div>
 
       <form id="number-form">
@@ -360,7 +517,7 @@
       </div>
 
       <div class="button-container">
-        <button class="submit-button" onclick="recordNumber()">Submit</button>
+        <button class="submit-button" onclick="recordTensionData('tens')">Submit</button>
         <button
           class="custom-button delete-button"
           onclick="deleteData(`tension`)"
@@ -388,7 +545,7 @@
     <div class="problem-stat-container">
       <div id="recorded-problems">
         <h2>
-          Recorded Problem for Spd No.
+          Recorded Problem for Col. No.
           <span id="displayed-id-prob">1</span>:
         </h2>
         <div class="probs-container">
@@ -400,7 +557,7 @@
           <label for="problem">Enter Problem: </label>
           <input type="problem" id="problem" name="problem" />
         </form>
-        <button class="submit-button" onclick="recordProb()">Submit</button>
+        <button class="submit-button" onclick="recordTensionData('prob')">Submit</button>
         <button class="custom-button delete-button" onclick="deleteData(`a`)">
           Delete
         </button>

@@ -1,405 +1,617 @@
-let currentID = 1;
-      let currentTensionType = "CT"; // Default tension type abbreviation
-      let currentValueType = "MAX"; // Default value type abbreviation
-      let abnormalColor = "";
-      let data = {};
+let currentColumn = "N";
+let currentValueType = "MAX"; // Default value type abbreviation
+let currentCreelRow = "A";
+let currentCreelRowInput = "A";
+let currentCreelSide = "Ai";
+let currentCreelSideInput = "Out";
+let abnormalColor = "";
+let data = {};
+let colIDs = [];
 
-      let machineNumber = "";
-      let operator = "";
-      let dtex = "";
-      let tpm = "";
-      let rpm = "";
-      let stdTens = "";
-      let devTens = "";
-      let itemNum = "";
+let machineNumber = "";
+let operator = "";
+let prod_order = "";
+let tpm = "";
+let rpm = "";
+let stdTens = "";
+let devTens = "";
+let itemNum = "";
 
-      // Load data from localStorage when the page is loaded
-      window.addEventListener("load", () => {
-        const savedData = localStorage.getItem("savedData");
-        if (savedData) {
-          data = JSON.parse(savedData);
-          // Update any necessary UI elements based on the loaded data
-          updateIDDisplay();
-          updateSpecForm();
-          // ... (other updates)
-        }
-      });
+// Load data from localStorage when the page is loaded
+window.addEventListener("load", () => {
+  const savedData = localStorage.getItem("savedData");
+  if (savedData) {
+    // Parse data from local storage variable
+    data = JSON.parse(savedData);
+    // Update displayed column number in recording form
+    updateIDDisplay();
+    // Update specification form value to show stored spec data
+    updateSpecForm();
+    // Show recorded target columns as form values
+    displayRecordedTargetColumns();
+    // ... (other updates)
+    console.log(data);
+  }
+});
 
-      // Save data to localStorage whenever it's modified
-      function saveDataToLocalStorage() {
-        localStorage.setItem("savedData", JSON.stringify(data));
+// Save data to localStorage whenever it's modified
+function saveDataToLocalStorage() {
+  localStorage.setItem("savedData", JSON.stringify(data));
+}
+
+// Record inputted specs in specification form
+function recordSpecs() {
+  // Call html element as assign it to variables
+  machineNumber = document.getElementById("machine-number").value;
+  operator = document.getElementById("operator").value;
+  prodOrder = document.getElementById("production-order").value;
+  baleNo = document.getElementById("bale-no").value;
+  colorCode = document.getElementById("color-code").value;
+  styleSpec = document.getElementById("style-spec").value;
+  counterNo = document.getElementById("counter-number").value;
+
+  // If stored data exist, show recorded specs as form values
+  data["machineNumber"] = machineNumber;
+  data["operator"] = operator;
+  data["productionOrder"] = prodOrder;
+  data["baleNo"] = baleNo;
+  data["style"] = styleSpec;
+  data["counterNo"] = counterNo;
+  data["colorCode"] = colorCode;
+
+  // After appending new specs data to data array, update stored data array in localStorage
+  saveDataToLocalStorage();
+  console.log(data);
+  autoScroll(event, 1000);
+}
+
+// Switch current selected creel side in targeting form
+function changeCreelSideInput() {
+  event.preventDefault();
+  currentCreelSideInput = currentCreelSideInput === "In" ? "Out" : "In";
+  updateCreelSideInputDisplay();
+  displayRecordedTargetColumns();
+}
+
+// Switch current selected row in targeting form
+function changeCreelRowInput(direction) {
+  event.preventDefault();
+  // Define an array of available rows
+  rows = ["A", "B", "C", "D", "E"];
+  if (direction === "next") {
+    // Change current selected row variable
+    // Get next item in the array by getting the next index of the array
+    // If the next index exceeded the array length, then go back to first index item
+    currentCreelRowInput =
+      rows.indexOf(currentCreelRowInput) + 1 > rows.length - 1
+        ? rows[0]
+        : rows[rows.indexOf(currentCreelRowInput) + 1];
+    updateCreelRowInput();
+  }
+  if (direction === "prev") {
+    // Change current selected row variable
+    // Get previous item in the array by getting the previous index of the array
+    // If the previous index is less than 0, then go to the last item of the array
+    event.preventDefault();
+    currentCreelRowInput =
+      rows.indexOf(currentCreelRowInput) - 1 < 0
+        ? rows[rows.length - 1]
+        : rows[rows.indexOf(currentCreelRowInput) - 1];
+    updateCreelRowInput();
+  }
+
+  // When the creel row changed, automatically switch to "Outside" (intended, may need some revision)
+  changeCreelSideInput();
+  // Update current selected creel side in targetting form
+  updateCreelSideInputDisplay();
+  // Display recorded targetted columns
+  displayRecordedTargetColumns();
+}
+
+// Record targetted column numbers
+function recordColumnNumbers() {
+  event.preventDefault();
+  // Get HTML element and assign it to variables
+  const maxColNum = document.getElementById("max-col-num").value;
+  const minColNum = document.getElementById("min-col-num").value;
+
+  // Checks if "recordTarget" key has a value
+  if (!data["recordTarget"]) {
+    data["recordTarget"] = {};
+  }
+  // Checks if data array keys and values corresponding to currently selected TARGETED creel side,
+  // creel row, and columns exist.
+  // If not, then create an object to store the values.
+  if (!data["recordTarget"][currentCreelRowInput]) {
+    data["recordTarget"][currentCreelRowInput] = {};
+  }
+  if (!data["recordTarget"][currentCreelRowInput][currentCreelSideInput]) {
+    data["recordTarget"][currentCreelRowInput][currentCreelSideInput] = [];
+  }
+  if (
+    data["recordTarget"][currentCreelRowInput][currentCreelSideInput].length > 1
+  ) {
+    data["recordTarget"][currentCreelRowInput][currentCreelSideInput] = [];
+  }
+
+  // Append the column numbers to the data array by taking the smallest and biggest number
+  // of the TARGETED column number
+  for (let i = Number(minColNum); i <= maxColNum; i++) {
+    data["recordTarget"][currentCreelRowInput][currentCreelSideInput].push(i);
+  }
+
+  // Empty form after recording data
+  maxColNum.value = "";
+  minColNum.value = "";
+
+  console.log(data);
+  // If both sides column numbers is filled, switch to next creel row
+  if (currentCreelSideInput === "In") {
+    changeCreelRowInput("next");
+  } else {
+    // If not then, change to another side
+    changeCreelSideInput();
+  }
+  // Update data array in localStorage
+  saveDataToLocalStorage();
+}
+
+// Create array of column target for four creel sides
+function arrangeDataID() {
+  sidesID = {
+    Ai: {},
+    Ao: {},
+    Bi: {},
+    Bo: {},
+  };
+
+  rws = data["recordTarget"];
+  for (var s in sidesID) {
+    if (s === "Ai" || s === "Bi") {
+      for (var i in rws) {
+        const key = i;
+        sidesID[s][key] = rws[i]["In"];
       }
-
-      function resetStorage() {
-        const confirmation = confirm(
-          "Are you sure you want to clear all stored data within this browser?"
-        );
-        if (confirmation === !null) {
-          localStorage.removeItem("savedData");
-        }
+    } else {
+      for (var i in rws) {
+        const key = i;
+        sidesID[s][key] = rws[i]["Out"];
       }
+    }
+  }
+  return sidesID;
+}
 
-      function autoScroll(event, where) {
-        event.preventDefault(); // Prevent the default form submission
-        localStorage.setItem("scrollPosition", window.scrollY);
-        window.scrollTo(0, where); // Scroll to the specified position
-      }
+// Display recorded targetted column numbers
+function displayRecordedTargetColumns() {
+  const minColNum = document.getElementById("min-col-num");
+  const maxColNum = document.getElementById("max-col-num");
+}
 
-      function updateSpecForm() {
-        document.getElementById("machine-number").value = data["machineNumber"];
-        document.getElementById("operator").value = data["operator"];
-        document.getElementById("dtex").value = data["dtex"];
-        document.getElementById("tpm").value = data["tpm"];
-        document.getElementById("rpm").value = data["rpm"];
-        document.getElementById("spec-tens").value = data["stdTens"];
-        document.getElementById("tens-dev").value = data["devTens"];
-        document.getElementById("item-number").value = data["itemNum"];
-      }
+// Finish recording targets
+function finishRecordRowNums() {
+  event.preventDefault();
+  colIDs = arrangeDataID();
+  console.log(colIDs);
+  // Prompt to check the inputted data
+  const confirmation = confirm(
+    `Are you sure you want to start recording tension? Please check the inputted target columns before continuing!`
+  );
 
-      function updateIDDisplay() {
-        const currentIDElement = document.getElementById("current-id");
-        currentIDElement.textContent = currentID;
-        document.getElementById("displayed-id").textContent = currentID;
-        document.getElementById("displayed-id-prob").textContent = currentID;
-        displayRecordedNumbers();
-        displayRecordedProbs();
-      }
+  if (confirmation === !null) {
+    currentColumn = colIDs[currentCreelSide][currentCreelRow][0];
+    updateIDDisplay();
+    console.log(colIDs[currentCreelSide][currentCreelRow][0]);
+    // Scroll down to tension recorder
+    autoScroll(event, 2000);
+  }
+}
 
-      function changeTensionType() {
-        event.preventDefault();
-        currentTensionType = currentTensionType === "CT" ? "WT" : "CT";
-        updateTensionTypeDisplay();
-        displayRecordedNumbers();
-      }
+// Update displayed creel row element to match currently selected TARGET creel row
+function updateCreelRowInput() {
+  const currentCreelRowInputElement = document.getElementById("row-side-input");
+  currentCreelRowInputElement.textContent = currentCreelRowInput;
+}
 
-      function changeValueType() {
-        currentValueType = currentValueType === "MIN" ? "MAX" : "MIN";
-        updateValueTypeDisplay();
-        displayRecordedNumbers();
-      }
+// Update displayed creel side element to match currently selected TARGET creel side
+function updateCreelSideInputDisplay() {
+  const currentCreelSideInputElement =
+    document.getElementById("creel-side-input");
+  currentCreelSideInputElement.textContent = currentCreelSideInput;
+}
 
-      function updateTensionTypeDisplay() {
-        const tensionTypeElement = document.getElementById("tension-type");
-        tensionTypeElement.textContent = currentTensionType;
-        const displayedTensionType = document.getElementById(
-          "displayed-tension-type"
-        );
-        displayedTensionType.textContent =
-          currentTensionType === "CT" ? "CT" : "WT";
-      }
+// Erase stored data in local browser storage
+function resetStorage() {
+  const confirmation = confirm(
+    "Are you sure you want to clear all stored data within this browser?"
+  );
+  if (confirmation === !null) {
+    localStorage.removeItem("savedData");
+  }
+}
 
-      function updateValueTypeDisplay() {
-        const valueTypeElement = document.getElementById("value-type");
-        valueTypeElement.textContent = currentValueType;
-      }
+// Automatically scroll to specific point
+function autoScroll(event, where) {
+  event.preventDefault(); // Prevent the default form submission
+  localStorage.setItem("scrollPosition", window.scrollY);
+  window.scrollTo(0, where); // Scroll to the specified position
+}
 
-      function prevID() {
-        if (currentID > 1) {
-          currentID--;
-          updateIDDisplay();
-        }
-      }
+// Fill the specification with stored data
+function updateSpecForm() {
+  document.getElementById("machine-number").value = data["machineNumber"];
+  document.getElementById("operator").value = data["operator"];
+  document.getElementById("production-order").value = data["productionOrder"];
+  document.getElementById("bale-no").value = data["baleNo"];
+  document.getElementById("color-code").value = data["colorCode"];
+  document.getElementById("style-spec").value = data["style"];
+  document.getElementById("counter-number").value = data["counterNo"];
+}
 
-      function nextID() {
-        if (currentID < 84) {
-          currentID++;
-          currentValueType = "MAX";
-          updateValueTypeDisplay();
-          updateIDDisplay();
-        }
-      }
+function changeCreelRow(direction) {
+  columns = ["A", "B", "C", "D", "E"];
+  if (direction === "next") {
+    currentCreelRow =
+      columns.indexOf(currentCreelRow) + 1 > columns.length - 1
+        ? columns[0]
+        : columns[columns.indexOf(currentCreelRow) + 1];
+  }
+  if (direction === "prev") {
+    currentCreelRow =
+      columns.indexOf(currentCreelRow) - 1 < 0
+        ? columns[columns.length - 1]
+        : columns[columns.indexOf(currentCreelRow) - 1];
+  }
+  currentColumn = colIDs[currentCreelSide][currentCreelRow][0];
+  updateIDDisplay();
+  updateColumnDisplay();
+}
 
-      function appendNumber(num) {
-        const numberInput = document.getElementById("number");
-        numberInput.value += num;
-      }
+function changeCreelSide(direction) {
+  sides = ["Ai", "Ao", "Bi", "Bo"];
+  if (direction === "next") {
+    currentCreelSide =
+      sides.indexOf(currentCreelSide) + 1 > sides.length - 1
+        ? sides[0]
+        : sides[sides.indexOf(currentCreelSide) + 1];
+  }
+  if (direction === "prev") {
+    currentCreelSide =
+      sides.indexOf(currentCreelSide) - 1 < 0
+        ? sides[sides.length - 1]
+        : sides[sides.indexOf(currentCreelSide) - 1];
+  }
+  currentCreelRow = "A";
+  updateColumnDisplay();
+  currentColumn = colIDs[currentCreelSide][currentCreelRow][0];
+  updateIDDisplay();
+  updateColumnSideDisplay();
+}
 
-      function backspaceNumber() {
-        const numberInput = document.getElementById("number");
-        numberInput.value = numberInput.value.slice(0, -1);
-      }
+function changeValueType() {
+  currentValueType = currentValueType === "MIN" ? "MAX" : "MIN";
+  updateValueTypeDisplay();
+  displayRecordedNumbers();
+}
 
-      function clearNumber() {
-        const numberInput = document.getElementById("number");
-        numberInput.value = "";
-      }
+function updateColumnDisplay() {
+  const columnDisplay = document.getElementById("column");
+  columnDisplay.textContent = currentCreelRow;
+}
 
-      function recordProb() {
-        const probInput = document.getElementById("problem");
-        const problems = probInput.value;
+function updateColumnSideDisplay() {
+  const columnSideDisplay = document.getElementById("column-side");
+  columnSideDisplay.textContent = currentCreelSide;
+}
 
-        if (!data[currentID]) {
-          data[currentID] = {};
-        }
+function updateValueTypeDisplay() {
+  const valueTypeElement = document.getElementById("value-type");
+  valueTypeElement.textContent = currentValueType;
+}
 
-        if (!data[currentID]["Problems"]) {
-          data[currentID]["Problems"] = [];
-        }
+function updateIDDisplay() {
+  const currentColumnElement = document.getElementById("current-id");
+  currentColumnElement.textContent = currentColumn;
+  document.getElementById("displayed-id").textContent = currentColumn;
+  document.getElementById("displayed-id-prob").textContent = currentColumn;
+  displayRecordedNumbers();
+  displayRecordedProbs();
+}
 
-        data[currentID]["Problems"].push(problems);
-        console.log(data);
-        probInput.value = "";
-        saveDataToLocalStorage();
-        displayRecordedProbs();
-      }
+function changeColumnNumber(direction) {
+  const currentSideColumns = colIDs[currentCreelSide][currentCreelRow];
+  if (
+    currentSideColumns.indexOf(currentColumn) + 1 <=
+      currentSideColumns.length - 1 &&
+    direction === "next"
+  ) {
+    currentColumn =
+      currentSideColumns[currentSideColumns.indexOf(currentColumn) + 1];
+  }
+  if (
+    currentSideColumns.indexOf(currentColumn) - 1 >= 0 &&
+    direction === "prev"
+  ) {
+    currentColumn =
+      currentSideColumns[currentSideColumns.indexOf(currentColumn) - 1];
+  }
+  updateIDDisplay();
+}
 
-      function recordNumber() {
-        const numberInput = document.getElementById("number");
-        const number = numberInput.value;
+function appendNumber(num) {
+  const numberInput = document.getElementById("number");
+  numberInput.value += num;
+}
 
-        if (!data[currentID]) {
-          data[currentID] = {};
-        }
-        if (!data[currentID][currentTensionType]) {
-          data[currentID][currentTensionType] = {};
-        }
-        if (!data[currentID][currentTensionType][currentValueType]) {
-          data[currentID][currentTensionType][currentValueType] = [];
-        }
+function backspaceNumber() {
+  const numberInput = document.getElementById("number");
+  numberInput.value = numberInput.value.slice(0, -1);
+}
 
-        // Check if tensions are abnormal
-        normalTens = true;
-        // if (checkAbnormalTens(number, currentValueType) === false) {
-        //   normalTens = false;
-        //   console.log(normalTens);
-        // }
+function clearNumber() {
+  const numberInput = document.getElementById("number");
+  numberInput.value = "";
+}
 
-        // Add the number to the array
-        data[currentID][currentTensionType][currentValueType].push(number);
-        saveDataToLocalStorage();
-        numberInput.value = "";
+function recordTensionData(directive) {
+  const numberInput = document.getElementById("number");
+  const number = numberInput.value;
+  const probInput = document.getElementById("problem");
+  const problems = probInput.value;
 
-        minValExist = false;
-        maxValExist = false;
+  if (!data["tensionData"]) {
+    data["tensionData"] = {};
+  }
 
-        for (let val in data[currentID][currentTensionType]) {
-          if (
-            data[currentID] &&
-            data[currentID][currentTensionType] &&
-            data[currentID][currentTensionType][val]
-          ) {
-            if (
-              val === "MIN" &&
-              data[currentID][currentTensionType][val].length > 0
-            ) {
-              minValExist = true;
-            }
-            if (
-              val === "MAX" &&
-              data[currentID][currentTensionType][val].length > 0
-            ) {
-              maxValExist = true;
-            }
-          }
-        }
+  if (!data["tensionData"][currentCreelSide]) {
+    data["tensionData"][currentCreelSide] = {};
+  }
 
-        console.log(data);
-        if (minValExist && maxValExist && normalTens) {
-          nextID();
-          displayRecordedNumbers();
-          console.log("All normal");
-        } else {
-          changeValueType();
-          displayRecordedNumbers();
-          console.log("Something's not right");
-        }
-      }
+  if (!data["tensionData"][currentCreelSide][currentCreelRow]) {
+    data["tensionData"][currentCreelSide][currentCreelRow] = {};
+  }
 
-      function checkAbnormalTens(tensNum, valueType) {
-        const stdTens = document.getElementById("spec-tens").value;
-        const devTens = document.getElementById("tens-dev").value;
-        const upperLimit = stdTens + devTens;
-        const lowerLimit = stdTens - devTens;
+  if (!data["tensionData"][currentCreelSide][currentCreelRow][currentColumn]) {
+    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn] = {};
+  }
 
-        if (valueType === "MIN" && tensNum < lowerLimit) {
-          data[currentID][currentTensionType]["minTensNormal"] = false;
-          return false;
-        } else {
-          data[currentID][currentTensionType]["minTensNormal"] = true;
-        }
+  if (
+    !data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+      currentValueType
+    ]
+  ) {
+    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+      currentValueType
+    ] = [];
+  }
 
-        if (valueType === "MAX" && tensNum > upperLimit) {
-          data[currentID][currentTensionType]["maxTensNormal"] = false;
-          return false;
-        } else {
-          data[currentID][currentTensionType]["maxTensNormal"] = true;
-        }
-      }
+  if (
+    !data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+      "Problems"
+    ]
+  ) {
+    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+      "Problems"
+    ] = [];
+  }
 
-      function nextForms() {
-        machineNumber = document.getElementById("machine-number").value;
-        operator = document.getElementById("operator").value;
-        dtex = document.getElementById("dtex").value;
-        tpm = document.getElementById("tpm").value;
-        rpm = document.getElementById("rpm").value;
-        stdTens = document.getElementById("spec-tens").value;
-        devTens = document.getElementById("tens-dev").value;
-        itemNum = document.getElementById("item-number").value;
+  // Check if tensions are abnormal
+  normalTens = true;
+  // if (checkAbnormalTens(number, currentValueType) === false) {
+  //   normalTens = false;
+  //   console.log(normalTens);
+  // }
 
-        data["machineNumber"] = machineNumber;
-        data["operator"] = operator;
-        data["dtex"] = dtex;
-        data["tpm"] = tpm;
-        data["rpm"] = rpm;
-        data["stdTens"] = stdTens;
-        data["devTens"] = devTens;
-        data["itemNum"] = itemNum;
+  if (directive === "tens") {
+    // Add the number to the array
+    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+      currentValueType
+    ].push(number);
+    numberInput.value = "";
+  }
 
-        saveDataToLocalStorage();
-        console.log(data);
-        autoScroll(event, 1000);
-      }
+  if (directive === "prob") {
+    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+      "Problems"
+    ].push(problems);
+  }
 
-      function finishRecording() {
-        const confirmation = confirm("Are you sure you want to finish?");
+  console.log(data);
+  minValExist = false;
+  maxValExist = false;
 
-        if (confirmation === !null) {
-          writeCSV(
-            data["machineNumber"],
-            data["operator"],
-            data["dtex"],
-            data["tpm"],
-            data["rpm"],
-            data["stdTens"],
-            data["devTens"],
-            data["itemNum"]
-          );
-        }
-      }
-
-      function writeCSV(
-        machineNumber,
-        operator,
-        dtx,
-        twm,
-        rpm,
-        stdT,
-        devT,
-        itemN
+  for (let val in data["tensionData"][currentCreelSide][currentCreelRow][
+    currentColumn
+  ]) {
+    if (
+      data["tensionData"][currentCreelSide] &&
+      data["tensionData"][currentCreelSide][currentCreelRow] &&
+      data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][val]
+    ) {
+      if (
+        val === "MAX" &&
+        data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+          val
+        ].length > 0
       ) {
-        let csvContent = "";
-        csvContent += `Machine No.,${machineNumber},Item Number,${itemN}\n`;
-        csvContent += `RPM, ${rpm},D-tex,${dtx},Operator Name,${operator}\n`;
-        csvContent += `TPM,${twm}\n`;
-        csvContent += `Spec STD,${stdT}\n`;
-        csvContent += `±,${devT}\n`;
-        csvContent += `Spindle Number,${currentTensionType} - MIN,${currentTensionType} - MAX, Stated Problem(s)\n`;
-
-        const ids = Object.keys(data); // Get an array of data IDs
-        const numIdsToDelete = 8; // Number of IDs to delete from the end
-        console.log(data);
-
-        // Loop through all IDs except the last few and append to csvContent
-        for (let i = 0; i < ids.length - numIdsToDelete; i++) {
-          const id = ids[i];
-          const minTensionVal = data[id]?.[currentTensionType]?.["MIN"] || "";
-          const maxTensionVal = data[id]?.[currentTensionType]?.["MAX"] || "";
-          const spindleProb = data[id]?.["Problems"] || "";
-          csvContent += `${id}.,${minTensionVal}.,${maxTensionVal}., ${spindleProb}.\n`;
-        }
-        const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
-        const filename = `[${machineNumber}] - [${itemN}] - [${operator}] - [${currentDateTime}]`;
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
+        maxValExist = true;
       }
-
-      function deleteData(dataType) {
-        if (dataType === "tension") {
-          const recordedValue =
-            data[currentID][currentTensionType][currentValueType];
-          if (currentValueType === "MIN") {
-            data[currentID][currentTensionType]["minTensNormal"] = "";
-          } else {
-            tensionChk = data[currentID][currentTensionType]["maxTensNormal"] =
-              "";
-          }
-          delete recordedValue.pop();
-          saveDataToLocalStorage();
-          displayRecordedNumbers();
-        } else {
-          if (data[currentID]["Problems"]) {
-            const problems = data[currentID]["Problems"];
-            delete problems.pop();
-            saveDataToLocalStorage();
-            console.log(data[currentID]["Problems"]);
-            displayRecordedProbs();
-          } else {
-            data[currentID]["Problems"] = [];
-            displayRecordedProbs();
-          }
-        }
+      if (
+        val === "MIN" &&
+        data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
+          val
+        ].length > 0
+      ) {
+        minValExist = true;
       }
+    }
+  }
 
-      function displayRecordedNumbers() {
-        const minNumbersList = document.getElementById("min-numbers-list");
-        const maxNumbersList = document.getElementById("max-numbers-list");
+  console.log(data);
+  if (minValExist && maxValExist && normalTens) {
+    changeColumnNumber("next");
+    changeValueType();
+  } else {
+    changeValueType();
+  }
+  saveDataToLocalStorage();
+  displayRecordedNumbers();
+  displayRecordedProbs();
+}
 
-        minNumbersList.innerHTML = "";
-        maxNumbersList.innerHTML = "";
+function displayRecordedNumbers() {
+  const minNumbersList = document.getElementById("min-numbers-list");
+  const maxNumbersList = document.getElementById("max-numbers-list");
 
-        const currentIDData = data[currentID];
-        if (currentIDData) {
-          const currentTensionTypeData = currentIDData[currentTensionType];
-          if (currentTensionTypeData) {
-            const currentMinValues =
-              currentTensionTypeData && currentTensionTypeData["MIN"]
-                ? currentTensionTypeData["MIN"]
-                : [];
-            const currentMaxValues =
-              currentTensionTypeData && currentTensionTypeData["MAX"]
-                ? currentTensionTypeData["MAX"]
-                : [];
+  minNumbersList.innerHTML = "";
+  maxNumbersList.innerHTML = "";
 
-            if (currentMinValues) {
-              currentMinValues.forEach((number) => {
-                const listItem = document.createElement("li");
-                listItem.textContent = number;
-                minNumbersList.appendChild(listItem);
-              });
-              if (currentTensionTypeData["minTensNormal"] === false) {
-                minNumbersList.style.backgroundColor = "yellow";
-              } else {
-                minNumbersList.style.backgroundColor = "transparent";
-              }
-            }
-
-            if (currentMaxValues) {
-              currentMaxValues.forEach((number) => {
-                const listItem = document.createElement("li");
-                listItem.textContent = number;
-                maxNumbersList.appendChild(listItem);
-              });
-              if (currentTensionTypeData["maxTensNormal"] === false) {
-                maxNumbersList.style.backgroundColor = "red";
-              } else {
-                maxNumbersList.style.backgroundColor = "transparent";
-              }
-            }
-          }
-        }
-      }
-
-      function displayRecordedProbs() {
-        const problemList = document.getElementById("prob-list");
-        problemList.innerHTML = "";
-        const currentIDData = data[currentID];
-
-        if (currentIDData) {
-          const currentIDProbs =
-            currentIDData && currentIDData["Problems"]
-              ? currentIDData["Problems"]
+  const currentSideData = data["tensionData"][currentCreelSide];
+  if (currentSideData) {
+    const currentRowData = currentSideData[currentCreelRow];
+    if (currentRowData) {
+      const currentColumnData = currentRowData[currentColumn];
+      if (currentColumnData) {
+        const currentTenValueType = currentColumnData[currentValueType];
+        if (currentTenValueType) {
+          const currentMaxValues =
+            currentColumnData && currentColumnData["MAX"]
+              ? currentColumnData["MAX"]
+              : [];
+          const currentMinValues =
+            currentColumnData && currentColumnData["MIN"]
+              ? currentColumnData["MIN"]
               : [];
 
-          if (currentIDProbs) {
-            currentIDProbs.forEach((problem) => {
+          console.log(currentTenValueType);
+          if (currentMinValues) {
+            currentMinValues.forEach((number) => {
               const listItem = document.createElement("li");
-              listItem.textContent = problem;
-              problemList.appendChild(listItem);
+              listItem.textContent = number;
+              minNumbersList.appendChild(listItem);
+            });
+          }
+
+          if (currentMaxValues) {
+            currentMaxValues.forEach((number) => {
+              const listItem = document.createElement("li");
+              listItem.textContent = number;
+              maxNumbersList.appendChild(listItem);
             });
           }
         }
       }
+    }
+  }
+}
+
+function displayRecordedProbs() {
+  const problemList = document.getElementById("prob-list");
+  problemList.innerHTML = "";
+  const currentColumnData =
+    data["tensionData"][currentCreelSide][currentCreelRow][currentColumn];
+
+  if (currentColumnData) {
+    const currentColumnProbs =
+      currentColumnData && currentColumnData["Problems"]
+        ? currentColumnData["Problems"]
+        : [];
+
+    if (currentColumnProbs) {
+      currentColumnProbs.forEach((problem) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = problem;
+        problemList.appendChild(listItem);
+      });
+    }
+  }
+}
+
+function checkAbnormalTens(tensNum, valueType) {
+  const stdTens = document.getElementById("spec-tens").value;
+  const devTens = document.getElementById("tens-dev").value;
+  const upperLimit = stdTens + devTens;
+  const lowerLimit = stdTens - devTens;
+
+  if (valueType === "MIN" && tensNum < lowerLimit) {
+    data[currentColumn][currentTensionType]["minTensNormal"] = false;
+    return false;
+  } else {
+    data[currentColumn][currentTensionType]["minTensNormal"] = true;
+  }
+
+  if (valueType === "MAX" && tensNum > upperLimit) {
+    data[currentColumn][currentTensionType]["maxTensNormal"] = false;
+    return false;
+  } else {
+    data[currentColumn][currentTensionType]["maxTensNormal"] = true;
+  }
+}
+
+function finishRecording() {
+  const confirmation = confirm("Are you sure you want to finish?");
+
+  if (confirmation === !null) {
+    writeCSV(
+      data["machineNumber"],
+      data["operator"],
+      data["prod_order"],
+      data["tpm"],
+      data["rpm"],
+      data["stdTens"],
+      data["devTens"],
+      data["itemNum"]
+    );
+  }
+}
+
+function writeCSV(machineNumber, operator, dtx, twm, rpm, stdT, devT, itemN) {
+  let csvContent = "";
+  csvContent += `Machine No.,${machineNumber},Item Number,${itemN}\n`;
+  csvContent += `RPM, ${rpm},D-tex,${dtx},Operator Name,${operator}\n`;
+  csvContent += `TPM,${twm}\n`;
+  csvContent += `Spec STD,${stdT}\n`;
+  csvContent += `±,${devT}\n`;
+  csvContent += `Spindle Number,${currentTensionType} - MIN,${currentTensionType} - MAX, Stated Problem(s)\n`;
+
+  const ids = Object.keys(data); // Get an array of data IDs
+  const numIdsToDelete = 8; // Number of IDs to delete from the end
+  console.log(data);
+
+  // Loop through all IDs except the last few and append to csvContent
+  for (let i = 0; i < ids.length - numIdsToDelete; i++) {
+    const id = ids[i];
+    const minTensionVal = data[id]?.[currentTensionType]?.["MIN"] || "";
+    const maxTensionVal = data[id]?.[currentTensionType]?.["MAX"] || "";
+    const spindleProb = data[id]?.["Problems"] || "";
+    csvContent += `${id}.,${minTensionVal}.,${maxTensionVal}., ${spindleProb}.\n`;
+  }
+  const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
+  const filename = `[${machineNumber}] - [${itemN}] - [${operator}] - [${currentDateTime}]`;
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+}
+
+function deleteData(dataType) {
+  const currentColumnData = data["tensionData"][currentCreelSide][currentCreelRow][currentColumn];
+  if (dataType === "tension") {
+    const recordedValue =
+    currentColumnData[currentValueType];
+    delete recordedValue.pop();
+  } else {
+    if (currentColumnData["Problems"]) {
+      const problems = currentColumnData["Problems"];
+      delete problems.pop();
+      console.log(currentColumnData["Problems"]);
+    } else {
+      currentColumnData["Problems"] = [];
+    }
+  }
+  saveDataToLocalStorage();
+  displayRecordedNumbers();
+  displayRecordedProbs();
+}
