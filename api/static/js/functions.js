@@ -184,8 +184,22 @@ function arrangeDataID() {
 
 // Display recorded targetted column numbers
 function displayRecordedTargetColumns() {
-  const minColNum = document.getElementById("min-col-num");
-  const maxColNum = document.getElementById("max-col-num");
+  const minColNum = document.getElementById("min-columns");
+  const maxColNum = document.getElementById("max-columns");
+
+  const rowsData = data["recordTarget"];
+  if (rowsData) {
+    const currentRowData = rowsData[currentCreelRowInput];
+    if (currentRowData) {
+      const currentSideData = currentRowData[currentCreelSideInput];
+      if (currentSideData) {
+        const currentMinColValue = currentSideData[0];
+        const currentMaxColValue = currentSideData[currentSideData.length - 1];
+        minColNum.textContent = currentMinColValue;
+        maxColNum.textContent = currentMaxColValue;
+      }
+    }
+  }
 }
 
 // Finish recording targets
