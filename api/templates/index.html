@@ -129,6 +129,11 @@
         height: 50px; /* Set the height */
       }
 
+      .data-mod-buttons {
+        display: flex;
+        justify-content: flex-start;
+      }
+
       .big-buttons {
         font-size: 14px; /* Adjust the font size as needed */
         padding: 8px 12px; /* Adjust the padding to create space around the text */
@@ -235,6 +240,26 @@
         font-weight: bold;
         font-size: 18px;
       }
+
+      .lower-buttons-cont {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      /* 
+      .lb-col {
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      .lb-col:nth-child(2) {
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+
+      .lb-row {
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      } */
     </style>
     <title>Tension Data Recorder</title>
   </head>
@@ -303,11 +328,11 @@
         </h2>
         <div class="numbers-container">
           <div class="tension-list">
-            <h3>MIN</h3>
+            <h3>MIN (<span id="min-allow-tens"></span>)</h3>
             <ul id="min-numbers-list"></ul>
           </div>
           <div class="tension-list">
-            <h3>MAX</h3>
+            <h3>MAX (<span id="max-allow-tens"></span>)</h3>
             <ul id="max-numbers-list"></ul>
           </div>
         </div>
@@ -336,37 +361,75 @@
         <input type="number" id="number" name="number" required />
       </form>
 
-      <div>
-        <button class="number-button" onclick="appendNumber(7)">7</button>
-        <button class="number-button" onclick="appendNumber(8)">8</button>
-        <button class="number-button" onclick="appendNumber(9)">9</button>
-      </div>
-      <div>
-        <button class="number-button" onclick="appendNumber(4)">4</button>
-        <button class="number-button" onclick="appendNumber(5)">5</button>
-        <button class="number-button" onclick="appendNumber(6)">6</button>
-      </div>
-      <div>
-        <button class="number-button" onclick="appendNumber(1)">1</button>
-        <button class="number-button" onclick="appendNumber(2)">2</button>
-        <button class="number-button" onclick="appendNumber(3)">3</button>
-      </div>
+      <table>
+        <tr>
+          <td>
+            <button class="number-button" onclick="appendNumber(7)">7</button>
+          </td>
+          <td>
+            <button class="number-button" onclick="appendNumber(8)">8</button>
+          </td>
+          <td>
+            <button class="number-button" onclick="appendNumber(9)">9</button>
+          </td>
+        </tr>
 
-      <div>
-        <button class="zero-button" onclick="appendNumber(0)">0</button>
-        <button class="number-button" onclick="backspaceNumber()">
-          &#9003;
-        </button>
-      </div>
+        <tr>
+          <td>
+            <button class="number-button" onclick="appendNumber(4)">4</button>
+          </td>
+          <td>
+            <button class="number-button" onclick="appendNumber(5)">5</button>
+          </td>
+          <td>
+            <button class="number-button" onclick="appendNumber(6)">6</button>
+          </td>
+        </tr>
 
-      <div class="button-container">
-        <button class="submit-button" onclick="recordNumber()">Submit</button>
-        <button
-          class="custom-button delete-button"
-          onclick="deleteData(`tension`)"
-        >
-          Delete
-        </button>
+        <tr>
+          <td>
+            <button class="number-button" onclick="appendNumber(1)">1</button>
+          </td>
+          <td>
+            <button class="number-button" onclick="appendNumber(2)">2</button>
+          </td>
+          <td>
+            <button class="number-button" onclick="appendNumber(3)">3</button>
+          </td>
+        </tr>
+      </table>
+
+      <div class="lower-buttons-cont">
+        <div class="lb-col">
+          <button
+            class="number-button"
+            style="height: 110px"
+            onclick="recordNumber()"
+          >
+            Sub
+          </button>
+        </div>
+        <div class="lb-col">
+          <div class="lb-row" style="display: flex; justify-content: center">
+            <div style="margin: auto">
+              <button class="number-button" onclick="appendNumber(0)">0</button>
+            </div>
+            <div style="margin-left: 0%">
+              <button class="number-button" onclick="backspaceNumber()">
+                &#9003;
+              </button>
+            </div>
+          </div>
+          <div class="lb-row">
+            <button
+              class="delete-button custom-button"
+              style="width: 115px"
+              onclick="deleteData(`tension`)"
+            >
+              Del
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="button-container">
@@ -434,6 +497,7 @@
           // Update any necessary UI elements based on the loaded data
           updateIDDisplay();
           updateSpecForm();
+          updateAllowTensDisplay();
           // ... (other updates)
         }
       });
@@ -506,6 +570,13 @@
         valueTypeElement.textContent = currentValueType;
       }
 
+      function updateAllowTensDisplay() {
+        const specTens = Number(data["stdTens"]);
+        const dvTens = Number(data["devTens"]);
+        document.getElementById("max-allow-tens").textContent = specTens + dvTens;
+        document.getElementById("min-allow-tens").textContent = specTens - dvTens;
+      }
+
       function prevID() {
         if (currentID > 1) {
           currentID--;
@@ -570,8 +641,34 @@
           data[currentID][currentTensionType][currentValueType] = [];
         }
 
+        if (
+          !data[currentID][currentTensionType][currentValueType]["statusTens"]
+        ) {
+          data[currentID][currentTensionType][currentValueType]["statusTens"] =
+            "";
+        }
+
+        const maxAllowTens = data["stdTens"] + data["devTens"];
+        const minAllowTens = data["stdTens"] - data["devTens"];
+        let tenStatus = "normal";
+
+        if (number > maxAllowTens) {
+          data[currentID][currentTensionType][currentValueType]["statusTens"] =
+            "high";
+          tenStatus = "high";
+          document.getElementById("problem").value = "Tension Tinggi";
+          recordProb();
+        }
+        if (number < minAllowTens) {
+          data[currentID][currentTensionType][currentValueType]["statusTens"] =
+            "low";
+          tenStatus = "low";
+          document.getElementById("problem").value = "Tension Rendah";
+          recordProb();
+        }
+
         // Check if tensions are abnormal
-        normalTens = true;
+
         // if (checkAbnormalTens(number, currentValueType) === false) {
         //   normalTens = false;
         //   console.log(normalTens);
@@ -607,7 +704,7 @@
         }
 
         console.log(data);
-        if (minValExist && maxValExist && normalTens) {
+        if (minValExist && maxValExist) {
           nextID();
           displayRecordedNumbers();
           console.log("All normal");
@@ -615,27 +712,6 @@
           changeValueType();
           displayRecordedNumbers();
           console.log("Something's not right");
-        }
-      }
-
-      function checkAbnormalTens(tensNum, valueType) {
-        const stdTens = document.getElementById("spec-tens").value;
-        const devTens = document.getElementById("tens-dev").value;
-        const upperLimit = stdTens + devTens;
-        const lowerLimit = stdTens - devTens;
-
-        if (valueType === "MIN" && tensNum < lowerLimit) {
-          data[currentID][currentTensionType]["minTensNormal"] = false;
-          return false;
-        } else {
-          data[currentID][currentTensionType]["minTensNormal"] = true;
-        }
-
-        if (valueType === "MAX" && tensNum > upperLimit) {
-          data[currentID][currentTensionType]["maxTensNormal"] = false;
-          return false;
-        } else {
-          data[currentID][currentTensionType]["maxTensNormal"] = true;
         }
       }
 
@@ -751,6 +827,10 @@
         const minNumbersList = document.getElementById("min-numbers-list");
         const maxNumbersList = document.getElementById("max-numbers-list");
 
+        // // Reset background colors to default
+        // minNumbersList.style.backgroundColor = "transparent";
+        // maxNumbersList.style.backgroundColor = "transparent";
+
         minNumbersList.innerHTML = "";
         maxNumbersList.innerHTML = "";
 
@@ -768,29 +848,31 @@
                 : [];
 
             if (currentMinValues) {
+              // if (currentMinValues["statusTens"] === "low") {
+              //   minNumbersList.style.backgroundColor = "yellow";
+              // }
+              // if (currentMinValues["statusTens"] === "normal") {
+              //   minNumbersList.style.backgroundColor = "transparent";
+              // }
               currentMinValues.forEach((number) => {
                 const listItem = document.createElement("li");
                 listItem.textContent = number;
                 minNumbersList.appendChild(listItem);
               });
-              if (currentTensionTypeData["minTensNormal"] === false) {
-                minNumbersList.style.backgroundColor = "yellow";
-              } else {
-                minNumbersList.style.backgroundColor = "transparent";
-              }
             }
 
             if (currentMaxValues) {
+              // if (currentMaxValues["statusTens"] === "high") {
+              //   maxNumbersList.style.backgroundColor = "red";
+              // }
+              // if (currentMaxValues["statusTens"] === "normal") {
+              //   maxNumbersList.style.backgroundColor = "transparent";
+              // }
               currentMaxValues.forEach((number) => {
                 const listItem = document.createElement("li");
                 listItem.textContent = number;
                 maxNumbersList.appendChild(listItem);
               });
-              if (currentTensionTypeData["maxTensNormal"] === false) {
-                maxNumbersList.style.backgroundColor = "red";
-              } else {
-                maxNumbersList.style.backgroundColor = "transparent";
-              }
             }
           }
         }
