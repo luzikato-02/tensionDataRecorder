@@ -245,21 +245,7 @@
         display: flex;
         flex-wrap: wrap;
       }
-      /* 
-      .lb-col {
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
 
-      .lb-col:nth-child(2) {
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
-
-      .lb-row {
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      } */
     </style>
     <title>Tension Data Recorder</title>
   </head>
@@ -296,17 +282,6 @@
         <label for="rpm">RPM:</label>
         <input type="text" id="rpm" name="rpm" required /><br />
 
-        <div id="tension-selector">
-          <span id="label-tension">Tension Type</span>
-          <button class="arrow-button" onclick="changeTensionType(event)">
-            &#9664;
-          </button>
-          <span id="tension-type">CT</span>
-          <button class="arrow-button" onclick="changeTensionType(event)">
-            &#9654;
-          </button>
-        </div>
-
         <div id="finish-recording-butt">
           <button class="big-buttons" onclick="nextForms()">
             Start Recording
@@ -323,7 +298,7 @@
     <div id="recorder-container">
       <div id="recorded-numbers">
         <h2>
-          Recorded <span id="displayed-tension-type">CT</span> for Spd No.
+          Recorded Tens.</span> for Spd No.
           <span id="displayed-id">1</span>:
         </h2>
         <div class="numbers-container">
@@ -475,9 +450,7 @@
 
     <script>
       let currentID = 1;
-      let currentTensionType = "CT"; // Default tension type abbreviation
       let currentValueType = "MAX"; // Default value type abbreviation
-      let abnormalColor = "";
       let data = {};
 
       let machineNumber = "";
@@ -542,27 +515,10 @@
         displayRecordedProbs();
       }
 
-      function changeTensionType() {
-        event.preventDefault();
-        currentTensionType = currentTensionType === "CT" ? "WT" : "CT";
-        updateTensionTypeDisplay();
-        displayRecordedNumbers();
-      }
-
       function changeValueType() {
         currentValueType = currentValueType === "MIN" ? "MAX" : "MIN";
         updateValueTypeDisplay();
         displayRecordedNumbers();
-      }
-
-      function updateTensionTypeDisplay() {
-        const tensionTypeElement = document.getElementById("tension-type");
-        tensionTypeElement.textContent = currentTensionType;
-        const displayedTensionType = document.getElementById(
-          "displayed-tension-type"
-        );
-        displayedTensionType.textContent =
-          currentTensionType === "CT" ? "CT" : "WT";
       }
 
       function updateValueTypeDisplay() {
@@ -573,8 +529,10 @@
       function updateAllowTensDisplay() {
         const specTens = Number(data["stdTens"]);
         const dvTens = Number(data["devTens"]);
-        document.getElementById("max-allow-tens").textContent = specTens + dvTens;
-        document.getElementById("min-allow-tens").textContent = specTens - dvTens;
+        document.getElementById("max-allow-tens").textContent =
+          specTens + dvTens;
+        document.getElementById("min-allow-tens").textContent =
+          specTens - dvTens;
       }
 
       function prevID() {
@@ -634,18 +592,13 @@
         if (!data[currentID]) {
           data[currentID] = {};
         }
-        if (!data[currentID][currentTensionType]) {
-          data[currentID][currentTensionType] = {};
-        }
-        if (!data[currentID][currentTensionType][currentValueType]) {
-          data[currentID][currentTensionType][currentValueType] = [];
+
+        if (!data[currentID][currentValueType]) {
+          data[currentID][currentValueType] = [];
         }
 
-        if (
-          !data[currentID][currentTensionType][currentValueType]["statusTens"]
-        ) {
-          data[currentID][currentTensionType][currentValueType]["statusTens"] =
-            "";
+        if (!data[currentID][currentValueType]["statusTens"]) {
+          data[currentID][currentValueType]["statusTens"] = "";
         }
 
         const maxAllowTens = data["stdTens"] + data["devTens"];
@@ -653,51 +606,32 @@
         let tenStatus = "normal";
 
         if (number > maxAllowTens) {
-          data[currentID][currentTensionType][currentValueType]["statusTens"] =
-            "high";
+          data[currentID][currentValueType]["statusTens"] = "high";
           tenStatus = "high";
           document.getElementById("problem").value = "Tension Tinggi";
           recordProb();
         }
         if (number < minAllowTens) {
-          data[currentID][currentTensionType][currentValueType]["statusTens"] =
-            "low";
+          data[currentID][currentValueType]["statusTens"] = "low";
           tenStatus = "low";
           document.getElementById("problem").value = "Tension Rendah";
           recordProb();
         }
-
-        // Check if tensions are abnormal
-
-        // if (checkAbnormalTens(number, currentValueType) === false) {
-        //   normalTens = false;
-        //   console.log(normalTens);
-        // }
-
+        
         // Add the number to the array
-        data[currentID][currentTensionType][currentValueType].push(number);
+        data[currentID][currentValueType].push(number);
         saveDataToLocalStorage();
         numberInput.value = "";
 
         minValExist = false;
         maxValExist = false;
 
-        for (let val in data[currentID][currentTensionType]) {
-          if (
-            data[currentID] &&
-            data[currentID][currentTensionType] &&
-            data[currentID][currentTensionType][val]
-          ) {
-            if (
-              val === "MIN" &&
-              data[currentID][currentTensionType][val].length > 0
-            ) {
+        for (let val in data[currentID]) {
+          if (data[currentID] && data[currentID][val]) {
+            if (val === "MIN" && data[currentID][val].length > 0) {
               minValExist = true;
             }
-            if (
-              val === "MAX" &&
-              data[currentID][currentTensionType][val].length > 0
-            ) {
+            if (val === "MAX" && data[currentID][val].length > 0) {
               maxValExist = true;
             }
           }
@@ -773,7 +707,7 @@
         csvContent += `TPM,${twm}\n`;
         csvContent += `Spec STD,${stdT}\n`;
         csvContent += `±,${devT}\n`;
-        csvContent += `Spindle Number,${currentTensionType} - MIN,${currentTensionType} - MAX, Stated Problem(s)\n`;
+        csvContent += `Spindle Number,MIN Value,MAX Value,Stated Problem(s)\n`;
 
         const ids = Object.keys(data); // Get an array of data IDs
         const numIdsToDelete = 8; // Number of IDs to delete from the end
@@ -782,8 +716,8 @@
         // Loop through all IDs except the last few and append to csvContent
         for (let i = 0; i < ids.length - numIdsToDelete; i++) {
           const id = ids[i];
-          const minTensionVal = data[id]?.[currentTensionType]?.["MIN"] || "";
-          const maxTensionVal = data[id]?.[currentTensionType]?.["MAX"] || "";
+          const minTensionVal = data[id]?.["MIN"] || "";
+          const maxTensionVal = data[id]?.["MAX"] || "";
           const spindleProb = data[id]?.["Problems"] || "";
           csvContent += `${id}.,${minTensionVal}.,${maxTensionVal}., ${spindleProb}.\n`;
         }
@@ -799,14 +733,7 @@
 
       function deleteData(dataType) {
         if (dataType === "tension") {
-          const recordedValue =
-            data[currentID][currentTensionType][currentValueType];
-          if (currentValueType === "MIN") {
-            data[currentID][currentTensionType]["minTensNormal"] = "";
-          } else {
-            tensionChk = data[currentID][currentTensionType]["maxTensNormal"] =
-              "";
-          }
+          const recordedValue = data[currentID][currentValueType];
           delete recordedValue.pop();
           saveDataToLocalStorage();
           displayRecordedNumbers();
@@ -828,53 +755,30 @@
         const minNumbersList = document.getElementById("min-numbers-list");
         const maxNumbersList = document.getElementById("max-numbers-list");
 
-        // // Reset background colors to default
-        // minNumbersList.style.backgroundColor = "transparent";
-        // maxNumbersList.style.backgroundColor = "transparent";
-
         minNumbersList.innerHTML = "";
         maxNumbersList.innerHTML = "";
 
         const currentIDData = data[currentID];
         if (currentIDData) {
-          const currentTensionTypeData = currentIDData[currentTensionType];
-          if (currentTensionTypeData) {
-            const currentMinValues =
-              currentTensionTypeData && currentTensionTypeData["MIN"]
-                ? currentTensionTypeData["MIN"]
-                : [];
-            const currentMaxValues =
-              currentTensionTypeData && currentTensionTypeData["MAX"]
-                ? currentTensionTypeData["MAX"]
-                : [];
+          const currentMinValues =
+            currentIDData && currentIDData["MIN"] ? currentIDData["MIN"] : [];
+          const currentMaxValues =
+            currentIDData && currentIDData["MAX"] ? currentIDData["MAX"] : [];
 
-            if (currentMinValues) {
-              // if (currentMinValues["statusTens"] === "low") {
-              //   minNumbersList.style.backgroundColor = "yellow";
-              // }
-              // if (currentMinValues["statusTens"] === "normal") {
-              //   minNumbersList.style.backgroundColor = "transparent";
-              // }
-              currentMinValues.forEach((number) => {
-                const listItem = document.createElement("li");
-                listItem.textContent = number;
-                minNumbersList.appendChild(listItem);
-              });
-            }
+          if (currentMinValues) {
+            currentMinValues.forEach((number) => {
+              const listItem = document.createElement("li");
+              listItem.textContent = number;
+              minNumbersList.appendChild(listItem);
+            });
+          }
 
-            if (currentMaxValues) {
-              // if (currentMaxValues["statusTens"] === "high") {
-              //   maxNumbersList.style.backgroundColor = "red";
-              // }
-              // if (currentMaxValues["statusTens"] === "normal") {
-              //   maxNumbersList.style.backgroundColor = "transparent";
-              // }
-              currentMaxValues.forEach((number) => {
-                const listItem = document.createElement("li");
-                listItem.textContent = number;
-                maxNumbersList.appendChild(listItem);
-              });
-            }
+          if (currentMaxValues) {
+            currentMaxValues.forEach((number) => {
+              const listItem = document.createElement("li");
+              listItem.textContent = number;
+              maxNumbersList.appendChild(listItem);
+            });
           }
         }
       }
