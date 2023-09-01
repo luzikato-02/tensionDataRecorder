@@ -4,18 +4,16 @@ let currentCreelRow = "A";
 let currentCreelRowInput = "A";
 let currentCreelSide = "Ai";
 let currentCreelSideInput = "Out";
-let abnormalColor = "";
 let data = {};
 let colIDs = [];
 
-let machineNumber = "";
-let operator = "";
-let prod_order = "";
-let tpm = "";
-let stl = "";
-let cntNoens = "";
-let colCodeens = "";
-let itemNum = "";
+machineNumber = "";
+operator = "";
+prodOrder = "";
+baleNo = "";
+colorCode = "";
+styleSpec = "";
+counterNo = "";
 
 // Load data from localStorage when the page is loaded
 window.addEventListener("load", () => {
@@ -141,8 +139,8 @@ function recordColumnNumbers() {
   }
 
   // Empty form after recording data
-  maxColNum.value = "";
-  minColNum.value = "";
+  document.getElementById("max-col-num").value = "";
+  document.getElementById("min-col-num").value = "";
 
   console.log(data);
   // If both sides column numbers is filled, switch to next creel row
@@ -186,6 +184,9 @@ function arrangeDataID() {
 function displayRecordedTargetColumns() {
   const minColNum = document.getElementById("min-columns");
   const maxColNum = document.getElementById("max-columns");
+
+  maxColNum.innerHTML = "";
+  minColNum.innerHTML = "";
 
   const rowsData = data["recordTarget"];
   if (rowsData) {
@@ -409,14 +410,9 @@ function recordTensionData(directive) {
     ] = [];
   }
 
-  // Check if tensions are abnormal
-  normalTens = true;
-  // if (checkAbnormalTens(number, currentValueType) === false) {
-  //   normalTens = false;
-  //   console.log(normalTens);
-  // }
-
+  let tensMode = false;
   if (directive === "tens") {
+    tensMode = true;
     // Add the number to the array
     data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
       currentValueType
@@ -425,9 +421,11 @@ function recordTensionData(directive) {
   }
 
   if (directive === "prob") {
+    // Add the problem to the array
     data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
       "Problems"
     ].push(problems);
+    probInput.value = "";
   }
 
   console.log(data);
@@ -462,7 +460,7 @@ function recordTensionData(directive) {
   }
 
   console.log(data);
-  if (minValExist && maxValExist && normalTens) {
+  if (minValExist && maxValExist && tensMode) {
     changeColumnNumber("next");
     changeValueType();
   } else {
@@ -480,42 +478,24 @@ function displayRecordedNumbers() {
   minNumbersList.innerHTML = "";
   maxNumbersList.innerHTML = "";
 
-  const currentSideData = data["tensionData"][currentCreelSide];
-  if (currentSideData) {
-    const currentRowData = currentSideData[currentCreelRow];
-    if (currentRowData) {
-      const currentColumnData = currentRowData[currentColumn];
-      if (currentColumnData) {
-        const currentTenValueType = currentColumnData[currentValueType];
-        if (currentTenValueType) {
-          const currentMaxValues =
-            currentColumnData && currentColumnData["MAX"]
-              ? currentColumnData["MAX"]
-              : [];
-          const currentMinValues =
-            currentColumnData && currentColumnData["MIN"]
-              ? currentColumnData["MIN"]
-              : [];
+  const currentColumnData =
+    data?.tensionData?.[currentCreelSide]?.[currentCreelRow]?.[currentColumn];
 
-          console.log(currentTenValueType);
-          if (currentMinValues) {
-            currentMinValues.forEach((number) => {
-              const listItem = document.createElement("li");
-              listItem.textContent = number;
-              minNumbersList.appendChild(listItem);
-            });
-          }
+  if (currentColumnData) {
+    const currentMaxValues = currentColumnData["MAX"] || [];
+    const currentMinValues = currentColumnData["MIN"] || [];
 
-          if (currentMaxValues) {
-            currentMaxValues.forEach((number) => {
-              const listItem = document.createElement("li");
-              listItem.textContent = number;
-              maxNumbersList.appendChild(listItem);
-            });
-          }
-        }
-      }
-    }
+    currentMinValues.forEach((number) => {
+      const listItem = document.createElement("li");
+      listItem.textContent = number;
+      minNumbersList.appendChild(listItem);
+    });
+
+    currentMaxValues.forEach((number) => {
+      const listItem = document.createElement("li");
+      listItem.textContent = number;
+      maxNumbersList.appendChild(listItem);
+    });
   }
 }
 
@@ -523,47 +503,22 @@ function displayRecordedProbs() {
   const problemList = document.getElementById("prob-list");
   problemList.innerHTML = "";
 
-  if (data["tensionData"][currentCreelSide][currentCreelRow][currentColumn]) {
-    const currentColumnProbs =
-      data["tensionData"][currentCreelSide][currentCreelRow][currentColumn] &&
-      data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
-        "Problems"
-      ]
-        ? data["tensionData"][currentCreelSide][currentCreelRow][currentColumn][
-            "Problems"
-          ]
-        : [];
+  const currentColumnData =
+    data?.tensionData?.[currentCreelSide]?.[currentCreelRow]?.[currentColumn];
+
+  if (currentColumnData) {
+    const currentColumnProbs = currentColumnData["Problems"];
 
     if (currentColumnProbs) {
       currentColumnProbs.forEach((problem) => {
         const listItem = document.createElement("li");
         listItem.textContent = problem;
         problemList.appendChild(listItem);
+        console.log(problem);
       });
     }
   }
 }
-
-// function checkAbnormalTens(tensNum, valueType) {
-//   const cntNoens = document.getElementById("spec-tens").value;
-//   const colCodeens = document.getElementById("tens-dev").value;
-//   const upperLimit = cntNoens + colCodeens;
-//   const lowerLimit = cntNoens - colCodeens;
-
-//   if (valueType === "MIN" && tensNum < lowerLimit) {
-//     data[currentColumn][currentTensionType]["minTensNormal"] = false;
-//     return false;
-//   } else {
-//     data[currentColumn][currentTensionType]["minTensNormal"] = true;
-//   }
-
-//   if (valueType === "MAX" && tensNum > upperLimit) {
-//     data[currentColumn][currentTensionType]["maxTensNormal"] = false;
-//     return false;
-//   } else {
-//     data[currentColumn][currentTensionType]["maxTensNormal"] = true;
-//   }
-// }
 
 function finishRecording() {
   const confirmation = confirm("Are you sure you want to finish?");
