@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      .forms-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      #recorder-container {
+        margin: 50px;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+      }
+
+      #initial-forms-container, #row-number-container {
+        text-align: center;
+      }
+
+      #initial-forms-container h1 {
+        margin: 5px;
+      }
+
+      .data-forms {
+        display: inline-block;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+        margin: 20px;
+        justify-content: center;
+      }
+
+      .data-forms label{
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .data-forms input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+      }
+
+      /* #finish-form {
+        display: inline-block;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+      } */
+
+
+      /* #finish-form label {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      #finish-form input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+      } */
+
+      #number-form {
+        margin: 20px 0;
+      }
+
+      #finish-form {
+        margin: 20px 0;
+      }
+
+      #problem-form {
+        margin: 20px;
+      }
+
+      #prob-list {
+        text-align: center;
+      }
+
+      .problem-stat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 30px;
+      }
+
+      #tension-selector {
+        margin: 10px 0;
+      }
+
+      #finish-recording-butt {
+        margin-left: 50px;
+        margin-right: 50px;
+      }
+
+      #reset-button {
+        margin-left: 50px;
+        margin-right: 50px;
+        color: whitesmoke;
+      }
+
+      .nav-button {
+        margin-left: 50px;
+        margin-right: 50px;
+        color: whitesmoke;
+      }
+
+      .number-button {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        font-size: 18px;
+      }
+
+      .submit-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .submit-prob-button {
+        font-size: 14px; /* Adjust the font size as needed */
+        padding: 8px 12px; /* Adjust the padding to create space around the text */
+        margin: 10px;
+      }
+
+      /* Modify the font size and add padding to the Submit, Finish, and Delete buttons */
+      .submit-button,
+      .delete-button {
+        font-size: 14px; /* Adjust the font size as needed */
+        padding: 8px 12px; /* Adjust the padding to create space around the text */
+        margin: 5px;
+        width: 85px; /* Set the width */
+        height: 50px; /* Set the height */
+      }
+
+      .big-buttons {
+        font-size: 14px; /* Adjust the font size as needed */
+        padding: 8px 12px; /* Adjust the padding to create space around the text */
+        margin: 5px;
+        width: 180px; /* Set the width */
+        height: 40px; /* Set the height */
+      }
+
+      #recorded-numbers {
+        margin-top: 20px;
+      }
+
+      .arrow-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      #current-id {
+        font-size: 24px;
+        margin: 0 10px;
+      }
+
+      .delete-button {
+        background-color: #ff0000;
+        color: white;
+      }
+
+      #tension-type {
+        font-size: 24px;
+        margin: 10px;
+      }
+
+      #column {
+        font-size: 24px;
+        margin: 10px;
+      }
+
+      #column-side {
+        font-size: 24px;
+        margin: 10px;
+      }
+
+      /* Added styles for tension type buttons */
+      .tension-type-button {
+        width: 130px;
+        height: 50px;
+        margin: 5px;
+        font-size: 14px;
+      }
+
+      .tension-type-button {
+        width: 130px;
+        height: 50px;
+        margin: 5px;
+        font-size: 14px;
+      }
+
+      .zero-button {
+        width: 115px;
+        height: 50px;
+        margin: 4px;
+        font-size: 18px;
+      }
+
+      /* Added styles for displayed tension type */
+      #displayed-tension-type {
+        font-size: 18px;
+        margin-top: 5px;
+      }
+
+      .numbers-container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px;
+      }
+
+      .tension-list {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+      }
+
+      .tension-list h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .tension-list ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 10px 0;
+      }
+
+      .prob-stat-list {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        text-align: left;
+      }
+
+      .prob-stat-list ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 10px 0;
+        color: red;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .toggle-types-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 10px;
+      }
+
+      .types-label {
+        justify-content: center;
+      }
+
+      .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .label {
+        flex: 1;
+        padding: 5px;
+        font-weight: bold;
+      }
+
+      .input-field {
+        padding: 5px;
+        margin-inline: 5px;
+      }
+
+      .input-group {
+        display: flex;
+        align-items: center;
+      }
+
+      .column {
+        float: left;
+        width: 33.33%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      .type-selector-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 20px;
+      }
+
+      .data-forms h2 {
+        text-align: center;
+      }
+    </style>
+    <title>Tension Data Recorder</title>
+  </head>
+  <body>
+    <div class="forms-container" id="initial-forms-container">
+      <h1>Tension Data Recorder</h1>
+      <form class="data-forms" id="finish-form">
+        <label for="production-order">Production Order:</label>
+        <input
+          type="text"
+          id="production-order"
+          name="production-order"
+          required
+        /><br />
+
+        <label for="machine-number">Machine Number:</label>
+        <input
+          type="text"
+          id="machine-number"
+          name="machine-number"
+          required
+        /><br />
+
+        <label for="operator">Operator:</label>
+        <input type="text" id="operator" name="operator" required /><br />
+
+        <label for="bale-no">Bale Number:</label>
+        <input type="text" id="bale-no" name="bale-no" required /><br />
+
+        <label for="color-code">Color Code:</label>
+        <input type="text" id="color-code" name="color-code" required /><br />
+
+        <label for="style-spec">Style:</label>
+        <input type="text" id="style-spec" name="style-spec" required /><br />
+
+        <label for="counter-number">Counter Number:</label>
+        <input
+          type="text"
+          id="counter-number"
+          name="counter-number"
+          required
+        /><br />
+
+        
+
+        <div id="finish-recording-butt">
+          <button class="big-buttons" onclick="recordSpecs()">
+            Start Recording
+          </button>
+        </div>
+        <div id="reset-button">
+          <button class="big-buttons" onclick="resetStorage()">
+            Clear Data
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="forms-container" id="row-number-container">
+      <form class="data-forms" id="row-num-forms">
+        <h2>Input Column Numbers</h2>
+        <div class="numbers-container">
+          <div class="tension-list">
+            <h3>FROM</h3>
+            <ul id="min-columns"></ul>
+          </div>
+          <div class="tension-list">
+            <h3>TO</h3>
+            <ul id="max-columns"></ul>
+          </div>
+        </div>
+        <div class="type-selector-group">
+          <div class="types-label"><span id="label-value">Creel Side</span></div>
+          <div class="types-toggle">
+            <button class="arrow-button" onclick="changeCreelSideInput()">
+              &#9664;
+            </button>
+            <span id="creel-side-input">Out</span>
+            <button class="arrow-button" onclick="changeCreelSideInput()">
+              &#9654;
+            </button>
+          </div>
+
+        </div>
+        <div class="type-selector-group">
+          <div class="types-label"><span id="label-value">Creel Row</span></div>
+          <div class="types-toggle">
+            <button class="arrow-button" onclick="changeCreelRowInput('prev')">
+              &#9664;
+            </button>
+            <span id="row-side-input">A</span>
+            <button class="arrow-button" onclick="changeCreelRowInput('next')">
+              &#9654;
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label" for="min-column-num">Enter Range:</label>
+          <div class="input-group">
+            <input class="input-field" type="text" id="min-col-num" name="min-col-num" size="5" placeholder="From">
+            <input class="input-field" type="text" id="max-col-num" name="max-col-num" size="5" placeholder="To">
+          </div>
+        </div>
+        
+        <div id="finish-recording-butt">
+          <button class="big-buttons" onclick="recordColumnNumbers()">
+            Submit
+          </button>
+        </div>
+        <div id="reset-button">
+          <button class="big-buttons" onclick="finishRecordRowNums()">
+            Next
+          </button>
+        </div>
+        <div id="reset-button">
+          <button class="big-buttons" onclick="autoScroll(event, 0)">
+            Back
+          </button>
+        </div>
+      
+      </form>
+
+    </div>
+
+    <div class="forms-container" id="recorder-container">
+      <div id="recorded-numbers">
+        <h2>
+          <span>Recorded Tens.</span> for Column No.
+          <span id="displayed-id">1</span>:
+        </h2>
+        <div class="numbers-container">
+          <div class="tension-list">
+            <h3>MIN</h3>
+            <ul id="min-numbers-list"></ul>
+          </div>
+          <div class="tension-list">
+            <h3>MAX</h3>
+            <ul id="max-numbers-list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggle-types-container">
+        <div class="types-label"><span id="label-value">Creel Side</span></div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeCreelSide('prev')">
+            &#9664;
+          </button>
+          <span id="column-side">Ai</span>
+          <button class="arrow-button" onclick="changeCreelSide('next')">
+            &#9654;
+          </button>
+        </div>
+
+        <div class="types-label">
+          <span id="label-value">Creel Row</span>
+        </div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeCreelRow('prev')">
+            &#9664;
+          </button>
+          <span id="column">A</span>
+          <button class="arrow-button" onclick="changeCreelRow('next')">
+            &#9654;
+          </button>
+        </div>
+
+        <div class="types-label"><span id="label-spindle">Col. No.</span></div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeColumnNumber('prev')">&#9664;</button>
+          <span id="current-id">N</span>
+          <button class="arrow-button" onclick="changeColumnNumber('next')">&#9654;</button>
+        </div>
+
+        <div class="types-label"><span id="label-value">Value Type</span></div>
+        <div class="types-toggle">
+          <button class="arrow-button" onclick="changeValueType()">
+            &#9664;
+          </button>
+          <span id="value-type">MAX</span>
+          <button class="arrow-button" onclick="changeValueType()">
+            &#9654;
+          </button>
+        </div>
+      </div>
+
+      <form id="number-form">
+        <label for="number">Enter Number: </label>
+        <input type="number" id="number" name="number" required />
+      </form>
+
+      <div>
+        <button class="number-button" onclick="appendNumber(7)">7</button>
+        <button class="number-button" onclick="appendNumber(8)">8</button>
+        <button class="number-button" onclick="appendNumber(9)">9</button>
+      </div>
+      <div>
+        <button class="number-button" onclick="appendNumber(4)">4</button>
+        <button class="number-button" onclick="appendNumber(5)">5</button>
+        <button class="number-button" onclick="appendNumber(6)">6</button>
+      </div>
+      <div>
+        <button class="number-button" onclick="appendNumber(1)">1</button>
+        <button class="number-button" onclick="appendNumber(2)">2</button>
+        <button class="number-button" onclick="appendNumber(3)">3</button>
+      </div>
+
+      <div>
+        <button class="zero-button" onclick="appendNumber(0)">0</button>
+        <button class="number-button" onclick="backspaceNumber()">
+          &#9003;
+        </button>
+      </div>
+
+      <div class="button-container">
+        <button class="submit-button" onclick="recordTensionData('tens')">Submit</button>
+        <button
+          class="custom-button delete-button"
+          onclick="deleteData(`tension`)"
+        >
+          Delete
+        </button>
+      </div>
+
+      <div class="button-container">
+        <button class="big-buttons" onclick="autoScroll(event, 3000)">
+          Report Problem
+        </button>
+      </div>
+
+      <div class="button-container">
+        <button class="submit-button" onclick="autoScroll(event, 1000)">
+          Back
+        </button>
+        <button class="submit-button" onclick="finishRecording()">
+          Finish
+        </button>
+      </div>
+    </div>
+
+    <div class="problem-stat-container">
+      <div id="recorded-problems">
+        <h2>
+          Recorded Problem for Col. No.
+          <span id="displayed-id-prob">1</span>:
+        </h2>
+        <div class="probs-container">
+          <div class="prob-stat-list">
+            <ul id="prob-list"></ul>
+          </div>
+        </div>
+        <form id="problem-form">
+          <label for="problem">Enter Problem: </label>
+          <input type="problem" id="problem" name="problem" />
+        </form>
+        <button class="submit-button" onclick="recordTensionData('prob')">Submit</button>
+        <button class="custom-button delete-button" onclick="deleteData(`a`)">
+          Delete
+        </button>
+        <button class="submit-button" onclick="autoScroll(event, 2000)">
+          Back
+        </button>
+      </div>
+    </div>
+
+    <script src="{{url_for('static', filename='js/weaving_func.js')}}"></script>
+  </body>
+</html>
