@@ -160,7 +160,7 @@ def download_tw(entry_id):
     csv = TwistingData.query.get(entry_id).csv_file
     m_n = TwistingData.query.get(entry_id).machine_number
     op = TwistingData.query.get(entry_id).operator
-    po = TwistingData.query.get(entry_id).production_order
+    i_n = TwistingData.query.get(entry_id).item_number
     dt = TwistingData.query.get(entry_id).datetime
 
     # Create a response with the CSV data and set appropriate headers
@@ -168,7 +168,26 @@ def download_tw(entry_id):
         io.BytesIO(csv),
         mimetype='text/csv',
         as_attachment=True,
-        download_name=f'[{m_n}] - [{po}] - [{op}] - [{dt}].csv'
+        download_name=f'[{m_n}] - [{i_n}] - [{op}] - [{dt}].csv'
+    )
+    return response
+
+@app.route('/download_wv/<entry_id>')
+def download_wv(entry_id):
+    # Retrieve the associated CSV data based on the entry_id
+    # For example, assuming your database model has a 'data' column
+    csv = WeavingData.query.get(entry_id).csv_file
+    m_n = WeavingData.query.get(entry_id).machine_number
+    op = WeavingData.query.get(entry_id).operator
+    p_o = WeavingData.query.get(entry_id).production_order
+    dt = WeavingData.query.get(entry_id).datetime
+
+    # Create a response with the CSV data and set appropriate headers
+    response = send_file(
+        io.BytesIO(csv),
+        mimetype='text/csv',
+        as_attachment=True,
+        download_name=f'[{m_n}] - [{p_o}] - [{op}] - [{dt}].csv'
     )
     return response
 
