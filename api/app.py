@@ -176,4 +176,4 @@ if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
         create_tables()
-    app.run(debug=True)
+    app.run(debug=False)
