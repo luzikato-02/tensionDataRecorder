@@ -157,13 +157,11 @@ let currentID = 1;
         if (number > maxAllowTens) {
           data[currentID][currentValueType]["statusTens"] = "high";
           tenStatus = "high";
-          document.getElementById("problem").value = "Tension Tinggi";
           recordProb();
         }
         if (number < minAllowTens) {
           data[currentID][currentValueType]["statusTens"] = "low";
           tenStatus = "low";
-          document.getElementById("problem").value = "Tension Rendah";
           recordProb();
         }
         
