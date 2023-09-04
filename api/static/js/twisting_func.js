@@ -277,6 +277,30 @@ let currentID = 1;
         link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
         link.setAttribute("download", filename);
         document.body.appendChild(link);
+
+        var blob = new Blob([csvContent], { type: "text/csv" });
+        // Create a FormData object to send both the CSV data
+        let formData = new FormData();
+        formData.append("datetime", currentDateTime);
+        formData.append("operator", operator);
+        formData.append("machine_number", machineNumber);
+        formData.append("item_number", itemN);
+        formData.append("rpm", rpm);
+        formData.append("tpm", twm);
+        formData.append("spec_tension", stdT);
+        formData.append("dev_tension", devT);
+        formData.append("csv_data", blob, filename); // Add CSV data
+
+        fetch("/store_tw", {
+          method: "POST",
+          body: formData
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            console.log(result); // Display server response
+          });
+
+
         link.click();
       }
 

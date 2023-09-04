@@ -7,13 +7,15 @@ let currentCreelSideInput = "Out";
 let data = {};
 let colIDs = [];
 
-machineNumber = "";
-operator = "";
-prodOrder = "";
-baleNo = "";
-colorCode = "";
-styleSpec = "";
-counterNo = "";
+let machineNumber = "";
+let operator = "";
+let prodOrder = "";
+let baleNo = "";
+let colorCode = "";
+let styleSpec = "";
+let counterNo = "";
+let specTens = "";
+let devTens = "";
 
 // Load data from localStorage when the page is loaded
 window.addEventListener("load", () => {
@@ -47,6 +49,8 @@ function recordSpecs() {
   colorCode = document.getElementById("color-code").value;
   styleSpec = document.getElementById("style-spec").value;
   counterNo = document.getElementById("counter-number").value;
+  devTens = document.getElementById("spec-tens").value;
+  stdTens = document.getElementById("dev-tens").value;
 
   // If stored data exist, show recorded specs as form values
   data["machineNumber"] = machineNumber;
@@ -56,6 +60,8 @@ function recordSpecs() {
   data["style"] = styleSpec;
   data["counterNo"] = counterNo;
   data["colorCode"] = colorCode;
+  data["specTens"] = specTens;
+  data["stdTens"] = stdTens;
 
   // After appending new specs data to data array, update stored data array in localStorage
   saveDataToLocalStorage();
@@ -261,6 +267,8 @@ function updateSpecForm() {
   document.getElementById("color-code").value = data["colorCode"];
   document.getElementById("style-spec").value = data["style"];
   document.getElementById("counter-number").value = data["counterNo"];
+  document.getElementById("spec-tens").value = data["specTens"];
+  document.getElementById("dev-tens").value = data["devTens"];
 }
 
 function changeCreelRow(direction) {
@@ -531,12 +539,24 @@ function finishRecording() {
       data["baleNo"],
       data["style"],
       data["counterNo"],
-      data["colorCode"]
+      data["colorCode"],
+      data["stdTens"],
+      data["devTens"]
     );
   }
 }
 
-function writeCSV(machineNumber, operator, po, bale, stl, cntNo, colCode) {
+function writeCSV(
+  machineNumber,
+  operator,
+  po,
+  bale,
+  stl,
+  cntNo,
+  colCode,
+  stdTen,
+  devTen
+) {
   let csvContent = "";
   const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
   csvContent += `Tanggal,${currentDateTime}\n`;
@@ -573,6 +593,31 @@ function writeCSV(machineNumber, operator, po, bale, stl, cntNo, colCode) {
   link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
   link.setAttribute("download", filename);
   document.body.appendChild(link);
+
+  var blob = new Blob([csvContent], { type: "text/csv" });
+  // Create a FormData object to send both the CSV data
+  let formData = new FormData();
+  formData.append("datetime", currentDateTime);
+  formData.append("operator", operator);
+  formData.append("machine_number", machineNumber);
+  formData.append("production_order", po);
+  formData.append("bale_number", bale);
+  formData.append("color_code", colCode);
+  formData.append("style", stl);
+  formData.append("counter_number", cntNo);
+  formData.append("spec_tension", stdTen);
+  formData.append("dev_tension", devTen);
+  formData.append("csv_data", blob, filename); // Add CSV data
+
+  fetch("/store_wv", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.text())
+    .then((result) => {
+      console.log(result); // Display server response
+    });
+
   link.click();
 }
 
