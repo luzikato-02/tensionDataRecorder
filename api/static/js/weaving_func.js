@@ -49,8 +49,8 @@ function recordSpecs() {
   colorCode = document.getElementById("color-code").value;
   styleSpec = document.getElementById("style-spec").value;
   counterNo = document.getElementById("counter-number").value;
-  devTens = document.getElementById("spec-tens").value;
-  stdTens = document.getElementById("dev-tens").value;
+  stdTens = document.getElementById("spec-tens").value;
+  devTens = document.getElementById("dev-tens").value;
 
   // If stored data exist, show recorded specs as form values
   data["machineNumber"] = machineNumber;
@@ -60,8 +60,8 @@ function recordSpecs() {
   data["style"] = styleSpec;
   data["counterNo"] = counterNo;
   data["colorCode"] = colorCode;
-  data["specTens"] = specTens;
   data["stdTens"] = stdTens;
+  data["devTens"] = devTens;
 
   // After appending new specs data to data array, update stored data array in localStorage
   saveDataToLocalStorage();
@@ -267,7 +267,7 @@ function updateSpecForm() {
   document.getElementById("color-code").value = data["colorCode"];
   document.getElementById("style-spec").value = data["style"];
   document.getElementById("counter-number").value = data["counterNo"];
-  document.getElementById("spec-tens").value = data["specTens"];
+  document.getElementById("spec-tens").value = data["stdTens"];
   document.getElementById("dev-tens").value = data["devTens"];
 }
 
