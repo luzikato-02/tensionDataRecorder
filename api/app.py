@@ -5,10 +5,10 @@ import io
 import os
 
 
-username = 'fi5mxjwkkln2fii4anq0'
-password = 'pscale_pw_6CIwLOYYaFna3iA9SXe7bJjcghaTxrrZKXU49byYjHo'
-hostname = 'aws.connect.psdb.cloud'
-db_name = 'tension_data'
+username = os.getenv('DB_USERNAME')
+password = os.getenv('DB_PASSWORD')
+hostname = os.getenv('DB_HOST')
+db_name = os.getenv('DB_NAME')
 port = 3306
 
 app = Flask(__name__)
