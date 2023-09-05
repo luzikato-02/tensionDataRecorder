@@ -5,10 +5,15 @@ import io
 import os
 
 
-username = 'fi5mxjwkkln2fii4anq0'
-password = 'pscale_pw_6CIwLOYYaFna3iA9SXe7bJjcghaTxrrZKXU49byYjHo'
-hostname = 'aws.connect.psdb.cloud'
-db_name = 'tension_data'
+# username = 'fi5mxjwkkln2fii4anq0'
+# password = 'pscale_pw_6CIwLOYYaFna3iA9SXe7bJjcghaTxrrZKXU49byYjHo'
+# hostname = 'aws.connect.psdb.cloud'
+# db_name = 'tension_data'
+
+username = os.environ.get('DB_USERNAME')
+password = os.environ.get('DB_PASSWORD')
+hostname = os.environ.get('DB_HOST')
+db_name = os.environ.get('DB_NAME')
 port = 3306
 
 app = Flask(__name__)
@@ -16,7 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{pas
 db = SQLAlchemy(app)
 
 class TwistingData(db.Model):
-    id = db.Column(db.String(255), primary_key=True, default=str(uuid.uuid4()))
+    id = db.Column(db.String(255), primary_key=True, default=str(uuid.uuid4))
     datetime = db.Column(db.String(255), nullable=False)
     operator = db.Column(db.String(255))
     machine_number = db.Column(db.String(255))
@@ -28,7 +33,7 @@ class TwistingData(db.Model):
     csv_file = db.Column(db.LargeBinary)
 
 class WeavingData(db.Model):
-    id = db.Column(db.String(255), primary_key=True, default=str(uuid.uuid4()))
+    id = db.Column(db.String(255), primary_key=True, default=str(uuid.uuid4))
     datetime = db.Column(db.String(255), nullable=False)
     operator = db.Column(db.String(255))
     machine_number = db.Column(db.String(255))
