@@ -3,15 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 import io
 import os
 
-# username = os.environ.get('DB_USERNAME')
-# password = os.environ.get('DB_PASSWORD')
-# hostname = os.environ.get('DB_HOST')
-# db_name = os.environ.get('DB_NAME')
-
-username = 's46niqagxd5jjmw6ww0h'
-password = 'pscale_pw_FLLUpf2Uj83nOFlRCapGw7wnesJ40zSpnIWway5yWLe'
-hostname = 'aws.connect.psdb.cloud'
-db_name = 'tension_data'
+username = os.environ.get('DB_USERNAME')
+password = os.environ.get('DB_PASSWORD')
+hostname = os.environ.get('DB_HOST')
+db_name = os.environ.get('DB_NAME')
 
 print(f"Database Host: {hostname}")
 port = 3306
