@@ -33,7 +33,7 @@ $(document).ready(function () {
       dataSrc: "", // Data will be retrieved from this URL
     },
     columns: [
-      { data: "id" },
+      { data: "datetime" },
       { data: "operator" },
       { data: "machine_number" },
       { data: "production_order" },
