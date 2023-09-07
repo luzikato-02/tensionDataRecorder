@@ -132,7 +132,7 @@ def store_wv():
 def get_data():
     data = TwistingData.query.all()
     return jsonify([{'id': ten_data.id, 
-                     'datetime': ten_data.datetime.strftime('%Y-%m-%d %H:%M:%S'), 
+                     'datetime': ten_data.datetime, 
                      'operator': ten_data.operator, 
                      'machine_number': ten_data.machine_number,
                      'item_number': ten_data.item_number,
@@ -145,7 +145,7 @@ def get_data():
 def get_wv_data():
     data = WeavingData.query.all()
     return jsonify([{'id': ten_data.id, 
-                     'datetime': ten_data.datetime.strftime('%Y-%m-%d %H:%M:%S'), 
+                     'datetime': ten_data.datetime, 
                      'operator': ten_data.operator, 
                      'machine_number': ten_data.machine_number,
                      'production_order': ten_data.production_order,
