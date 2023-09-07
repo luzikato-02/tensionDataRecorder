@@ -7,7 +7,14 @@ $(document).ready(function () {
     columns: [
       {
         data: "datetime",
-        
+        render: function (data, type, row) {
+          if (type === "display" || type === "filter") {
+            // Modify this code to match the datetime format from the server
+            var datetime = new Date(data);
+            return datetime.toLocaleString(); // Adjust the format as needed
+          }
+          return data;
+        },
       },
       { data: "operator" },
       { data: "item_number" },
