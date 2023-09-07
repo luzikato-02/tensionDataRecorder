@@ -5,6 +5,7 @@ $(document).ready(function () {
       dataSrc: "", // Data will be retrieved from this URL
     },
     columns: [
+      { data: "id" },
       { data: "operator" },
       { data: "item_number" },
       { data: "machine_number" },
