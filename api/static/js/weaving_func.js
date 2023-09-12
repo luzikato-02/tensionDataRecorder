@@ -587,7 +587,7 @@ function writeCSV(
     }
   }
 
-  const filename = `[${machineNumber}] - [${po}] - [${operator}] - [${currentDateTime}]`;
+  const filename = `[${machineNumber}] - [${po}] - [${currentDateTime}] - [${operator}]`;
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", "data:text/csv;charset=utf-8," + encodedUri);
