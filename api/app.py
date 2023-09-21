@@ -166,7 +166,7 @@ def download_tw(entry_id):
     # Create a response with the CSV data and set appropriate headers
     response = send_file(
         io.BytesIO(csv),
-        mimetype='text/csv',
+        mimetype='text/csv; charset=utf-8',
         as_attachment=True,
         download_name=f'[{m_n}] - [{i_n}] - [{op}] - [{dt}].csv'
     )
@@ -185,7 +185,7 @@ def download_wv(entry_id):
     # Create a response with the CSV data and set appropriate headers
     response = send_file(
         io.BytesIO(csv),
-        mimetype='text/csv',
+        mimetype='text/csv; charset=utf-8',
         as_attachment=True,
         download_name=f'[{m_n}] - [{p_o}] - [{op}] - [{dt}].csv'
     )
