@@ -7,11 +7,13 @@ username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
 hostname = os.environ.get('DB_HOST')
 db_name = os.environ.get('DB_NAME')
+bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 print(f"Database Host: {hostname}")
 port = 3306
-
+bot = Bot(token=bot_token)
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
 db = SQLAlchemy(app)
 
@@ -190,6 +192,19 @@ def download_wv(entry_id):
         download_name=f'[{m_n}] - [{p_o}] - [{op}] - [{dt}].csv'
     )
     return response
+
+@app.route("/telegram-webhook", methods=["POST"])
+def webhook():
+    update = request.get_json()
+    if "message" in update:
+        message = update["message"]
+        chat_id = message["chat"]["id"]
+        text = message["SUCCESS"]
+        # Add your bot logic here
+        bot.send_message(chat_id, f"You said: {text}")
+    
+    return "OK"
+
 
 if __name__ == '__main__':
     with app.app_context():  # Enter the application context
