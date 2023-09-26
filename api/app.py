@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 from telegram import Bot
+from telegram import Update
+from telegram.ext import CommandHandler, MessageHandler, Filters, Updater
 import io
 import os
 
@@ -195,21 +197,30 @@ def download_wv(entry_id):
     )
     return response
 
-@app.route("/telegram-webhook", methods=["POST"])
-def webhook():
-    update = request.get_json()
-    if "message" in update:
-        message = update["message"]
-        chat_id = message["chat"]["id"]
-        text = message["SUCCESS"]
-        # Add your bot logic here
-        bot.send_message(chat_id, f"You said: {text}")
-    
-    return "OK"
+@app.route('/send-message', methods=['POST'])
+def send_message(update: Update, context):
+    message_text = update.message.text
+    chat_id = update.message.chat_id
+
+    if chat_id and message_text:
+        try:
+            bot.send_message(chat_id, message_text)
+            return 'Message sent successfully.'
+        except Exception as e:
+            return f'Error sending message: {str(e)}'
+    else:
+        return 'Missing chat_id or message in the request data.'
+
+# Create an Updater and add the message handler
+updater = Updater(token=bot_token, use_context=True)
+dispatcher = updater.dispatcher
+message_handler = MessageHandler(Filters.text & ~Filters.command, telegram_message_handler)
+dispatcher.add_handler(message_handler)
 
 
 if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
+        updater.start_polling()
         create_tables()
     app.run(debug=False)
