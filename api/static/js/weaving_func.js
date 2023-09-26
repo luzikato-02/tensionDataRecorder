@@ -594,7 +594,7 @@ function writeCSV(
   link.setAttribute("download", filename);
   document.body.appendChild(link);
 
-  var blob = new Blob([encodedUri], { type: "text/csv" });
+  var blob = new Blob([encodedUri], { type: "data:text/csv;charset=utf-8," });
   // Create a FormData object to send both the CSV data
   let formData = new FormData(document.querySelector('form'));
   formData.append("datetime", currentDateTime);
