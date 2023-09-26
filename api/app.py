@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
+from telegram import Bot
 import io
 import os
 
@@ -7,12 +8,13 @@ username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
 hostname = os.environ.get('DB_HOST')
 db_name = os.environ.get('DB_NAME')
-bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
+bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
 
 print(f"Database Host: {hostname}")
 port = 3306
-bot = Bot(token=bot_token)
+
 app = Flask(__name__)
+bot = Bot(token=bot_token)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
 db = SQLAlchemy(app)
@@ -210,4 +212,4 @@ if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
         create_tables()
-    app.run(debug=True)
+    app.run(debug=False)
