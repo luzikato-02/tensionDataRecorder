@@ -287,7 +287,7 @@ let currentID = 1;
         formData.append("tpm", twm);
         formData.append("spec_tension", stdT);
         formData.append("dev_tension", devT);
-        formData.append("csv_data", blob, filename); // Add CSV data
+        formData.append("csv_data", csvContent); // Add CSV data
 
         fetch("/store_tw", {
           method: "POST",
