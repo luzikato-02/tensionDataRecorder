@@ -68,7 +68,7 @@ def show_data():
 
 @app.route('/store_tw', methods=['POST'])
 def store_tw():
-    csv_data = request.files["csv_data"].read().decode('utf-8')
+    csv_data = request.files["csv_data"].read()
     datetime = request.form["datetime"] 
     operator = request.form["operator"]
     machine_number = request.form["machine_number"]  
@@ -97,7 +97,7 @@ def store_tw():
 
 @app.route('/store_wv', methods=['POST'])
 def store_wv():
-    csv_data = request.files["csv_data"].read().decode('utf-8')
+    csv_data = request.files["csv_data"].read()
     datetime = request.form["datetime"] 
     operator = request.form["operator"]
     machine_number = request.form["machine_number"]  
