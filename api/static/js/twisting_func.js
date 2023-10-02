@@ -276,7 +276,7 @@ let currentID = 1;
         link.setAttribute("download", filename);
         document.body.appendChild(link);
 
-        const blob = new Blob([csvContent], { type: "text/csv" });
+        var blob = new Blob([csvContent], { type: "text/csv" });
         // Create a FormData object to send both the CSV data
         let formData = new FormData();
         formData.append("datetime", currentDateTime);
