@@ -594,31 +594,23 @@ function writeCSV(
   link.setAttribute("download", filename);
   document.body.appendChild(link);
 
-  var blob = new Blob([csvContent], { type: "text/csv" });
-  // Create a FormData object to send both the CSV data
-  let formData = new FormData(document.querySelector('form'));
-  formData.append("datetime", currentDateTime);
-  formData.append("operator", operator);
-  formData.append("machine_number", machineNumber);
-  formData.append("production_order", po);
-  formData.append("bale_number", bale);
-  formData.append("color_code", colCode);
-  formData.append("style", stl);
-  formData.append("counter_number", cntNo);
-  formData.append("spec_tension", stdTen);
-  formData.append("dev_tension", devTen);
-  formData.append("csv_data", blob, filename); // Add CSV data
-
+  const confirmDownloadCSV = confirm("Do you want to download the CSV file to this device as backup?");
+  if (confirmDownloadCSV) {
+    link.click();
+  }
+  const jsonData = JSON.stringify(data);
   fetch("/store_wv", {
     method: "POST",
-    body: formData,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: jsonData,
   })
     .then((response) => response.text())
     .then((result) => {
       console.log(result); // Display server response
     });
 
-  link.click();
 }
 
 function deleteData(dataType) {

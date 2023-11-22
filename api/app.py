@@ -2,6 +2,9 @@ from flask import Flask, request, render_template, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 import io
 import os
+import datetime
+# from dotenv import load_dotenv
+# load_dotenv()
 
 username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
@@ -68,15 +71,36 @@ def show_data():
 
 @app.route('/store_tw', methods=['POST'])
 def store_tw():
-    csv_data = request.files["csv_data"].read().decode('utf-8')
-    datetime = request.form["datetime"] 
-    operator = request.form["operator"]
-    machine_number = request.form["machine_number"]  
-    item_number = request.form["item_number"]
-    spd_rpm = request.form["rpm"]
-    twm = request.form["tpm"]
-    specTen = request.form["spec_tension"]
-    devTens = request.form["dev_tension"]  
+    json_data = request.get_json()
+    datetime = json_data["datetime"]
+    operator = json_data["operator"]
+    machine_number = json_data["machineNumber"]  
+    item_number = json_data["itemNum"]
+    dtex = json_data["dtex"]
+    spd_rpm = json_data["rpm"]
+    twm = json_data["tpm"]
+    specTen = json_data["stdTens"]
+    devTens = json_data["devTens"]
+
+    csv_data = f"Machine No.,{machine_number},Item Number,{item_number}\n"
+    csv_data += f"RPM, {spd_rpm},D-tex,{dtex},Operator Name,{operator}\n"
+    csv_data += f"TPM,{twm}\n"
+    csv_data += f"Spec STD,{specTen}\n"
+    csv_data += f"±,{devTens}\n"
+    csv_data += "Spindle Number,MIN Value,MAX Value,Stated Problem(s)\n"
+
+    ids = list(json_data.keys())
+    numIdsToDelete = 9
+
+    # Loop through all IDs except the last few and append to csv_data
+    for i in range(len(ids) - numIdsToDelete):
+        id = ids[i]
+        print(type(json_data[id]))
+        minTensionVal = json_data[id]["MIN"]
+        maxTensionVal = json_data[id]["MAX"]
+        spindleProb = json_data[id]["Problems"]
+        csv_data += f"{id},{minTensionVal},{maxTensionVal},{spindleProb}\n"
+    csv_data = csv_data.encode("utf-8")
 
     with app.app_context():  # Enter the application context
         new_data_entry = TwistingData(
@@ -95,23 +119,48 @@ def store_tw():
         db.session.commit()
     return 'CSV data stored in the database.'
 
+
 @app.route('/store_wv', methods=['POST'])
 def store_wv():
-    csv_data = request.files["csv_data"].read()
-    datetime = request.form["datetime"] 
-    operator = request.form["operator"]
-    machine_number = request.form["machine_number"]  
-    production_order = request.form["production_order"]
-    bale_no = request.form["bale_number"]
-    color_code = request.form["color_code"]
-    style = request.form["style"]
-    counter_number = request.form["counter_number"]
-    specTen = request.form["spec_tension"]
-    devTens = request.form["dev_tension"]  
+    json_data = request.get_json()
+    operator = json_data["operator"]
+    machine_number = json_data["machineNumber"]  
+    production_order = json_data["productionOrder"]
+    bale_no = json_data["baleNo"]
+    color_code = json_data["colorCode"]
+    style = json_data["style"]
+    counter_number = json_data["counterNo"]
+    specTen = json_data["stdTens"]
+    devTens = json_data["devTens"]
 
+    csv_data = ""
+    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Get current date and time
+    csv_data += f"Tanggal,{current_datetime}\n"
+    csv_data += f"Style,{style}\n"
+    csv_data += f"PO,{production_order}\n\n"
+    csv_data += f"Color,{color_code}\n"
+    csv_data += f"Bale Ke,{bale_no}\n"
+    csv_data += f"Loom,{machine_number}\n"
+    csv_data += f"Meter,{counter_number}\n"
+    csv_data += f"Date,{current_datetime}\n"
+    csv_data += f"Operator,{operator}\n"
+
+    tension_data = json_data.get("tension_data", {})
+
+    # Loop through all IDs and append to csv_data
+    for sd, sd_data in tension_data.items():
+        print(sd)
+        csv_data += f"{sd}\n"
+        for rw, rw_data in sd_data.items():
+            print(rw)
+            for col, col_data in rw_data.items():
+                minTensionVal = col_data.get("MIN", "")
+                maxTensionVal = col_data.get("MAX", "")
+                csv_data += f"{rw},{col},{maxTensionVal},{minTensionVal}\n"
+    csv_data = csv_data.encode("utf-8")
     with app.app_context():  # Enter the application context
         new_data_entry = WeavingData(
-            datetime=datetime,
+            datetime=current_datetime,
             operator=operator,
             machine_number=machine_number,
             production_order = production_order,
@@ -195,4 +244,4 @@ if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
         create_tables()
-    app.run(debug=True)
+    app.run(debug=False)
