@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 import io
 import os
 import datetime
+from telegram import Bot, Update
+from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -10,6 +13,8 @@ username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
 hostname = os.environ.get('DB_HOST')
 db_name = os.environ.get('DB_NAME')
+bot = Bot(token='YOUR_TELEGRAM_API_TOKEN')
+dispatcher = Dispatcher(bot, None, use_context=True)
 
 print(f"Database Host: {hostname}")
 port = 3306
@@ -44,6 +49,20 @@ class WeavingData(db.Model):
     devTen = db.Column(db.Integer)
     csv_file = db.Column(db.LargeBinary)
 
+@dispatcher.message_handler(Filters.text & ~Filters.command)
+def echo(update: Update, context: CallbackContext):
+    update.message.reply_text(update.message.text)
+
+@dispatcher.message_handler(CommandHandler('start'))
+def start(update: Update, context: CallbackContext):
+    update.message.reply_text('Hello! I am your bot.')
+
+def webhook(request):
+    if request.method == "POST":
+        json_str = request.get_data().decode("UTF-8")
+        update = Update.de_json(json_str, bot)
+        dispatcher.process_update(update)
+    return '', 200
 
 def create_tables():
     db.create_all()
