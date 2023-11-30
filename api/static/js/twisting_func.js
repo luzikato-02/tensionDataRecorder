@@ -13,7 +13,7 @@ let itemNum = "";
 
 // Load data from localStorage when the page is loaded
 window.addEventListener("load", () => {
-  const savedData = localStorage.getItem("savedData");
+  const savedData = localStorage.getItem("twistingData");
   if (savedData) {
     data = JSON.parse(savedData);
     // Update any necessary UI elements based on the loaded data
@@ -26,7 +26,7 @@ window.addEventListener("load", () => {
 
 // Save data to localStorage whenever it's modified
 function saveDataToLocalStorage() {
-  localStorage.setItem("savedData", JSON.stringify(data));
+  localStorage.setItem("twistingData", JSON.stringify(data));
 }
 
 function resetStorage() {
@@ -34,7 +34,7 @@ function resetStorage() {
     "Are you sure you want to clear all stored data within this browser?"
   );
   if (confirmation === !null) {
-    localStorage.removeItem("savedData");
+    localStorage.removeItem("twistingData");
   }
 }
 
