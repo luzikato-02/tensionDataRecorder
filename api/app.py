@@ -3,8 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 import io
 import os
 import datetime
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 
 username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
@@ -91,15 +91,20 @@ def store_tw():
 
     ids = list(json_data.keys())
     numIdsToDelete = 9
+    required_keys_id = ["MIN", "MAX", "Problems"]
 
     # Loop through all IDs except the last few and append to csv_data
     for i in range(len(ids) - numIdsToDelete):
         id = ids[i]
-        print(type(json_data[id]))
-        minTensionVal = json_data[id]["MIN"]
-        maxTensionVal = json_data[id]["MAX"]
-        spindleProb = json_data[id]["Problems"]
-        csv_data += f"{id},{minTensionVal},{maxTensionVal},{spindleProb}\n"
+        spd_data = {}
+        for key_id in required_keys_id:
+                try:
+                    print(json_data[id][key_id])
+                    spd_data[key_id] = json_data[id][key_id]
+                except KeyError:
+                    # Handle the case when the key is not present, e.g., set a default value
+                    spd_data[key_id] = ""
+        csv_data += f"{id},{spd_data['MIN']},{spd_data['MAX']},{spd_data['Problems']}\n"
     csv_data = csv_data.encode("utf-8")
 
     with app.app_context():  # Enter the application context
