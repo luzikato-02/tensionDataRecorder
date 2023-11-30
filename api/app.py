@@ -3,8 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 import io
 import os
 import datetime
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
