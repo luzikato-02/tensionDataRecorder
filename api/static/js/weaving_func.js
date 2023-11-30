@@ -19,7 +19,7 @@ let devTens = "";
 
 // Load data from localStorage when the page is loaded
 window.addEventListener("load", () => {
-  const savedData = localStorage.getItem("savedData");
+  const savedData = localStorage.getItem("weavingData");
   if (savedData) {
     // Parse data from local storage variable
     data = JSON.parse(savedData);
@@ -36,7 +36,7 @@ window.addEventListener("load", () => {
 
 // Save data to localStorage whenever it's modified
 function saveDataToLocalStorage() {
-  localStorage.setItem("savedData", JSON.stringify(data));
+  localStorage.setItem("weavingData", JSON.stringify(data));
 }
 
 // Record inputted specs in specification form
