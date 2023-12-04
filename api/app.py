@@ -4,7 +4,7 @@ import io
 import os
 import datetime
 from telegram import Bot, Update
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher
+from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher, Updater
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -13,8 +13,7 @@ username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
 hostname = os.environ.get('DB_HOST')
 db_name = os.environ.get('DB_NAME')
-bot = Bot(token='YOUR_TELEGRAM_API_TOKEN')
-dispatcher = Dispatcher(bot, None, use_context=True)
+telegram_api_token = os.environ.get('TELEGRAM_API_TOKEN')
 
 print(f"Database Host: {hostname}")
 port = 3306
@@ -22,6 +21,29 @@ port = 3306
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
 db = SQLAlchemy(app)
+
+bot = Bot(token=telegram_api_token)
+updater = Updater(token=telegram_api_token, use_context=True)
+dispatcher = Dispatcher(bot=None, update_queue=None, use_context=True)
+
+def start(update: Update, context: CallbackContext):
+    chat_id = update.effective_chat.id
+    context.bot.send_message(chat_id=chat_id, text="Hello there. Provide any English word and I will give you a bunch "
+                                                   "of information about it.")
+
+def echo(update: Update, context: CallbackContext):
+    text = update.message.text
+    update.message.reply_text(f"You said: {text}")
+
+# Register handlers with the dispatcher
+dispatcher.add_handler(CommandHandler("start", start))
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+
+@app.route('/tele-webhook', methods=['POST'])
+def telegram_webhook():
+    update = Update.de_json(request.get_json(force=True), context=dispatcher.bot)
+    dispatcher.process_update(update)
+    return '', 200
 
 class TwistingData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,20 +71,6 @@ class WeavingData(db.Model):
     devTen = db.Column(db.Integer)
     csv_file = db.Column(db.LargeBinary)
 
-@dispatcher.message_handler(Filters.text & ~Filters.command)
-def echo(update: Update, context: CallbackContext):
-    update.message.reply_text(update.message.text)
-
-@dispatcher.message_handler(CommandHandler('start'))
-def start(update: Update, context: CallbackContext):
-    update.message.reply_text('Hello! I am your bot.')
-
-def webhook(request):
-    if request.method == "POST":
-        json_str = request.get_data().decode("UTF-8")
-        update = Update.de_json(json_str, bot)
-        dispatcher.process_update(update)
-    return '', 200
 
 def create_tables():
     db.create_all()
@@ -267,5 +275,6 @@ def download_wv(entry_id):
 if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
+        updater.start_polling()
         create_tables()
     app.run(debug=False)
