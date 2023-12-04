@@ -282,16 +282,13 @@ function writeCSV(machineNumber, operator, dtx, twm, rpm, stdT, devT, itemN) {
     },
     body: jsonData,
   })
-  .then(response => {
-    console.log(response);
-    return response.json();  // Assuming the response is JSON
-  })
-  .then(data => {
-    console.log(data);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.message);  // Access the message property in the JSON response
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
 }
 
 function deleteData(dataType) {

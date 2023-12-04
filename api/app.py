@@ -122,7 +122,8 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    return 'CSV data stored in the database.'
+    return jsonify({"message": "CSV data stored in the database."})
+
 
 
 @app.route('/store_wv', methods=['POST'])
