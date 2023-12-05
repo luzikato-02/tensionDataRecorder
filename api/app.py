@@ -34,7 +34,7 @@ def start(update: Update, context: CallbackContext) -> None:
 def echo(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.text)
 
-def alert(update: Update, context: CallbackContext) -> None:
+def send_alert_to_all_users(context: CallbackContext) -> None:
     # Get the message text after the /broadcast command
     message_text = "Broadcast message test"
     
@@ -47,10 +47,6 @@ def alert(update: Update, context: CallbackContext) -> None:
             context.bot.send_message(chat_id=chat_id, text=message_text)
         except Exception as e:
             print(f"Error broadcasting message to {chat_id}: {str(e)}")
-
-def send_msg():
-    context = CallbackContext(updater.dispatcher)
-    updater.job_queue.run_once(alert, 10, context=context)
 
 # Add your handlers to the dispatcher
 start_handler = CommandHandler('start', start)
@@ -183,7 +179,7 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    send_msg()
+    send_alert_to_all_users(context=CallbackContext(dispatcher, context_data={}, update_queue=dispatcher.update_queue))
     return jsonify({"message": "CSV data stored in the database."})
 
 
