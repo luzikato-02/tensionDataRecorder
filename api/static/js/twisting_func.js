@@ -278,12 +278,16 @@ function writeCSV(machineNumber, operator, dtx, twm, rpm, stdT, devT, itemN) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Accept": "application/json",
     },
     body: jsonData,
   })
-    .then((response) => response.text())
-    .then((result) => {
-      console.log(result); // Display server response
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.message);  // Access the message property in the JSON response
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
 }
 

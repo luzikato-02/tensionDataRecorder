@@ -6,8 +6,8 @@ import datetime
 from telegram import Bot, Update
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher, Updater
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
@@ -149,7 +149,8 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    return 'CSV data stored in the database.'
+    return jsonify({"message": "CSV data stored in the database."})
+
 
 
 @app.route('/store_wv', methods=['POST'])
@@ -207,7 +208,7 @@ def store_wv():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    return 'CSV data stored in the database.'
+    return jsonify({"message": "CSV data stored in the database."})
 
 @app.route('/get_tw_data')
 def get_data():
