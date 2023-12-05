@@ -6,8 +6,8 @@ import datetime
 from telegram import Bot, Update
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher, Updater
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
