@@ -34,6 +34,20 @@ def start(update: Update, context: CallbackContext) -> None:
 def echo(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.text)
 
+def alert(update: Update, context: CallbackContext) -> None:
+    # Get the message text after the /broadcast command
+    message_text = "Broadcast message test"
+    
+    # Get all chat IDs of users who have interacted with the bot
+    chat_ids = [str(chat.id) for chat in context.bot.chat_data]
+
+    # Broadcast the message to all users
+    for chat_id in chat_ids:
+        try:
+            context.bot.send_message(chat_id=chat_id, text=message_text)
+        except Exception as e:
+            print(f"Error broadcasting message to {chat_id}: {str(e)}")
+
 # Add your handlers to the dispatcher
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
