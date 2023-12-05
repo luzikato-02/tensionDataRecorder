@@ -179,7 +179,7 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    send_alert_to_all_users(context=CallbackContext(dispatcher, context_data={}, update_queue=dispatcher.update_queue))
+    send_alert_to_all_users(context=CallbackContext(dispatcher=dispatcher))
     return jsonify({"message": "CSV data stored in the database."})
 
 
