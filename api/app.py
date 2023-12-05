@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import io
 import os
 import datetime
+import json
 from telegram import Bot, Update
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher, Updater
 
@@ -43,11 +44,17 @@ dispatcher.add_handler(echo_handler)
 # Set up the Flask app to handle the webhook
 @app.route('/set-webhook', methods=['POST'])
 def telegram_webhook():
-    json_str = request.get_data().decode('UTF-8')
-    update = Update.de_json(json_str, updater.bot)
+    try:
+        json_str = request.get_data().decode('UTF-8')
+        json_data = json.loads(json_str)
+        
+        update = Update.de_json(json_data, updater.bot)
 
-    # Dispatch the update to the appropriate handlers
-    dispatcher.process_update(update)
+        # Dispatch the update to the appropriate handlers
+        dispatcher.process_update(update)
+
+    except Exception as e:
+        print(f"Error processing webhook: {str(e)}")
 
     return '', 200
 
