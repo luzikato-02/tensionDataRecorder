@@ -24,7 +24,7 @@ db = SQLAlchemy(app)
 
 updater = Updater(token=telegram_api_token, use_context=True)
 dispatcher = updater.dispatcher
-webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set_webhook"
+webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set-webhook"
 
 # Define your handlers
 def start(update: Update, context: CallbackContext) -> None:
