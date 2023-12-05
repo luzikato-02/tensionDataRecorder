@@ -22,38 +22,37 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
 db = SQLAlchemy(app)
 
-bot = Bot(token=telegram_api_token)
+updater = Updater(token=telegram_api_token, use_context=True)
+dispatcher = updater.dispatcher
 webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set_webhook"
 
-@app.route('/{}'.format(telegram_api_token), methods=['POST'])
-def respond():
-   # retrieve the message in JSON and then transform it to Telegram object
-   update = Update.de_json(request.get_json(force=True), bot)
+# Define your handlers
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Hello! This is your bot.')
 
-   chat_id = update.message.chat.id
-   msg_id = update.message.message_id
+def echo(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text(update.message.text)
 
-   # Telegram understands UTF-8, so encode text for unicode compatibility
-   text = update.message.text.encode('utf-8').decode()
-   # for debugging purposes only
-   print("got text message :", text)
-   # the first time you chat with the bot AKA the welcoming message
-   if text == "/start":
-       # print the welcoming message
-       bot_welcome = """
-       Test Message
-       """
-       # send the welcoming message
-       bot.sendMessage(chat_id=chat_id, text=bot_welcome, reply_to_message_id=msg_id)
-   return 'ok'
+# Add your handlers to the dispatcher
+start_handler = CommandHandler('start', start)
+dispatcher.add_handler(start_handler)
 
-@app.route('/set_webhook', methods=['GET', 'POST'])
-def set_webhook():
-   s = bot.setWebhook('{URL}{HOOK}'.format(URL=webhook_url, HOOK=telegram_api_token))
-   if s:
-       return "webhook setup ok"
-   else:
-       return "webhook setup failed"
+echo_handler = MessageHandler(Filters.text & ~Filters.command, echo)
+dispatcher.add_handler(echo_handler)
+
+# Set up the Flask app to handle the webhook
+@app.route('/set-webhook', methods=['POST'])
+def telegram_webhook():
+    json_str = request.get_data().decode('UTF-8')
+    update = Update.de_json(json_str, updater.bot)
+
+    # Dispatch the update to the appropriate handlers
+    dispatcher.process_update(update)
+
+    return '', 200
+
+# Set the webhook for your bot
+updater.bot.setWebhook(url=webhook_url)
 
 class TwistingData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -288,4 +287,4 @@ if __name__ == '__main__':
         # drop_tables()
         # updater.start_polling()
         create_tables()
-    app.run(debug=True)
+    app.run(debug=False)
