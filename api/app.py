@@ -179,6 +179,7 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
+    alert()
     return jsonify({"message": "CSV data stored in the database."})
 
 
