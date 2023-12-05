@@ -4,7 +4,7 @@ import io
 import os
 import datetime
 import json
-from telegram import Bot, Update
+from telegram import Bot, Update, Message, Chat, User
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher, Updater
 
 # from dotenv import load_dotenv
@@ -27,26 +27,20 @@ updater = Updater(token=telegram_api_token, use_context=True)
 dispatcher = updater.dispatcher
 webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set-webhook"
 
+subs_chat_ids = []
+
 # Define your handlers
 def start(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('Hello! This is your bot.')
+    new_chat_id = update.message.chat_id
+    if not new_chat_id in subs_chat_ids:
+        subs_chat_ids.append(update.message.chat_id)
+    update.message.reply_text("""
+                              Hello! I am TeDaRe 🤖, your personal tension data reporter.
+                              By receiving this message means you are already subscribed to my reports.
+                              """)
 
 def echo(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.text)
-
-def send_alert_to_all_users(context: CallbackContext) -> None:
-    # Get the message text after the /broadcast command
-    message_text = "Broadcast message test"
-    
-    # Get all chat IDs of users who have interacted with the bot
-    chat_ids = [str(chat.id) for chat in context.bot.chat_data]
-
-    # Broadcast the message to all users
-    for chat_id in chat_ids:
-        try:
-            context.bot.send_message(chat_id=chat_id, text=message_text)
-        except Exception as e:
-            print(f"Error broadcasting message to {chat_id}: {str(e)}")
 
 # Add your handlers to the dispatcher
 start_handler = CommandHandler('start', start)
@@ -179,7 +173,7 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    send_alert_to_all_users(context=CallbackContext(dispatcher=dispatcher))
+
     return jsonify({"message": "CSV data stored in the database."})
 
 
