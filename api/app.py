@@ -48,6 +48,10 @@ def alert(update: Update, context: CallbackContext) -> None:
         except Exception as e:
             print(f"Error broadcasting message to {chat_id}: {str(e)}")
 
+def send_msg():
+    context = CallbackContext(updater.dispatcher)
+    updater.job_queue.run_once(alert, 10, context=context)
+
 # Add your handlers to the dispatcher
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
@@ -179,7 +183,7 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    updater.job_queue.run_once(alert, 0)
+    send_msg()
     return jsonify({"message": "CSV data stored in the database."})
 
 
