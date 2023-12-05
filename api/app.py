@@ -23,7 +23,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{pas
 db = SQLAlchemy(app)
 
 bot = Bot(token=telegram_api_token)
-webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app"
+webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set_webhook"
 
 @app.route('/{}'.format(telegram_api_token), methods=['POST'])
 def respond():
@@ -286,6 +286,6 @@ def download_wv(entry_id):
 if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
-        updater.start_polling()
+        # updater.start_polling()
         create_tables()
     app.run(debug=True)
