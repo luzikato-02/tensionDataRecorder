@@ -4,6 +4,7 @@ import io
 import os
 import datetime
 import json
+import requests
 from telegram import Bot, Update, Message, Chat, User
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher, Updater
 
@@ -23,51 +24,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
 db = SQLAlchemy(app)
 
-updater = Updater(token=telegram_api_token, use_context=True)
-dispatcher = updater.dispatcher
-webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set-webhook"
-
-subs_chat_ids = []
-
-# Define your handlers
-def start(update: Update, context: CallbackContext) -> None:
-    new_chat_id = update.message.chat_id
-    if not new_chat_id in subs_chat_ids:
-        subs_chat_ids.append(update.message.chat_id)
-    update.message.reply_text("""
-                              Hello! I am TeDaRe 🤖, your personal tension data reporter.
-                              By receiving this message means you are already subscribed to my reports.
-                              """)
-
-def echo(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text(update.message.text)
-
-# Add your handlers to the dispatcher
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
-
-echo_handler = MessageHandler(Filters.text & ~Filters.command, echo)
-dispatcher.add_handler(echo_handler)
-
-# Set up the Flask app to handle the webhook
-@app.route('/set-webhook', methods=['POST'])
-def telegram_webhook():
-    try:
-        json_str = request.get_data().decode('UTF-8')
-        json_data = json.loads(json_str)
-        
-        update = Update.de_json(json_data, updater.bot)
-
-        # Dispatch the update to the appropriate handlers
-        dispatcher.process_update(update)
-
-    except Exception as e:
-        print(f"Error processing webhook: {str(e)}")
-
-    return '', 200
-
-# Set the webhook for your bot
-updater.bot.setWebhook(url=webhook_url)
+class ReportSubscriber(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    chat_id = db.Column(db.String(255), nullable=False)
 
 class TwistingData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -102,6 +61,76 @@ def create_tables():
 # Use only for debugging db
 def drop_tables():
     db.drop_all()
+
+
+updater = Updater(token=telegram_api_token, use_context=True)
+dispatcher = updater.dispatcher
+webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set-webhook"
+
+def write_new_subs(chat_id):
+    with app.app_context():  # Enter the application context
+        new_data_entry = ReportSubscriber(
+            chat_id=chat_id,
+        )
+        db.session.add(new_data_entry)
+        db.session.commit()
+
+# Define your handlers
+def start(update: Update, context: CallbackContext) -> None:
+    new_chat_id = update.message.chat_id
+    existing_data = ReportSubscriber.query.filter_by(**new_chat_id).first()
+    if not existing_data:
+        write_new_subs(new_chat_id)
+    update.message.reply_text("""
+                              Hello! I am TeDaRe 🤖, your personal tension data reporter.\nBy receiving this message means you are already subscribed to my reports.
+                              """)
+
+def echo(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text(update.message.text)
+
+def send_report():
+    url = f'https://api.telegram.org/bot{telegram_api_token}/sendMessage' # Calling the telegram API to reply the message  
+    subs_data = ReportSubscriber.query.with_entities(ReportSubscriber.chat_id).all()
+    chat_ids = [value for (value,) in subs_data]  # Extracting values from the result
+    for id in chat_ids:
+        payload = {
+            'chat_id': id,
+            'text': "TEST BROADCAST"
+        }
+        r = requests.post(url, json=payload)
+
+        if r.status_code == 200:
+            return "Report(s) successfully sent to all subscribers."
+        else: 
+            return "Failed to send reports to all subscribers."
+
+# Add your handlers to the dispatcher
+start_handler = CommandHandler('start', start)
+dispatcher.add_handler(start_handler)
+
+echo_handler = MessageHandler(Filters.text & ~Filters.command, echo)
+dispatcher.add_handler(echo_handler)
+
+# Set up the Flask app to handle the webhook
+@app.route('/set-webhook', methods=['POST'])
+def telegram_webhook():
+    try:
+        json_str = request.get_data().decode('UTF-8')
+        json_data = json.loads(json_str)
+        
+        update = Update.de_json(json_data, updater.bot)
+
+        # Dispatch the update to the appropriate handlers
+        dispatcher.process_update(update)
+
+    except Exception as e:
+        print(f"Error processing webhook: {str(e)}")
+
+    return '', 200
+
+# Set the webhook for your bot
+updater.bot.setWebhook(url=webhook_url)
+
 
 @app.route('/')
 def index():
@@ -173,7 +202,7 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-
+        send_report()
     return jsonify({"message": "CSV data stored in the database."})
 
 
