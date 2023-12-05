@@ -179,7 +179,7 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    alert()
+    updater.job_queue.run_once(alert, 0)
     return jsonify({"message": "CSV data stored in the database."})
 
 
