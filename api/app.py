@@ -78,7 +78,7 @@ def write_new_subs(chat_id):
 # Define your handlers
 def start(update: Update, context: CallbackContext) -> None:
     new_chat_id = update.message.chat_id
-    existing_data = ReportSubscriber.query.filter_by(**new_chat_id).first()
+    existing_data = ReportSubscriber.query.filter_by(chat_id=new_chat_id).first()
     if not existing_data:
         write_new_subs(new_chat_id)
     update.message.reply_text("""
