@@ -5,8 +5,10 @@ import os
 import datetime
 import json
 import requests
-from telegram import Bot, Update, Message, Chat, User
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Dispatcher, Updater
+from telegram import Update
+from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Updater
+import csv
+from collections import defaultdict
 
 # from dotenv import load_dotenv
 # load_dotenv()
@@ -82,7 +84,7 @@ def start(update: Update, context: CallbackContext) -> None:
     if not existing_data:
         write_new_subs(new_chat_id)
     update.message.reply_text("""
-                              Hello! I am TeDaRe 🤖, your personal tension data reporter.\nBy receiving this message means you are already subscribed to my reports.
+                              Hello! I am TeDaRe 🤖. I am your personal tension data reporter.\nBy receiving this message means you are already subscribed to my reports.
                               """)
 
 def echo(update: Update, context: CallbackContext) -> None:
@@ -172,6 +174,7 @@ def store_tw():
     ids = list(json_data.keys())
     numIdsToDelete = 9
     required_keys_id = ["MIN", "MAX", "Problems"]
+    spindles_with_problems = []
 
     # Loop through all IDs except the last few and append to csv_data
     for i in range(len(ids) - numIdsToDelete):
@@ -179,12 +182,15 @@ def store_tw():
         spd_data = {}
         for key_id in required_keys_id:
                 try:
-                    print(json_data[id][key_id])
                     spd_data[key_id] = json_data[id][key_id]
                 except KeyError:
                     # Handle the case when the key is not present, e.g., set a default value
                     spd_data[key_id] = ""
         csv_data += f"{id},{spd_data['MIN']},{spd_data['MAX']},{spd_data['Problems']}\n"
+
+        if spd_data['Problems'] and spd_data['Problems'].strip():  # Check for non-empty string
+            spindle_info = f"{id} - {spd_data['MIN']} - {spd_data['MAX']} - {spd_data['Problems']}"
+            spindles_with_problems.append(spindle_info)
     csv_data = csv_data.encode("utf-8")
 
     with app.app_context():  # Enter the application context
@@ -202,9 +208,9 @@ def store_tw():
 
         db.session.add(new_data_entry)
         db.session.commit()
-        send_report()
+    
+    
     return jsonify({"message": "CSV data stored in the database."})
-
 
 
 @app.route('/store_wv', methods=['POST'])
