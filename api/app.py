@@ -174,7 +174,7 @@ def store_tw():
     ids = list(json_data.keys())
     numIdsToDelete = 9
     required_keys_id = ["MIN", "MAX", "Problems"]
-    spindles_with_problems = []
+    spindles_with_problems = ""
 
     # Loop through all IDs except the last few and append to csv_data
     for i in range(len(ids) - numIdsToDelete):
@@ -190,9 +190,8 @@ def store_tw():
 
         if spd_data['Problems'] and any(spd_data['Problems']):  # Check if the list is not empty
             problems_str = ', '.join(map(str, spd_data['Problems']))
-            spindle_info = f"{id} - {spd_data['MIN'][0]} - {spd_data['MAX'][0]} - {problems_str}"
-            spindles_with_problems.append(spindle_info)
-
+            spindles_with_problems += f"{id} - {spd_data['MIN'][0]} - {spd_data['MAX'][0]} - {problems_str}\n"
+    
     csv_data = csv_data.encode("utf-8")
 
     with app.app_context():  # Enter the application context
@@ -211,6 +210,7 @@ def store_tw():
         db.session.add(new_data_entry)
         db.session.commit()
     
+
     send_report(spindles_with_problems)
     return jsonify({"message": "CSV data stored in the database."})
 
