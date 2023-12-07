@@ -90,14 +90,14 @@ def start(update: Update, context: CallbackContext) -> None:
 def echo(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.text)
 
-def send_report():
+def send_report(msg):
     url = f'https://api.telegram.org/bot{telegram_api_token}/sendMessage' # Calling the telegram API to reply the message  
     subs_data = ReportSubscriber.query.with_entities(ReportSubscriber.chat_id).all()
     chat_ids = [value for (value,) in subs_data]  # Extracting values from the result
     for id in chat_ids:
         payload = {
             'chat_id': id,
-            'text': "TEST BROADCAST"
+            'text': msg
         }
         r = requests.post(url, json=payload)
 
@@ -209,7 +209,7 @@ def store_tw():
         db.session.add(new_data_entry)
         db.session.commit()
     
-    
+    send_report(spindles_with_problems)
     return jsonify({"message": "CSV data stored in the database."})
 
 
