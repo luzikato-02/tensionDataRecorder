@@ -210,19 +210,18 @@ def store_tw():
         db.session.add(new_data_entry)
         db.session.commit()
     
-    msg = f"""|---------------ALERT FOR FIXERS---------------|
+    msg = f"""[🚨ALERT FOR FIXERS🚨]
     
-     Machine Number: {machine_number}
-     Tensiongirl: {operator}
+ Machine Number: {machine_number}
+ Tensiongirl: {operator}
 
-     Detected abnormalities per spindle: 
-     Spd No --- Min Val --- Max Val --- Problems
+ Detected abnormalities per spindle: 
+ Spd No --- Min Val --- Max Val --- Problems
 
-     {spindles_with_problems}
+ {spindles_with_problems}
 
-     Abnormal process parameter has been detected 
-     on this machine. Please act accordingly.
-    |-----------------END OF REPORT----------------|
+ Kindly confirm the listed problems and act accordingly.
+[END OF REPORT]
     """
     send_report(msg=msg)
     return jsonify({"message": "CSV data stored in the database."})
