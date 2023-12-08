@@ -65,7 +65,7 @@ def drop_tables():
 
 updater = Updater(token=telegram_api_token, use_context=True)
 dispatcher = updater.dispatcher
-webhook_url = "tension-data-recorder-git-telebotrev-luzikato-02.vercel.app/set-webhook"
+webhook_url = "tension-data-recorder.vercel.app/set-webhook"
 
 def write_new_subs(chat_id):
     with app.app_context():  # Enter the application context
