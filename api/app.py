@@ -190,7 +190,7 @@ def store_tw():
 
         if spd_data['Problems'] and any(spd_data['Problems']):  # Check if the list is not empty
             problems_str = ', '.join(map(str, spd_data['Problems']))
-            spindles_with_problems += f"{id} - {spd_data['MIN'][0]} - {spd_data['MAX'][0]} - {problems_str}\n"
+            spindles_with_problems += f"{id} --- {spd_data['MIN'][0]} --- {spd_data['MAX'][0]} --- {problems_str}\n"
     
     csv_data = csv_data.encode("utf-8")
 
@@ -212,16 +212,18 @@ def store_tw():
     
     msg = f"""|---------------ALERT FOR FIXERS---------------|
     
-         Machine Number: {machine_number}
-         Tensiongirl: {operator}
+     Machine Number: {machine_number}
+     Tensiongirl: {operator}
 
-         Detected abnormalities per spindle:
-         {spindles_with_problems}
+     Detected abnormalities per spindle: 
+     Spd No --- Min Val --- Max Val --- Problems
 
-         Abnormal process parameter has been detected 
-         on this machine. Please act accordingly.
-        |-----------------END OF REPORT----------------|
-        """
+     {spindles_with_problems}
+
+     Abnormal process parameter has been detected 
+     on this machine. Please act accordingly.
+    |-----------------END OF REPORT----------------|
+    """
     send_report(msg=msg)
     return jsonify({"message": "CSV data stored in the database."})
 
