@@ -189,7 +189,7 @@ def store_tw():
         csv_data += f"{id},{spd_data['MIN']},{spd_data['MAX']},{spd_data['Problems']}\n"
 
         if spd_data['Problems'] and any(spd_data['Problems']):  # Check if the list is not empty
-            problems_str = ', '.join(map(str, spd_data['Problems']))
+            problems_str = ', '.join(filter(lambda x: x.strip(), map(str, spd_data['Problems'])))
             spindles_with_problems += f"{id} --- {spd_data['MIN'][0]} --- {spd_data['MAX'][0]} --- {problems_str}\n"
     
     csv_data = csv_data.encode("utf-8")
@@ -212,15 +212,15 @@ def store_tw():
     
     msg = f"""[🚨ALERT FOR FIXERS🚨]
     
- Machine Number: {machine_number}
- Tensiongirl: {operator}
+Machine Number: {machine_number}
+Operator: {operator}
 
- Detected abnormalities per spindle: 
- Spd No --- Min Val --- Max Val --- Problems
+Detected abnormalities per spindle: 
+Spd No --- Min Val --- Max Val --- Problems
+{spindles_with_problems}
 
- {spindles_with_problems}
+Kindly confirm the listed problems and act accordingly.
 
- Kindly confirm the listed problems and act accordingly.
 [END OF REPORT]
     """
     send_report(msg=msg)
