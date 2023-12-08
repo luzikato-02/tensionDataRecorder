@@ -7,8 +7,6 @@ import json
 import requests
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Updater
-import csv
-from collections import defaultdict
 
 # from dotenv import load_dotenv
 # load_dotenv()
@@ -350,6 +348,5 @@ def download_wv(entry_id):
 if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
-        # updater.start_polling()
         create_tables()
     app.run(debug=False)
