@@ -92,6 +92,7 @@ def send_report(msg):
     url = f'https://api.telegram.org/bot{telegram_api_token}/sendMessage' # Calling the telegram API to reply the message  
     subs_data = ReportSubscriber.query.with_entities(ReportSubscriber.chat_id).all()
     chat_ids = [value for (value,) in subs_data]  # Extracting values from the result
+    print(chat_ids)
     for id in chat_ids:
         payload = {
             'chat_id': id,
@@ -100,7 +101,7 @@ def send_report(msg):
         r = requests.post(url, json=payload)
 
         if r.status_code == 200:
-            return "Report(s) successfully sent to all subscribers."
+            return "Report successfully sent to all subscribers."
         else: 
             return "Failed to send reports to all subscribers."
 
@@ -221,7 +222,8 @@ Kindly confirm the listed problems and act accordingly.
 
 [END OF REPORT]
     """
-    send_report(msg=msg)
+    if spindles_with_problems:
+        send_report(msg=msg)
     return jsonify({"message": "CSV data stored in the database."})
 
 
