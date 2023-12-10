@@ -350,5 +350,6 @@ def download_wv(entry_id):
 if __name__ == '__main__':
     with app.app_context():  # Enter the application context
         # drop_tables()
+        updater.start_polling(timeout=600)
         create_tables()
     app.run(debug=False)
