@@ -7,6 +7,7 @@ import json
 import requests
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Updater
+import time
 
 # from dotenv import load_dotenv
 # load_dotenv()
@@ -94,6 +95,7 @@ def send_report(msg):
     chat_ids = [value for (value,) in subs_data]  # Extracting values from the result
     print(chat_ids)
     for id in chat_ids:
+        time.sleep(0.5)
         payload = {
             'chat_id': id,
             'text': msg
@@ -104,6 +106,7 @@ def send_report(msg):
             return "Report successfully sent to all subscribers."
         else: 
             return "Failed to send reports to all subscribers."
+        
 
 # Add your handlers to the dispatcher
 start_handler = CommandHandler('start', start)
@@ -131,7 +134,6 @@ def telegram_webhook():
 
 # Set the webhook for your bot
 updater.bot.setWebhook(url=webhook_url)
-
 
 @app.route('/')
 def index():
