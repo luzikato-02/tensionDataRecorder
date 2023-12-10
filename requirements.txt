@@ -2,4 +2,4 @@ Flask==2.3.2
 Flask-SQLAlchemy
 mysql-connector-python
 python-telegram-bot==13.8.1
-requests
+requests==2.10.0
