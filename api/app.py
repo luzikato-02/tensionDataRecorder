@@ -90,22 +90,32 @@ def echo(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(update.message.text)
 
 def send_report(msg):
-    url = f'https://api.telegram.org/bot{telegram_api_token}/sendMessage' # Calling the telegram API to reply the message  
+    url = f'https://api.telegram.org/bot{telegram_api_token}/sendMessage'  # Calling the Telegram API to reply to the message
     subs_data = ReportSubscriber.query.with_entities(ReportSubscriber.chat_id).all()
     chat_ids = [value for (value,) in subs_data]  # Extracting values from the result
     print(chat_ids)
-    for id in chat_ids:
+
+    success_count = 0
+    failure_reasons = {}
+
+    for chat_id in chat_ids:
         time.sleep(0.5)
         payload = {
-            'chat_id': id,
+            'chat_id': chat_id,
             'text': msg
         }
         r = requests.post(url, json=payload)
 
         if r.status_code == 200:
-            return "Report successfully sent to all subscribers."
-        else: 
-            return "Failed to send reports to all subscribers."
+            success_count += 1
+        else:
+            failure_reasons[chat_id] = r.text
+            print(f"Failed to send report to chat ID {chat_id}. Reason: {r.text}")
+
+    if success_count == len(chat_ids):
+        return "Report successfully sent to all subscribers."
+    else:
+        return f"Failed to send reports to some subscribers. Successfully sent to {success_count} out of {len(chat_ids)} subscribers. Failure reasons: {failure_reasons}"
         
 
 # Add your handlers to the dispatcher
