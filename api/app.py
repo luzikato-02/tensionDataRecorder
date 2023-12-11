@@ -113,9 +113,9 @@ def send_report(msg):
             print(f"Failed to send report to chat ID {chat_id}. Reason: {r.text}")
 
     if success_count == len(chat_ids):
-        return "Report successfully sent to all subscribers."
+        return success_count, None, chat_ids
     else:
-        return f"Failed to send reports to some subscribers. Successfully sent to {success_count} out of {len(chat_ids)} subscribers. Failure reasons: {failure_reasons}"
+        return success_count, failure_reasons, chat_ids
         
 
 # Add your handlers to the dispatcher
@@ -235,8 +235,19 @@ Kindly confirm the listed problems and act accordingly.
 [END OF REPORT]
     """
     if spindles_with_problems:
-        send_report(msg=msg)
-    return jsonify({"message": "CSV data stored in the database."})
+        success_count, failure_reasons, chat_ids = send_report(msg=msg)
+        if success_count == len(chat_ids):
+            response_message = "Report successfully sent to all subscribers."
+        else:
+            response_message = (
+                f"Failed to send reports to some subscribers. "
+                f"Successfully sent to {success_count} out of {len(chat_ids)} subscribers. "
+                f"Failure reasons: {failure_reasons}"
+            )
+    else:
+        response_message = "CSV data stored in the database."
+
+    return jsonify({"message": response_message})
 
 
 @app.route('/store_wv', methods=['POST'])
