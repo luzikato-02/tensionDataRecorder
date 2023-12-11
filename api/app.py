@@ -66,7 +66,7 @@ def drop_tables():
 
 updater = Updater(token=telegram_api_token, use_context=True)
 dispatcher = updater.dispatcher
-webhook_url = "tension-data-recorder.vercel.app/set-webhook"
+webhook_url = "tension-data-recorder-luzikato-02.vercel.app/set-webhook"
 
 def write_new_subs(chat_id):
     with app.app_context():  # Enter the application context
@@ -74,6 +74,14 @@ def write_new_subs(chat_id):
             chat_id=chat_id,
         )
         db.session.add(new_data_entry)
+        db.session.commit()
+
+def delete_subs(chat_id):
+    with app.app_context():
+        item_to_delete = ReportSubscriber.query.filter_by(
+            chat_id=chat_id
+        ).first()
+        db.session.delete(item_to_delete)
         db.session.commit()
 
 # Define your handlers
@@ -86,8 +94,15 @@ def start(update: Update, context: CallbackContext) -> None:
                               Hello! I am TeDaRe 🤖. I am your personal tension data reporter.\nBy receiving this message means you are already subscribed to my reports.
                               """)
 
-def echo(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text(update.message.text)
+def subs_detail(update: Update, context: CallbackContext) -> None:
+    reply_text = f"This is your ID: {update.message.chat_id}"
+    update.message.reply_text(reply_text)
+
+def unsubs(update: Update, context: CallbackContext) -> None:
+    existing_data = ReportSubscriber.query.filter_by(chat_id=update.message.chat_id).first()
+    if existing_data:
+        delete_subs(existing_data)
+    update.message.reply_text("You have successfully unsubscribed from my reports. Goodbye👋!")
 
 def send_report(msg):
     url = f'https://api.telegram.org/bot{telegram_api_token}/sendMessage'  # Calling the Telegram API to reply to the message
@@ -122,8 +137,11 @@ def send_report(msg):
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
-echo_handler = MessageHandler(Filters.text & ~Filters.command, echo)
-dispatcher.add_handler(echo_handler)
+detail_handler = CommandHandler('mydetail', subs_detail)
+dispatcher.add_handler(detail_handler)
+
+unsub_handler = MessageHandler(Filters.text & ~Filters.command, subs_detail)
+dispatcher.add_handler(detail_handler)
 
 # Set up the Flask app to handle the webhook
 @app.route('/set-webhook', methods=['POST'])
