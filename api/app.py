@@ -140,7 +140,7 @@ dispatcher.add_handler(start_handler)
 detail_handler = CommandHandler('mydetail', subs_detail)
 dispatcher.add_handler(detail_handler)
 
-unsub_handler = MessageHandler(Filters.text & ~Filters.command, subs_detail)
+unsub_handler = CommandHandler('unsub', subs_detail)
 dispatcher.add_handler(detail_handler)
 
 # Set up the Flask app to handle the webhook
