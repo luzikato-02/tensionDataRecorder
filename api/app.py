@@ -140,8 +140,8 @@ dispatcher.add_handler(start_handler)
 detail_handler = CommandHandler('mydetail', subs_detail)
 dispatcher.add_handler(detail_handler)
 
-unsub_handler = CommandHandler('unsub', subs_detail)
-dispatcher.add_handler(detail_handler)
+unsub_handler = CommandHandler('unsub', unsubs)
+dispatcher.add_handler(unsub_handler)
 
 # Set up the Flask app to handle the webhook
 @app.route('/set-webhook', methods=['POST'])
