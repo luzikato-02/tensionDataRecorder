@@ -304,7 +304,7 @@ def store_wv():
                 csv_data += f"{rw},{col},{maxTensionVal},{minTensionVal},{problems}\n"
 
                 if problems and any(problems):
-                    problems_str = ', '.join(filter(lambda x: x.strip(), map(str, spd_data['Problems'])))
+                    problems_str = ', '.join(filter(lambda x: x.strip(), map(str, problems)))
                     problem_list += f"{sd} --- {rw} --- {col} --- {minTensionVal} --- {maxTensionVal} --- {problems_str}\n"
 
     csv_data = csv_data.encode("utf-8")
