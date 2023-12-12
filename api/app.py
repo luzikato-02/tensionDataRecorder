@@ -305,7 +305,7 @@ def store_wv():
 
                 if problems and any(problems):
                     problems_str = ', '.join(filter(lambda x: x.strip(), map(str, problems)))
-                    problem_list += f"{sd} --- {rw} --- {col} --- {minTensionVal} --- {maxTensionVal} --- {problems_str}\n"
+                    problem_list += f"{sd} --- {rw} --- {col} --- {minTensionVal[0]} --- {maxTensionVal[0]} --- {problems_str}\n"
 
     csv_data = csv_data.encode("utf-8")
     with app.app_context():  # Enter the application context

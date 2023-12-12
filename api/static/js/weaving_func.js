@@ -522,7 +522,6 @@ function displayRecordedProbs() {
         const listItem = document.createElement("li");
         listItem.textContent = problem;
         problemList.appendChild(listItem);
-        console.log(problem);
       });
     }
   }
@@ -573,10 +572,8 @@ function writeCSV(
 
   // Loop through all IDs except the last few and append to csvContent
   for (let sd in data["tensionData"]) {
-    console.log(sd);
     csvContent += `${sd}\n`;
     for (let rw in data["tensionData"][sd]) {
-      console.log(rw);
       for (let col in data["tensionData"][sd][rw]) {
         const minTensionVal =
           data["tensionData"]?.[sd]?.[rw]?.[col]?.["MIN"] || "";
@@ -627,7 +624,6 @@ function deleteData(dataType) {
     if (currentColumnData["Problems"]) {
       const problems = currentColumnData["Problems"];
       delete problems.pop();
-      console.log(currentColumnData["Problems"]);
     } else {
       currentColumnData["Problems"] = [];
     }
