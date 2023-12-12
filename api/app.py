@@ -236,7 +236,7 @@ def store_tw():
         db.session.add(new_data_entry)
         db.session.commit()
     
-    msg = f"""[🚨ALERT FOR FIXERS🚨]
+    msg = f"""[🚨ALERT FOR **TWISTING** FIXERS🚨]
     
 Machine Number: {machine_number}
 Operator: {operator}
@@ -291,18 +291,22 @@ def store_wv():
     csv_data += f"Operator,{operator}\n"
 
     tension_data = json_data.get("tensionData", {})
-    print(tension_data)
+    problem_list = ""
 
     # Loop through all IDs and append to csv_data
     for sd, sd_data in tension_data.items():
-        print(sd)
         csv_data += f"{sd}\n"
         for rw, rw_data in sd_data.items():
-            print(rw)
             for col, col_data in rw_data.items():
                 minTensionVal = col_data.get("MIN", "")
                 maxTensionVal = col_data.get("MAX", "")
-                csv_data += f"{rw},{col},{maxTensionVal},{minTensionVal}\n"
+                problems = col_data.get("Problems", "")
+                csv_data += f"{rw},{col},{maxTensionVal},{minTensionVal},{problems}\n"
+
+                if problems and any(problems):
+                    problems_str = ', '.join(filter(lambda x: x.strip(), map(str, spd_data['Problems'])))
+                    problem_list += f"{sd} --- {rw} --- {col} --- {minTensionVal} --- {maxTensionVal} --- {problems_str}\n"
+
     csv_data = csv_data.encode("utf-8")
     with app.app_context():  # Enter the application context
         new_data_entry = WeavingData(
@@ -321,7 +325,33 @@ def store_wv():
 
         db.session.add(new_data_entry)
         db.session.commit()
-    return jsonify({"message": "CSV data stored in the database."})
+    msg = f"""[🚨ALERT FOR **WEAVING** FIXERS🚨]
+    
+Machine Number: {machine_number}
+Operator: {operator}
+
+Detected abnormalities per column: 
+Side --- Row --- Col --- Min --- Max --- Problems
+{problem_list}
+
+Kindly confirm the listed problems and act accordingly.
+
+[END OF REPORT]
+    """
+    if problem_list:
+        success_count, failure_reasons, chat_ids = send_report(msg=msg)
+        if success_count == len(chat_ids):
+            response_message = "Report successfully sent to all subscribers."
+        else:
+            response_message = (
+                f"Failed to send reports to some subscribers. "
+                f"Successfully sent to {success_count} out of {len(chat_ids)} subscribers. "
+                f"Failure reasons: {failure_reasons}"
+            )
+    else:
+        response_message = "CSV data stored in the database."
+
+    return jsonify({"message": response_message})
 
 @app.route('/get_tw_data')
 def get_data():
