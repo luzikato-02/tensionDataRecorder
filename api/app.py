@@ -98,9 +98,7 @@ def subs_detail(update: Update, context: CallbackContext) -> None:
     update.message.reply_text(reply_text)
 
 def unsubs(update: Update, context: CallbackContext) -> None:
-    existing_data = ReportSubscriber.query.filter_by(chat_id=update.message.chat_id).first()
-    if existing_data:
-        delete_subs(existing_data)
+    delete_subs(update.message.chat_id)
     update.message.reply_text("You have successfully unsubscribed from my reports. Goodbye👋!")
 
 def send_report(msg):
