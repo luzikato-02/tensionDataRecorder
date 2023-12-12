@@ -76,13 +76,12 @@ def write_new_subs(chat_id):
         db.session.add(new_data_entry)
         db.session.commit()
 
-def delete_subs(chat_id):
+def delete_subs(chat_id_rm):
     with app.app_context():
-        item_to_delete = ReportSubscriber.query.filter_by(
-            chat_id=chat_id
-        ).first()
-        db.session.delete(item_to_delete)
-        db.session.commit()
+        record_to_remove = ReportSubscriber.query.filter_by(chat_id=chat_id_rm).first()
+        if record_to_remove:
+            db.session.delete(record_to_remove)
+            db.session.commit()
 
 # Define your handlers
 def start(update: Update, context: CallbackContext) -> None:
