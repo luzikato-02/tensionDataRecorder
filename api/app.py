@@ -99,7 +99,7 @@ def subs_detail(update: Update, context: CallbackContext) -> None:
 
 def unsubs(update: Update, context: CallbackContext) -> None:
     delete_subs(update.message.chat_id)
-    update.message.reply_text("You have successfully unsubscribed from my reports. Goodbye👋!")
+    update.message.reply_text("You have successfully unsubscribed from my reports.\nGoodbye👋!")
 
 def send_report(msg):
     url = f'https://api.telegram.org/bot{telegram_api_token}/sendMessage'  # Calling the Telegram API to reply to the message
@@ -290,7 +290,8 @@ def store_wv():
     csv_data += f"Date,{current_datetime}\n"
     csv_data += f"Operator,{operator}\n"
 
-    tension_data = json_data.get("tension_data", {})
+    tension_data = json_data.get("tensionData", {})
+    print(tension_data)
 
     # Loop through all IDs and append to csv_data
     for sd, sd_data in tension_data.items():
