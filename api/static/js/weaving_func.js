@@ -247,7 +247,7 @@ function resetStorage() {
     "Are you sure you want to clear all stored data within this browser?"
   );
   if (confirmation === !null) {
-    localStorage.removeItem("savedData");
+    localStorage.removeItem("weavingData");
   }
 }
 

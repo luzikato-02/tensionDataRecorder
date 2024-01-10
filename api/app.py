@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import io
 import os
 import datetime
@@ -22,6 +23,7 @@ print(f"Database Host: {hostname}")
 port = 3306
 
 app = Flask(__name__)
+CORS(app) 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
 db = SQLAlchemy(app)
 
