@@ -584,18 +584,18 @@ function writeCSV(
     }
   }
 
-  const filename = `[${machineNumber}] - [${po}] - [${currentDateTime}] - [${operator}]`;
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", "data:text/plain;charset=utf-8," + encodedUri);
-  link.setAttribute("download", filename);
+  // const filename = `[${machineNumber}] - [${po}] - [${currentDateTime}] - [${operator}]`;
+  // const encodedUri = encodeURI(csvContent);
+  // const link = document.createElement("a");
+  // link.setAttribute("href", "data:text/plain;charset=utf-8," + encodedUri);
+  // link.setAttribute("download", filename);
   
-  const confirmDownloadCSV = confirm("Do you want to download the CSV file to this device as backup?");
-  if (confirmDownloadCSV) {
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
+  // const confirmDownloadCSV = confirm("Do you want to download the CSV file to this device as backup?");
+  // if (confirmDownloadCSV) {
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // }
   const jsonData = JSON.stringify(data);
   fetch("/store_wv", {
     method: "POST",
