@@ -388,14 +388,13 @@ def download_tw(entry_id):
     m_n = TwistingData.query.get(entry_id).machine_number
     op = TwistingData.query.get(entry_id).operator
     i_n = TwistingData.query.get(entry_id).item_number
-    dt = TwistingData.query.get(entry_id).datetime
 
     # Create a response with the CSV data and set appropriate headers
     response = send_file(
         io.BytesIO(csv),
         mimetype='text/csv; charset=utf-8',
         as_attachment=True,
-        download_name=f'[{m_n}] - [{i_n}] - [{op}] - [{dt}].csv'
+        download_name=f'[{m_n}] - [{i_n}] - [{op}].csv'
     )
     return response
 
@@ -407,14 +406,13 @@ def download_wv(entry_id):
     m_n = WeavingData.query.get(entry_id).machine_number
     op = WeavingData.query.get(entry_id).operator
     p_o = WeavingData.query.get(entry_id).production_order
-    dt = WeavingData.query.get(entry_id).datetime
 
     # Create a response with the CSV data and set appropriate headers
     response = send_file(
         io.BytesIO(csv),
         mimetype='text/csv; charset=utf-8',
         as_attachment=True,
-        download_name=f'[{m_n}] - [{p_o}] - [{op}] - [{dt}].csv'
+        download_name=f'[{m_n}] - [{p_o}] - [{op}].csv'
     )
     return response
 
