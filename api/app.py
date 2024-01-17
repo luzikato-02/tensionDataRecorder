@@ -214,11 +214,17 @@ def store_tw():
                 except KeyError:
                     # Handle the case when the key is not present, e.g., set a default value
                     spd_data[key_id] = ""
+        if spd_data[id]["MIN"] < specTen - devTens:
+            spd_data[id]["Problems"].append("Tension Rendah")
+        if spd_data[id]["MAX"] > specTen + devTens:
+            spd_data[id]["Problems"].append("Tension Tinggi")
         csv_data += f"{id},{spd_data['MIN']},{spd_data['MAX']},{spd_data['Problems']}\n"
 
         if spd_data['Problems'] and any(spd_data['Problems']):  # Check if the list is not empty
             problems_str = ', '.join(filter(lambda x: x.strip(), map(str, spd_data['Problems'])))
             spindles_with_problems += f"{id} --- {spd_data['MIN'][0]} --- {spd_data['MAX'][0]} --- {problems_str}\n"
+        
+
     
     csv_data = csv_data.encode("utf-8")
 
