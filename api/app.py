@@ -223,8 +223,6 @@ def store_tw():
         if spd_data['Problems'] and any(spd_data['Problems']):  # Check if the list is not empty
             problems_str = ', '.join(filter(lambda x: x.strip(), map(str, spd_data['Problems'])))
             spindles_with_problems += f"{id} --- {spd_data['MIN'][0]} --- {spd_data['MAX'][0]} --- {problems_str}\n"
-        
-
     
     csv_data = csv_data.encode("utf-8")
 
