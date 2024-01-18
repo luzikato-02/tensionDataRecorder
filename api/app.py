@@ -214,9 +214,9 @@ def store_tw():
                 except KeyError:
                     # Handle the case when the key is not present, e.g., set a default value
                     spd_data[key_id] = ""
-        if spd_data["MIN"][0] < specTen - devTens:
+        if spd_data["MIN"][0] < int(specTen) - int(devTens):
             spd_data["Problems"].append("Tension Rendah")
-        if spd_data["MAX"][0] > specTen + devTens:
+        if spd_data["MAX"][0] > int(specTen) + int(devTens):
             spd_data["Problems"].append("Tension Tinggi")
         csv_data += f"{id},{spd_data['MIN']},{spd_data['MAX']},{spd_data['Problems']}\n"
 
