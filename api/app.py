@@ -214,6 +214,7 @@ def store_tw():
                 except KeyError:
                     # Handle the case when the key is not present, e.g., set a default value
                     spd_data[key_id] = ""
+        print(spd_data)
         if int(spd_data["MIN"][0]) < int(specTen) - int(devTens):
             spd_data["Problems"].append("Tension Rendah")
         if int(spd_data["MAX"][0]) > int(specTen) + int(devTens):
