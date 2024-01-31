@@ -7,7 +7,7 @@ import datetime
 import json
 import requests
 from telegram import Update
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, Filters, Updater
+from telegram.ext import CommandHandler, CallbackContext, Updater
 import time
 
 # from dotenv import load_dotenv
@@ -177,6 +177,10 @@ def weaving_recorder():
 @app.route('/showcase')
 def show_data():
     return render_template('showcase.html')
+
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
 
 
 @app.route('/store_tw', methods=['POST'])
