@@ -14,7 +14,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow shadow-sm">
       <div class="container">
         <a class="navbar-brand" href="#">
-          <img src="https://bogorcareercenter.bogorkab.go.id/assets/upload/company/logo/FILE-pt-indo-kordsa-tbk.png" class="d-inline-block align-top" style="height: 2rem;">
+          <img src="{{ url_for('static'), filename='img/ik-logo.png' }}" class="d-inline-block align-top" style="height: 2rem;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -45,16 +45,16 @@
         <div class="row align-items-center min-vh-50">
           <div class="col-xxl-7">
             <h1 class="display-5 fw-bold" style="color: #2F318B;">Tension Data Recorder</h1>
-            <p class="col-md-8 fs-4">Made to reduce data acquisition and processing duration. To start, please select the process stage.</p>
+            <p class="col-md-8 fs-4">Made to reduce data acquisition and processing duration. Easy to use. Start recording now.</p>
             <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xxl-start mb-3">
               <a class="btn btn-outline-primary btn-lg px-5 py-3 me-sm-3 fs-5 fw-bolder" href="{{ url_for('twisting') }}">Twisting</a>
               <a class="btn btn-outline-primary btn-lg px-5 py-3 me-sm-3 fs-5 fw-bolder" href="{{ url_for('weaving') }}">Weaving</a>
               <a class="btn btn-outline-dark btn-lg px-5 py-3 fs-5 fw-bolder" href="{{ url_for('showcase') }}">Database</a>
           </div>
           </div>
-          <!-- <div class="col-xxl-5">
-            <img class="img-thumbnail rounded-circle" src="https://indometer.co.id/image/cache/catalog/checkline/dts_digital-500x445.jpg" alt="">
-          </div> -->
+          <div class="col-xxl-5">
+            <img class="img-thumbnail rounded-circle" src="{{ url_for('static'), filename='img/tension-meter.png' }}" alt="">
+          </div>
         </div>
        
         
