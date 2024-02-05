@@ -181,7 +181,7 @@ updater.bot.setWebhook(url=webhook_url)
 
 @app.route('/')
 def index():
-    return render_template('main.html')
+    return render_template('base.html')
 
 @app.route('/menu')
 @login_required
