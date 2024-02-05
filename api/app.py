@@ -217,7 +217,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("login_page"))
+    return redirect(url_for("login"))
 
 
 @app.route('/store_tw', methods=['POST'])
