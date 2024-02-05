@@ -190,12 +190,12 @@ def menu():
 
 @app.route('/twisting')
 @login_required
-def twisting_recorder():
+def twisting():
     return render_template('twisting.html', user=current_user)
 
 @app.route('/weaving')
 @login_required
-def weaving_recorder():
+def weaving():
     return render_template('weaving.html', user=current_user)
 
 @app.route('/showcase')
