@@ -212,7 +212,7 @@ def login():
         if user.password == request.form.get('password'):
             login_user(user)
             return redirect(url_for('index'))
-    return redirect(url_for('menu'))
+    return render_template('login.html')
 
 @app.route("/logout")
 def logout():
