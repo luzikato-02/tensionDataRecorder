@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify, send_file, redirect,
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_bcrypt import Bcrypt
 import io
 import os
 import datetime
@@ -30,6 +31,7 @@ app.config['SECRET_KEY'] = "abcdefg"
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
+bcrypt = Bcrypt(app)
 
 # ---------------------------------------------DATABASE CLASSES INITIALIZATION --------------------------------------------------- #
 class ReportSubscriber(db.Model):
@@ -206,10 +208,8 @@ def showcase():
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == "POST":
-        user = UsersData.query.filter_by(
-            request.form.get('username')
-        ).first()
-        if user.password == request.form.get('password'):
+        user = UsersData.query.filter_by(username=request.form.get('username')).first()
+        if user and bcrypt.check_password_hash(user.password, request.form.get('password')):
             login_user(user)
             return redirect(url_for('index'))
     return render_template('login.html')
