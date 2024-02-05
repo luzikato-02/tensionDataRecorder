@@ -205,6 +205,10 @@ def weaving():
 def showcase():
     return render_template('showcase.html', user=current_user)
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))
+
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == "POST":
@@ -257,12 +261,12 @@ def store_tw():
                     spd_data[key_id] = ""
         for val in spd_data['MIN']:
             if val.isdigit():
-                if int(spd_data["MIN"][0]) < int(specTen) - int(devTens):
+                if int(spd_data["MIN"][0]) != 0 and int(spd_data["MIN"][0]) < int(specTen) - int(devTens):
                     spd_data["Problems"].append("Tension Rendah")
             break
         for val in spd_data['MAX']:
             if val.isdigit():
-                if int(spd_data["MAX"][0]) > int(specTen) + int(devTens):
+                if int(spd_data["MAX"][0]) != 0 and int(spd_data["MAX"][0]) > int(specTen) + int(devTens):
                     spd_data["Problems"].append("Tension Tinggi")
             break
         csv_data += f"{id},{spd_data['MIN']},{spd_data['MAX']},{spd_data['Problems']}\n"
