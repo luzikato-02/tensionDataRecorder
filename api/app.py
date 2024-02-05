@@ -200,7 +200,7 @@ def weaving():
 
 @app.route('/showcase')
 @login_required
-def show_data():
+def showcase():
     return render_template('showcase.html', user=current_user)
 
 @app.route('/login', methods=['GET','POST'])
