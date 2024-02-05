@@ -39,7 +39,7 @@ class ReportSubscriber(db.Model):
     chat_id = db.Column(db.String(255), nullable=False)
 
 class UsersData(UserMixin, db.Model):
-    user_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), unique=True, nullable=False)
     user_role = db.Column(db.String(250), unique=True, nullable=False)
