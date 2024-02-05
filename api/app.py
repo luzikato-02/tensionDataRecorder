@@ -203,8 +203,8 @@ def weaving_recorder():
 def show_data():
     return render_template('showcase.html', user=current_user)
 
-@app.route('/login', methods=['POST'])
-def login_page():
+@app.route('/login', methods=['GET','POST'])
+def login():
     if request.method == "POST":
         user = UsersData.query.filter_by(
             request.form.get('username')
