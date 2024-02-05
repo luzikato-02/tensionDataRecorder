@@ -18,6 +18,34 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       color: #ffffff; /* Text color */
     }
+
+    .navbar-brand img {
+        height: 2.5rem;
+      }
+
+      .navbar {
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 0.1rem;
+        box-shadow: 0 0.5rem 0.5rem rbga(0, 0, 0, 0.5);
+        z-index: 1;
+      }
+
+      #nav-container {
+        border-bottom: 1px solid black;
+      }
+
+      .nav-item {
+        padding: 0.2rem;
+        font-family: "Outfit", sans-serif;
+        font-size: 15pt;
+        color: black;
+      }
+
+      .nav-link.active,
+      .nav-link:hover {
+        color: darkblue !important;
+      }
   </style>
 </head>
 <body>
@@ -25,7 +53,7 @@
 <nav class="navbar navbar-expand-lg bg-white border-bottom box-shadow">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-      <img src="{{ url_for('static', filename='img/ik-logo.png') }}" alt="Company Logo" height="30px" class="d-inline-block align-top">
+      <img src="{{ url_for('static', filename='img/ik-logo.png') }}" alt="Company Logo" class="d-inline-block align-top">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -36,10 +64,7 @@
           <a class="nav-link" href="#">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contact</a>
+          <a class="nav-link" href="https://forms.gle/BpF2T3eArEcX18aP9">Report</a>
         </li>
       </ul>
     </div>
@@ -47,17 +72,17 @@
 </nav>
 
 <div class="container login-container">
-  <form>
+  <form method="POST">
     <h2 class="text-center mb-4">Login</h2>
 
     <div class="mb-3">
       <label for="username" class="form-label">Username</label>
-      <input type="text" class="form-control" id="username" placeholder="Enter your username">
+      <input type="text" class="form-control" name="username" placeholder="Enter your username">
     </div>
 
     <div class="mb-3">
       <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password" placeholder="Enter your password">
+      <input type="password" class="form-control" name="password" placeholder="Enter your password">
     </div>
 
     <div class="mb-3 form-check">

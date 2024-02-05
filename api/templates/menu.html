@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tension Recorder</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 10px;
+      }
+
+      .stages-buttons {
+        height: 50px;
+        width: 100px;
+        font-size: 20px;
+      }
+
+      .showcase-butt {
+        height: 50px;
+        width: 200px;
+        font-size: 20px;
+      }
+
+      .paragraphs {
+        font-size: 20px;
+      }
+
+      .ik-logo {
+        height: 50px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <img class="ik-logo"
+        src="{{ url_for('static', filename='img/ik-logo.png') }}"
+        alt="Description of the image"
+      />
+      <h2>Welcome to IK's Online Tension Data Recorder</h2>
+      <p class="paragraphs">
+        To start tension recording process, please choose the process stage.
+      </p>
+      <div>
+        <a href="{{ url_for('twisting_recorder') }}"
+          ><button class="stages-buttons">Twisting</button></a
+        >
+        <a href="{{ url_for('weaving_recorder') }}"
+          ><button class="stages-buttons">Weaving</button></a
+        >
+      </div>
+      <p class="paragraphs">
+        Or, if you simply want to look at the tension database please click the
+        button below.
+      </p>
+      <div>
+        <a href="{{ url_for('show_data') }}"
+          ><button class="showcase-butt">Showcase Database</button></a
+        >
+      </div>
+    </div>
+  </body>
+</html>

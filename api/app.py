@@ -1,6 +1,7 @@
-from flask import Flask, request, render_template, jsonify, send_file
+from flask import Flask, request, render_template, jsonify, send_file, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import io
 import os
 import datetime
@@ -13,23 +14,34 @@ import time
 # from dotenv import load_dotenv
 # load_dotenv()
 
+# ----------------------------------------------------- CREDENTIALS ----------------------------------------------------- #
 username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
 hostname = os.environ.get('DB_HOST')
 db_name = os.environ.get('DB_NAME')
 telegram_api_token = os.environ.get('TELEGRAM_API_TOKEN')
-
-print(f"Database Host: {hostname}")
 port = 3306
 
+# ------------------------------------- OBJECT INITIALIZATION AND DATABASE CONNECTION -------------------------------------- #
 app = Flask(__name__)
 CORS(app) 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
+app.config['SECRET_KEY'] = "abcdefg"
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
+# ---------------------------------------------DATABASE CLASSES INITIALIZATION --------------------------------------------------- #
 class ReportSubscriber(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chat_id = db.Column(db.String(255), nullable=False)
+
+class UsersData(UserMixin, db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(250), unique=True, nullable=False)
+    password = db.Column(db.String(250), unique=True, nullable=False)
+    user_role = db.Column(db.String(250), unique=True, nullable=False)
+
 
 class TwistingData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,11 +71,16 @@ class WeavingData(db.Model):
 
 
 def create_tables():
-    db.create_all()
+    with app.app_context():
+        db.create_all()
 
 # Use only for debugging db
 def drop_tables():
     db.drop_all()
+
+@login_manager.user_loader
+def loader_user(user_id):
+    return UsersData.query.get(user_id)
 
 
 updater = Updater(token=telegram_api_token, use_context=True)
@@ -166,21 +183,41 @@ updater.bot.setWebhook(url=webhook_url)
 def index():
     return render_template('main.html')
 
+@app.route('/menu')
+@login_required
+def menu():
+    return render_template('menu.html', user=current_user)
+
 @app.route('/twisting')
+@login_required
 def twisting_recorder():
-    return render_template('twisting.html')
+    return render_template('twisting.html', user=current_user)
 
 @app.route('/weaving')
+@login_required
 def weaving_recorder():
-    return render_template('weaving.html')
+    return render_template('weaving.html', user=current_user)
 
 @app.route('/showcase')
+@login_required
 def show_data():
-    return render_template('showcase.html')
+    return render_template('showcase.html', user=current_user)
 
-@app.route('/login')
+@app.route('/login', methods=['POST'])
 def login_page():
-    return render_template('login.html')
+    if request.method == "POST":
+        user = UsersData.query.filter_by(
+            request.form.get('username')
+        ).first()
+        if user.password == request.form.get('password'):
+            login_user(user)
+            return redirect(url_for('index'))
+    return render_template(url_for('menu'))
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("login_page"))
 
 
 @app.route('/store_tw', methods=['POST'])
