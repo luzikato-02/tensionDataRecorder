@@ -183,12 +183,7 @@ updater.bot.setWebhook(url=webhook_url)
 
 @app.route('/')
 def index():
-    return render_template('base.html')
-
-@app.route('/menu')
-@login_required
-def menu():
-    return render_template('menu.html', user=current_user)
+    return render_template('main.html')
 
 @app.route('/twisting')
 @login_required
