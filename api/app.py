@@ -15,7 +15,7 @@ import time
 # from dotenv import load_dotenv
 # load_dotenv()
 
-# ----------------------------------------------------- CREDENTIALS ----------------------------------------------------- #
+# ----------------------------------------------------- CREDENTIALS --------------------------------------------------------------- #
 username = os.environ.get('DB_USERNAME')
 password = os.environ.get('DB_PASSWORD')
 hostname = os.environ.get('DB_HOST')
@@ -23,7 +23,7 @@ db_name = os.environ.get('DB_NAME')
 telegram_api_token = os.environ.get('TELEGRAM_API_TOKEN')
 port = 3306
 
-# ------------------------------------- OBJECT INITIALIZATION AND DATABASE CONNECTION -------------------------------------- #
+# ------------------------------------- OBJECT INITIALIZATION AND DATABASE CONNECTION -------------------------------------------- #
 app = Flask(__name__)
 CORS(app) 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
