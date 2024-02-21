@@ -207,8 +207,8 @@ def unauthorized():
 @app.route('/login', methods=['GET','POST'])
 def login():
     if request.method == "POST":
-        user = UsersData.query.filter_by(username=request.form.get('username')).first()
-        if user and bcrypt.check_password_hash(user.password, request.form.get('password')):
+        user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
+        if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
             login_user(user)
             return redirect(url_for('index'))
     return render_template('login.html')
