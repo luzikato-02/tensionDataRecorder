@@ -3,20 +3,26 @@
 {% block content %}
     <!-- Login Form Begin -->
     <section class="login-section vh-100">
-        <div class="login-form container h-100">
+        <div class="login-form-container container h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-4">
                     <div class="card-form shadow" style="border-radius: 0.5rem;">
                         <div class="card-form-body p-5">
                             <h3 style="color: #2c348c;">Welcome back!</h3>
                             <h5 style="margin-bottom: 2rem; color: grey;">Login to continue</h5>
-                            <form method="POST">
+                            <div id="alert" class="alert alert-danger mt-3" style="display: none;">
+                                <span id="alertMessage"></span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form id="login-form" method="POST">
                                 <div class="form-floating mb-3">
-                                  <input type="text" class="form-control" name="username-input" required>
+                                  <input type="text" class="form-control" name="username-input" placeholder="Username" required>
                                   <label for="username-input" style="color: grey;">Username</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                  <input type="password" class="form-control" name="password-input" required>
+                                  <input type="password" class="form-control" name="password-input" placeholder="Password" required>
                                   <label for="password-input" class="form-label" style="color: grey;">Password</label>
                                   <div id="credHelp" class="form-text">Contact administrator to get your credentials.</div>
                                 </div>
@@ -39,5 +45,46 @@
             
         </div>
     </section>
+    <!-- Login Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Login Successful</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add any additional content or messages here -->
+                    Welcome back, {% current_user %}!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Login Success Modal End -->
+    <!-- Login Error Modal Begin -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span id="errorModalMessage">Something went wrong during login process. Check your connection and try again.</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Login Error Modal End -->
     <!-- Login Form End -->
   {% endblock %}

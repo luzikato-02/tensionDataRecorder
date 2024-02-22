@@ -210,7 +210,9 @@ def login():
         user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
         if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
             login_user(user)
-            return redirect(url_for('index'))
+            return jsonify(success=True)
+        else:
+            return jsonify(success=False)
     return render_template('login.html')
 
 @app.route("/logout")
