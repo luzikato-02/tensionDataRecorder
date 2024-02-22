@@ -1,0 +1,66 @@
+.navbar{
+    font-family: 'Poppins';
+    font-weight: 600;
+    font-size: large;
+}
+
+.nav-item {
+    margin-right: 30px;
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: #2c348c !important;
+}
+
+.jumbotron-title {
+  font-family: "Plus Jakarta Sans";
+  font-weight: 300;
+  color: #2c348c;
+}
+
+.jumbotron-text, .card-title {
+  font-family: "Plus Jakarta Sans";
+}
+
+.option-btn {
+  font-family: "Poppins";
+  font-weight: 500;
+  background-color: #2c348c;
+  border-radius: 0.2rem;
+}
+
+.option-btn:hover {
+  background-color: #696aab;
+}
+
+.card-text, .datatable {
+  font-family: "Roboto";
+}
+
+.option-btn {
+  font-family: "Poppins";
+  font-weight: 500;
+  background-color: #2c348c;
+  border-radius: 0.2rem;
+}
+
+.option-btn:hover {
+  background-color: #696aab;
+}
+
+.login-btn {
+    background-color: #2c348c;
+}
+
+.login-btn:hover {
+  background-color: #696aab;
+}
+
+.card-form {
+  font-family: "Roboto";
+}
+
+.card-title {
+  font-weight: 700;
+  color: #2c348c;
+}
