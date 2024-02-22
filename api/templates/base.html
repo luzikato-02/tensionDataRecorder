@@ -14,6 +14,13 @@
       crossorigin="anonymous"
     ></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+    {% if request.endpoint == 'showcase' %}
+        <script src="{{ url_for('static', filename='js/show_db.js')}}"></script>
+    {% elif request.endpoint == 'twisting' %}
+        <script src="{{ url_for('static', filename='js/twisting_func.js')}}"></script>
+    {% elif request.endpoint == 'weaving' %}
+        <script src="{{ url_for('static', filename='js/weaving_func.js')}}"></script>
+
 </head>
 <body>
     <!-- Navbar Begin -->
