@@ -15,6 +15,8 @@
     ></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
     {% if request.endpoint == 'showcase' %}
+        <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.2/dist/bootstrap-table.min.css">
+        <script src="https://unpkg.com/bootstrap-table@1.22.2/dist/bootstrap-table.min.js"></script>
         <script src="{{ url_for('static', filename='js/show_db.js')}}"></script>
     {% elif request.endpoint == 'twisting' %}
         <script src="{{ url_for('static', filename='js/twisting_func.js')}}"></script>
