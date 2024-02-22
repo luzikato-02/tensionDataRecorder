@@ -4,12 +4,9 @@
     <!-- Datatable Begin -->
     <section class="datatable vh-100">
         <div class="container">
-            <div class="">
-
-            </div>
-            <div class="row">
+            <div class="row mt-5">
                 <div class="col mb-3">
-                    <h4 class="table-title" style="color: #2c348c;">Measured Twisting Tension Datatable</h4>
+                    <h4 class="table-title" style="color: #2c348c;">Measured Tension Datatable</h4>
                 </div>
                 <div class="col text-end">
                     <h5 class="role-text">Your current role: {{ current_user.user_role }}</h5>
@@ -17,16 +14,16 @@
             </div>
             
           </div>
-          <div class="container-md mt-5">
+          <div class="container-md mt-3">
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" role="presentation"><button class="nav-link active tab-nav" href="#tw-table" data-bs-toggle="tab" data-bs-target="#tw-table">
                     Twisting
                 </button></li>
                 <li><button class="nav-link tab-nav" href="#wv-table" data-bs-toggle="tab" data-bs-target="#wv-table">Weaving</button></li>
             </ul>
-            <div class="tab-content pt-2">
+            <div class="tab-content pt-4">
                 <div class="tab-pane show active" id="tw-table">
-                    <table id="tw-data-table" class="table table-striped table-light table-hover table-responsive mt-5" cellspacing="0" width="100%">
+                    <table id="tw-data-table" class="table table-striped table-light table-hover table-responsive" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Entry ID</th>
@@ -44,7 +41,7 @@
                     </table>
                 </div>
                 <div class="tab-pane" id="wv-table">
-                    <table id="wv-data-table" class="table table-striped table-light table-hover table-responsive mt-5" cellspacing="0" width="100%">
+                    <table id="wv-data-table" class="table table-striped table-light table-hover table-responsive" cellspacing="0" width="100%">
                         <thead>
                             <tr>
                                 <th>Entry ID</th>
