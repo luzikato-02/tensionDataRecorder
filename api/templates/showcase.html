@@ -17,31 +17,30 @@
             </div>
             
           </div>
-          <div class="container-md table-responsive">
+          <div class="container-md">
             <table
-                id="tw-data-table"
-                class="table table-striped table-hover table-light"
-                data-toggle="table"
-                data-url="/get_tw_data"
-                data-pagination="true"
-                data-side-pagination="server"
-                data-query-params="queryParams"
+              id="tw-data-table"
+              class="table table-striped table-hover table-light"
             >
-                <thead>
-                    <tr>
-                        <th data-field="id">Entry ID</th>
-                        <th data-field="operator">Operator</th>
-                        <th data-field="item_number">Item Number</th>
-                        <th data-field="machine_number">Machine Number</th>
-                        <th data-field="rpm">RPM</th>
-                        <th data-field="tpm">TPM</th>
-                        <th data-field="stdTen">Spec. Tension</th>
-                        <th data-field="devTen">Tens. Deviation</th>
-                        <th data-field="download" data-formatter="operateFormatter" data-events="operateEvents">Actions</th>
-                        <!-- Add more column headers -->
-                    </tr>
-                </thead>
+              <thead>
+                <tr>
+                  <th>Entry ID</th>
+                  <th>Operator</th>
+                  <th>Item Number</th>
+                  <th>Machine Number</th>
+                  <th>RPM</th>
+                  <th>TPM</th>
+                  <th>Spec. Tension</th>
+                  <th>Tens. Deviation</th>
+                  <th>Actions</th>
+                  <!-- Add more column headers -->
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Data rows will be added here -->
+              </tbody>
             </table>
+          </div>
         </div>
 
     </section>
