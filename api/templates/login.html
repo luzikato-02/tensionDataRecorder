@@ -5,27 +5,27 @@
     <section class="login-section vh-100">
         <div class="login-form container h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
-                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="col-4">
                     <div class="card-form shadow" style="border-radius: 0.5rem;">
                         <div class="card-form-body p-5">
                             <h3 style="color: #2c348c;">Welcome back!</h3>
-                            <h5 style="margin-bottom: 3rem; color: grey;">Login to continue</h5>
-                            <form method="post">
+                            <h5 style="margin-bottom: 2rem; color: grey;">Login to continue</h5>
+                            <form>
                                 <div class="form-floating mb-3">
-                                  <input type="text" class="form-control" name="username-input" placeholder="Username">
+                                  <input type="text" class="form-control" id="username-input" placeholder="Username">
                                   <label for="username-input" style="color: grey;">Username</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                  <input type="password" class="form-control" name="password-input" placeholder="**************************">
+                                  <input type="password" class="form-control" id="password-input" placeholder="**************************">
                                   <label for="password-input" class="form-label" style="color: grey;">Password</label>
                                   <div id="credHelp" class="form-text">Contact administrator to get your credentials.</div>
                                 </div>
-                                <div class="mt-4 mb-3 form-check">
+                                <div class="d-grid mt-2">
+                                    <button type="submit" class="login-btn btn btn-primary" style="border-radius: 0.25rem; height: 3rem; font-size: 1.125rem;">Login</button>
+                                </div>
+                                <div class="mt-3 mb-3 form-check">
                                   <input type="checkbox" class="form-check-input" id="remember-check">
                                   <label class="form-check-label" for="remember-check">Remember me</label>
-                                </div>
-                                <div class="d-grid mx-auto">
-                                    <button type="submit" class="login-btn btn btn-primary" style="border-radius: 0.25rem;">Login</button>
                                 </div>
                                 
                             </form>
