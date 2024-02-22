@@ -64,3 +64,11 @@
   font-weight: 700;
   color: #2c348c;
 }
+
+.tab-nav {
+    font-family: "Roboto";
+    font-weight: 600;
+    color: #2c348c;
+    border-radius: 0.25rem;
+    border-color: #2c348c;
+}
