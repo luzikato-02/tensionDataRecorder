@@ -66,3 +66,7 @@ $(document).on("click", ".wv-download-button", function () {
   // Make an AJAX request to your Flask endpoint to initiate the download
   window.location.href = "/download_wv/" + entryId;
 });
+
+$('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+  DataTable.tables({ visible: true, api: true }).columns.adjust();
+});

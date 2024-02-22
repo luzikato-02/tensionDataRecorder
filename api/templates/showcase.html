@@ -2,7 +2,7 @@
 
 {% block content %}
     <!-- Datatable Begin -->
-    <section class="datatable vh-100 my-5">
+    <section class="datatable vh-100">
         <div class="container">
             <div class="">
 
@@ -18,28 +18,48 @@
             
           </div>
           <div class="container-md">
-            <table
-              id="tw-data-table"
-              class="table table-striped table-hover table-light"
-            >
-              <thead>
-                <tr>
-                  <th>Entry ID</th>
-                  <th>Operator</th>
-                  <th>Item Number</th>
-                  <th>Machine Number</th>
-                  <th>RPM</th>
-                  <th>TPM</th>
-                  <th>Spec. Tension</th>
-                  <th>Tens. Deviation</th>
-                  <th>Actions</th>
-                  <!-- Add more column headers -->
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Data rows will be added here -->
-              </tbody>
-            </table>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation"><button class="nav-link active" href="#tw-table" data-bs-toggle="tab" data-bs-target="#tw-table">
+                    Twisting
+                </button></li>
+                <li><button class="nav-link" href="#wv-table" data-bs-toggle="tab" data-bs-target="#wv-table">Weaving</button></li>
+            </ul>
+            <div class="tab-content pt-2">
+                <div class="tab-pane show active" id="tw-table">
+                    <table id="tw-data-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Entry ID</th>
+                                <th>Operator</th>
+                                <th>Item Number</th>
+                                <th>Machine Number</th>
+                                <th>RPM</th>
+                                <th>TPM</th>
+                                <th>Spec. Tension</th>
+                                <th>Tens. Deviation</th>
+                                <th>Actions</th>
+                                <!-- Add more column headers -->
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="tab-pane" id="wv-table">
+                    <table id="wv-data-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Entry ID</th>
+                                <th>Operator</th>
+                                <th>Machine Number</th>
+                                <th>Production Order</th>
+                                <th>Bale Number</th>
+                                <th>Spec. Tension</th>
+                                <th>Tens. Deviation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
           </div>
         </div>
 
