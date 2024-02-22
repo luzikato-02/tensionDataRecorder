@@ -10,13 +10,13 @@
                         <div class="card-form-body p-5">
                             <h3 style="color: #2c348c;">Welcome back!</h3>
                             <h5 style="margin-bottom: 2rem; color: grey;">Login to continue</h5>
-                            <form>
+                            <form method="POST">
                                 <div class="form-floating mb-3">
-                                  <input type="text" class="form-control" name="username-input" placeholder="Username">
+                                  <input type="text" class="form-control" name="username-input" required>
                                   <label for="username-input" style="color: grey;">Username</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                  <input type="password" class="form-control" name="password-input" placeholder="**************************">
+                                  <input type="password" class="form-control" name="password-input" required>
                                   <label for="password-input" class="form-label" style="color: grey;">Password</label>
                                   <div id="credHelp" class="form-text">Contact administrator to get your credentials.</div>
                                 </div>
