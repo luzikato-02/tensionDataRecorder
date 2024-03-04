@@ -211,6 +211,7 @@ def login_page():
 @app.route('/user_login', methods=['POST'])
 def auth_user():
     user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
+    print(f'Username: {username}')
     if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
         login_user(user)
         return jsonify(success=True)
