@@ -3,8 +3,8 @@ $(document).ready(function () {
         e.preventDefault();
 
         var formData = {
-            username: $('#username-input').val(),
-            password: $('#password-input').val()
+            username: $('#username-col').val(),
+            password: $('#password-col').val()
         };
 
         console.log('Form Data:', formData);

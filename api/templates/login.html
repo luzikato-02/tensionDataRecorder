@@ -18,13 +18,13 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <form id="login-form" action="{{ url_for('auth_user') }}" method="post">
+                            <form id="login-form">
                                 <div class="form-floating mb-3">
-                                  <input type="text" class="form-control" id="username-input" name="username-input" placeholder="Username" required>
+                                  <input type="text" class="form-control" id="username-col" name="username-input" placeholder="Username" required>
                                   <label for="username-input" style="color: grey;">Username</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                  <input type="password" class="form-control" id="password-input" name="password-input" placeholder="Password" required>
+                                  <input type="password" class="form-control" id="password-col" name="password-input" placeholder="Password" required>
                                   <label for="password-input" class="form-label" style="color: grey;">Password</label>
                                   <div id="credHelp" class="form-text">Contact administrator to get your credentials.</div>
                                 </div>
