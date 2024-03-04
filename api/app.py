@@ -204,8 +204,12 @@ def showcase():
 def unauthorized():
     return redirect(url_for('login'))
 
-@app.route('/login', methods=['GET','POST'])
-def login():
+@app.route('/login', methods=['GET'])
+def login_page():
+    return render_template('login.html')
+
+@app.route('/login_user', methods=['POST'])
+def user_login():
     if request.method == "POST":
         user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
         if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
@@ -213,7 +217,6 @@ def login():
             return jsonify(success=True)
         else:
             return jsonify(success=False)
-    return render_template('login.html')
 
 @app.route("/logout")
 def logout():
