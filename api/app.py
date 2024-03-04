@@ -208,7 +208,7 @@ def unauthorized():
 def login_page():
     return render_template('login.html')
 
-@app.route('/login_user', methods=['POST'])
+@app.route('/user_login', methods=['POST'])
 def user_login():
     if request.method == "POST":
         user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
