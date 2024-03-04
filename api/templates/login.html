@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <script src="{{ url_for('static', filename='static/js/login.js')}}"></script>
     <!-- Login Form Begin -->
     <section class="login-section vh-100">
         <div class="login-form-container container h-100">
@@ -85,6 +86,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Login Error Modal End -->
     <!-- Login Form End -->
   {% endblock %}
