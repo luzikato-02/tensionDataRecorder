@@ -8,7 +8,7 @@ $(document).ready(function () {
         };
 
         console.log('Form Data:', formData);
-        alertContainer = document.getElementById("#alertContainer");
+        let alertContainer = document.querySelector("#alertContainer");
 
         $.ajax({
             type: 'POST',
