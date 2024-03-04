@@ -202,11 +202,14 @@ def showcase():
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return redirect(url_for('login'))
+    return redirect(url_for('login_page'))
 
 @app.route('/login', methods=['GET'])
 def login_page():
-    return render_template('login.html', status=None)
+    if current_user.is_authenticated:
+        return render_template(url_for('index'))
+    else:
+        return render_template('login.html', status=None)
 
 @app.route('/user_login', methods=['POST'])
 def auth_user():
