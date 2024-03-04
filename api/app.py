@@ -228,6 +228,7 @@ def logout():
 
 
 @app.route('/store_tw', methods=['POST'])
+@login_required
 def store_tw():
     json_data = request.get_json()
     datetime = json_data["datetime"]
@@ -325,6 +326,7 @@ Kindly confirm the listed problems and act accordingly.
 
 
 @app.route('/store_wv', methods=['POST'])
+@login_required
 def store_wv():
     json_data = request.get_json()
     operator = json_data["operator"]
@@ -413,6 +415,7 @@ Kindly confirm the listed problems and act accordingly.
     return jsonify({"message": response_message})
 
 @app.route('/get_tw_data')
+@login_required
 def get_data():
     data = TwistingData.query.all()
     return jsonify([{'id': ten_data.id, 
@@ -426,6 +429,7 @@ def get_data():
                      'devTen' : ten_data.devTen} for ten_data in data])
 
 @app.route('/get_wv_data')
+@login_required
 def get_wv_data():
     data = WeavingData.query.all()
     return jsonify([{'id': ten_data.id, 
@@ -438,6 +442,7 @@ def get_wv_data():
                      'devTen' : ten_data.devTen} for ten_data in data])
 
 @app.route('/download_tw/<entry_id>')
+@login_required
 def download_tw(entry_id):
     # Retrieve the associated CSV data based on the entry_id
     # For example, assuming your database model has a 'data' column
@@ -456,6 +461,7 @@ def download_tw(entry_id):
     return response
 
 @app.route('/download_wv/<entry_id>')
+@login_required
 def download_wv(entry_id):
     # Retrieve the associated CSV data based on the entry_id
     # For example, assuming your database model has a 'data' column
