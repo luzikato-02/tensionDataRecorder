@@ -8,6 +8,7 @@ $(document).ready(function () {
         };
 
         console.log('Form Data:', formData);
+        alertContainer = document.getElementById("#alertContainer");
 
         $.ajax({
             type: 'POST',
@@ -20,8 +21,12 @@ $(document).ready(function () {
                     // Show the success modal
                     $('#successModal').modal('show');
                 } else {
-                    $('#alertMessage').text('Invalid credentials. Please try again.');
-                    $('#alert').show();
+                    alertContainer.innerHTML = `
+                    <div id="alert" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Astagfirullah!</strong> Invalid crendentials. Please try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    `
                 }
             },
             error: function () {
