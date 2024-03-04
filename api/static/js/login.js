@@ -20,6 +20,9 @@ $(document).ready(function () {
                 if (response.success) {
                     // Show the success modal
                     $('#successModal').modal('show');
+                    setTimeout(function () {
+                        window.location.href = "/";
+                    }, 2000); // Redirect after 2 seconds
                 } else {
                     alertContainer.innerHTML = `
                     <div id="alert" class="alert alert-danger alert-dismissible fade show" role="alert">
