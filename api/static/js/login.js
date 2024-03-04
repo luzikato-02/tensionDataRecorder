@@ -12,8 +12,8 @@ $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: '/user_login',
-            data: formData,
-            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(formData), 
             success: function (response) {
                 console.log(response);
                 if (response.success) {
