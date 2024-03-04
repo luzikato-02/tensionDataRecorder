@@ -14,21 +14,16 @@ $(document).ready(function () {
             url: '/user_login',
             data: formData,
             dataType: 'json',
-            success: function (data) {
-                console.log('Success Response:', data);
-                if (data.success) {
+            success: function (response) {
+                if (response.success) {
+                    // Show the success modal
                     $('#successModal').modal('show');
-                    setTimeout(function () {
-                        window.location.href = "{{ url_for('home') }}";
-                    }, 2000); // Redirect after 2 seconds
                 } else {
-                    console.log('Error Message:', data.error);
-                    $('#alertMessage').text(data.error);
+                    $('#alertMessage').text('Invalid credentials. Please try again.');
                     $('#alert').show();
                 }
             },
-            error: function (xhr, status, error) {
-                console.error('Ajax Error:', xhr.responseText);
+            error: function () {
                 $('#errorModal').modal('show');
             }
         });
