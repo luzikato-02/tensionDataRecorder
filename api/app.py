@@ -206,16 +206,16 @@ def unauthorized():
 
 @app.route('/login', methods=['GET'])
 def login_page():
-    return render_template('login.html')
+    return render_template('login.html', status=None)
 
 @app.route('/user_login', methods=['POST'])
 def auth_user():
     user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
     if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
         login_user(user)
-        return jsonify(success=True)
+        return render_template('login.html', status='login_success')
     else:
-        return jsonify(success=False)
+        return render_template('login.html', status='invalid_cred')
 
 @app.route("/logout")
 def logout():
