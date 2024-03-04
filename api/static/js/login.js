@@ -17,6 +17,9 @@ $(document).ready(function () {
                 if (response.success) {
                     // Show the success modal
                     $('#successModal').modal('show');
+                    setTimeout(function () {
+                        window.location.href = "{{ url_for('home') }}";
+                    }, 2000); // Redirect after 2 seconds
                 } else {
                     $('#alertMessage').text('Invalid credentials. Please try again.');
                     $('#alert').show();
