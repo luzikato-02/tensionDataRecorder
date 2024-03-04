@@ -213,7 +213,7 @@ def login():
             return jsonify(success=True)
         else:
             return jsonify(success=False)
-    return render_template('login.html')
+    return render_template('login.html', user=current_user)
 
 @app.route("/logout")
 def logout():
