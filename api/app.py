@@ -213,9 +213,9 @@ def auth_user():
     user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
     if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
         login_user(user)
-        return render_template('login.html', status='login_success')
+        return jsonify(success=True)
     else:
-        return render_template('login.html', status='invalid_cred')
+        return jsonify(success=False)
 
 @app.route("/logout")
 def logout():
