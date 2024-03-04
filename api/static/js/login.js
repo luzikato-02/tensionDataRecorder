@@ -10,7 +10,7 @@ $(document).ready(function () {
         // Send an AJAX request to the server
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('user_login') }}",  // Replace with your actual server endpoint
+            url: "{{ url_for('auth_user') }}",  // Replace with your actual server endpoint
             data: JSON.stringify(formData),
             contentType: 'application/json',
             success: function (response) {

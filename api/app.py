@@ -209,14 +209,13 @@ def login_page():
     return render_template('login.html')
 
 @app.route('/user_login', methods=['POST'])
-def user_login():
-    if request.method == "POST":
-        user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
-        if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
-            login_user(user)
-            return jsonify(success=True)
-        else:
-            return jsonify(success=False)
+def auth_user():
+    user = UsersData.query.filter_by(username=request.form.get('username-input')).first()
+    if user and bcrypt.check_password_hash(user.password, request.form.get('password-input')):
+        login_user(user)
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False)
 
 @app.route("/logout")
 def logout():
