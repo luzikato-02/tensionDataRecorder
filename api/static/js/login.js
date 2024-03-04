@@ -15,6 +15,7 @@ $(document).ready(function () {
             data: formData,
             dataType: 'json',
             success: function (response) {
+                console.log(response);
                 if (response.success) {
                     // Show the success modal
                     $('#successModal').modal('show');
