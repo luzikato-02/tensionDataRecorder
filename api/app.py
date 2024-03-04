@@ -224,7 +224,7 @@ def auth_user():
 @app.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    return redirect(url_for("login_page"))
 
 
 @app.route('/store_tw', methods=['POST'])
