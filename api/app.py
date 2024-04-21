@@ -24,7 +24,7 @@ port = 3306
 
 app = Flask(__name__)
 CORS(app) 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{username}:{password}@{hostname}:{port}/{db_name}'
 db = SQLAlchemy(app)
 
 class ReportSubscriber(db.Model):
