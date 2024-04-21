@@ -26,7 +26,7 @@ port = 3306
 # ------------------------------------- OBJECT INITIALIZATION AND DATABASE CONNECTION -------------------------------------------- #
 app = Flask(__name__)
 CORS(app) 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{username}:{password}@{hostname}:{port}/{db_name}'
 app.config['SECRET_KEY'] = "abcdefg"
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -48,6 +48,7 @@ class UsersData(UserMixin, db.Model):
 class TwistingData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     datetime = db.Column(db.String(255), nullable=False)
+    mill_loc = db.Column(db.String(255))
     operator = db.Column(db.String(255))
     machine_number = db.Column(db.String(255))
     item_number = db.Column(db.String(255))
@@ -60,6 +61,7 @@ class TwistingData(db.Model):
 class WeavingData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     datetime = db.Column(db.String(255), nullable=False)
+    mill_loc = db.Column(db.String(255))
     operator = db.Column(db.String(255))
     machine_number = db.Column(db.String(255))
     production_order = db.Column(db.String(255))
@@ -286,6 +288,7 @@ def store_tw():
     with app.app_context():  # Enter the application context
         new_data_entry = TwistingData(
             datetime=datetime,
+            mill_loc=UsersData.mill_loc,
             operator=operator,
             machine_number=machine_number,
             item_number=item_number,
@@ -375,7 +378,7 @@ def store_wv():
     with app.app_context():  # Enter the application context
         new_data_entry = WeavingData(
             datetime=current_datetime,
-            operator=operator,
+            mill_loc=UsersData.mill_loc,
             machine_number=machine_number,
             production_order = production_order,
             bale_number = bale_no,
