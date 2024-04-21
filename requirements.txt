@@ -4,3 +4,4 @@ mysql-connector-python
 python-telegram-bot==13.8.1
 requests==2.10.0
 Flask-CORS
+pymysql
