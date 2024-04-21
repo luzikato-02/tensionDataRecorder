@@ -43,6 +43,7 @@ class UsersData(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), unique=True, nullable=False)
     user_role = db.Column(db.String(250), unique=True, nullable=False)
+    mill_loc = db.Column(db.String(250), unique=True, nullable=False)
 
 
 class TwistingData(db.Model):
@@ -288,7 +289,6 @@ def store_tw():
     with app.app_context():  # Enter the application context
         new_data_entry = TwistingData(
             datetime=datetime,
-            mill_loc=UsersData.mill_loc,
             operator=operator,
             machine_number=machine_number,
             item_number=item_number,
@@ -378,7 +378,6 @@ def store_wv():
     with app.app_context():  # Enter the application context
         new_data_entry = WeavingData(
             datetime=current_datetime,
-            mill_loc=UsersData.mill_loc,
             machine_number=machine_number,
             production_order = production_order,
             bale_number = bale_no,
