@@ -378,6 +378,7 @@ def store_wv():
     with app.app_context():  # Enter the application context
         new_data_entry = WeavingData(
             datetime=current_datetime,
+            operator=operator,
             machine_number=machine_number,
             production_order = production_order,
             bale_number = bale_no,
