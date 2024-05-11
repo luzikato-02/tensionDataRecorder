@@ -259,6 +259,7 @@ function writeCSV(machineNumber, operator, dtx, twm, rpm, stdT, devT, itemN) {
   }
   const currentDateTime = new Date().toLocaleString(); // Get current date and time in a localized format
   data["datetime"] = currentDateTime;
+  console.log(data["datetime"]);
   const filename = `[${machineNumber}] - [${itemN}] - [${operator}] - [${currentDateTime}]`;
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
