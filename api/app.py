@@ -235,7 +235,7 @@ def logout():
 @login_required
 def store_tw():
     json_data = request.get_json()
-    datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     operator = json_data["operator"]
     machine_number = json_data["machineNumber"]  
     item_number = json_data["itemNum"]
@@ -286,7 +286,7 @@ def store_tw():
 
     with app.app_context():  # Enter the application context
         new_data_entry = TwistingData(
-            datetime=datetime,
+            datetime=current_datetime,
             operator=operator,
             machine_number=machine_number,
             item_number=item_number,
