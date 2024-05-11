@@ -237,6 +237,7 @@ def logout():
 def store_tw():
     json_data = request.get_json()
     datetime = json_data["datetime"]
+    print(datetime)
     operator = json_data["operator"]
     machine_number = json_data["machineNumber"]  
     item_number = json_data["itemNum"]
