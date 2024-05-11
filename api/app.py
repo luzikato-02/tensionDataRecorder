@@ -219,7 +219,6 @@ def auth_user():
     username = input_cred['username']
     password = input_cred['password']
     user = UsersData.query.filter_by(username=username).first()
-    print(f'Username: {username}')
     if user and bcrypt.check_password_hash(user.password, password):
         login_user(user)
         return jsonify(success=True)
@@ -236,8 +235,7 @@ def logout():
 @login_required
 def store_tw():
     json_data = request.get_json()
-    datetime = json_data["datetime"]
-    print(datetime)
+    datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     operator = json_data["operator"]
     machine_number = json_data["machineNumber"]  
     item_number = json_data["itemNum"]
