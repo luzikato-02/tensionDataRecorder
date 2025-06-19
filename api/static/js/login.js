@@ -6,8 +6,6 @@ $(document).ready(function () {
             username: $('#username-col').val(),
             password: $('#password-col').val()
         };
-
-        console.log('Form Data:', formData);
         let alertContainer = document.querySelector("#alertContainer");
 
         $.ajax({
